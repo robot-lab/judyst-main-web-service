@@ -3,6 +3,7 @@ name: Idea proposal
 about: Suggest an idea for this project
 
 ---
+
 # Idea proposal
 
 ## В чём заключается идея
