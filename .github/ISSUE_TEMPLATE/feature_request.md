@@ -3,6 +3,7 @@ name: Feature request
 about: Suggest an concrete feature for this project
 
 ---
+
 # Feature request
 
 ## Почему Вы заинтересованы в данном функционале
