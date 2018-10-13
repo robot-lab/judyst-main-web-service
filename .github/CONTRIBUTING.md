@@ -4,6 +4,16 @@
 
 Здесь мы укажем основные моменты, с которыми будущщему участнику стоит ознакомиться в первую очередь.
 
+## Процессы работы
+
+Над нашим проектом работают много людей. Поэтому, чтобы разработка не привратилась в хаос, мы разработали ряд положений, сформированных в виде инструкций:
+
+- [Инструкция по разработке](https://github.com/robot-lab/judyst-main-web-service/wiki/Development-instruction);
+- [Инструкция по аналитике](https://github.com/robot-lab/judyst-main-web-service/wiki/Business-&-system-analyst's-instruction);
+- [Инструкция по тестированию](https://github.com/robot-lab/judyst-main-web-service/wiki/Test-instruction).
+
+Также Вы можете ознакомиться с другой информацией о проекте, компонентах и команде в [Wiki](https://github.com/robot-lab/judyst-main-web-service/wiki) этого репозитория.
+
 ## Курс Молодого Бойца
 
 Если у Вас нет/мало опыта в программировании, особенно на Python, или Вы не знакомы с основами текстового анализа, то мы настоятельно рекомендуем пройти наш [Курс Молодого Бойца (КМБ)](https://docs.google.com/document/d/1KZJOBYGu6T1qMXPV_oeN803qvGaaFFLFHoIUCRiei4A/edit?usp=sharing). Также мы будем рады, если Вы оставите отзыв о КМБ.
