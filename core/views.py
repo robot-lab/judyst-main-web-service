@@ -33,7 +33,7 @@ class UserViewSet(viewsets.ViewSet):
         validate_data = request.data
         if validate(validate_data, ['first_name', 'last_name', 'email', 'password', 'organization']):
             return ErrorResponse().not_valid()
-        # TODO: (Lev) we need to add a check if this user exist already.
+        # FIXME: (Lev) we need to add a check if this user exist already.
         try:
             user = User.objects.create(email=validate_data['email'], username=validate_data['email'],
                                        first_name=validate_data['first_name'], last_name=validate_data['last_name'],
@@ -43,7 +43,7 @@ class UserViewSet(viewsets.ViewSet):
             token = get_token(validate_data['email'], validate_data['organization'])
         except Exception:
             return ErrorResponse().not_valid()
-        # TODO: (Lev) add a email sending function
+        # FIXME: (Lev) add a email sending function
         return Response({"token": token.key})
 
     @redirect_if_authorize
