@@ -25,5 +25,4 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'^api/', include(router.urls)),
     url(r'^api/user/', include('core.urls')),
-
 ]
