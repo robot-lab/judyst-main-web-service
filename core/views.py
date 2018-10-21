@@ -10,7 +10,7 @@ from core.utils.functions import get_token, validate
 
 class UserViewSet(viewsets.ViewSet):
     """
-    A simple ViewSet for listing or register users.
+    A simple ViewSet
     """
 
     def list(self, request):
