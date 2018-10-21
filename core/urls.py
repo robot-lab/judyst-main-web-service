@@ -3,5 +3,6 @@ from django.urls import include, path
 from core import views
 
 urlpatterns = [
-    path('', views.UserListView.as_view()),
+    path('list', views.UserViewSet.as_view({'get': 'list'})),
+    path('register', views.UserViewSet.as_view({'post': 'registration'}))
 ]

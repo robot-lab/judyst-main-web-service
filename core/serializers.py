@@ -1,8 +1,11 @@
 from rest_framework import serializers
-from core import models
+from core.models import CustomUser
 
 
 class UserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+    read_only_fields = ('id',)
+
     class Meta:
-        model = models.CustomUser
-        fields = ('email', 'first_name', 'last_name', 'username', 'email', 'organization' )
+        model = CustomUser
+        fields = ('email', 'first_name', 'last_name', 'username', 'organization','password','id')
