@@ -11,3 +11,9 @@ class ErrorResponse(object):
         self.response.status_code=400
         self.response.data = {"code": 400, "message": "invalid request"}
         return self.response
+
+    def user_exist(self):
+        """not valid response 400"""
+        self.response.status_code = 400
+        self.response.data = {"code": 400, "message": "user already exist"}
+        return self.response
