@@ -44,9 +44,9 @@ class UserViewSet(viewsets.ViewSet):
             user = User.objects.create(email=validate_data['email'], username=validate_data['email'],
                                        first_name=validate_data['first_name'], last_name=validate_data['last_name'],
                                        organization=validate_data['organization'])
-            user.set_password(validate_data['organization'])
+            user.set_password(validate_data['password'])
             user.save()
-            token = get_token(validate_data['email'], validate_data['organization'])
+            token = get_token(validate_data['email'], validate_data['password'])
         except Exception:
             return ErrorResponse().not_valid()
         # FIXME: (Lev) add a email sending function
@@ -64,10 +64,12 @@ class UserViewSet(viewsets.ViewSet):
         """
         validate_data = request.data
         if validate(validate_data, ['email', 'password']):
+            print(1)
             return ErrorResponse().not_valid()
         try:
-            token = get_token(validate_data['email'], validate_data['organization'])
+            token = get_token(validate_data['email'], validate_data['password'])
         except Exception:
+            print(2)
             return ErrorResponse().not_valid()
         return Response({"token": token.key})
 
