@@ -1,10 +1,10 @@
 from rest_framework import viewsets
 from rest_framework.response import Response
 
-from core.exceptions import ErrorResponse
 from core.models import CustomUser as User
 from core.serializers import UserSerializer
 from core.utils.decorators import redirect_if_authorize
+from core.utils.exceptions import ErrorResponse
 from core.utils.functions import get_token, validate
 
 
