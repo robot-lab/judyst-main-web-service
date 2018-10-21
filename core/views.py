@@ -16,7 +16,7 @@ class UserViewSet(viewsets.ViewSet):
     def list(self, request):
         """
         simple method to see all users
-        :param request:
+        :param request: a plain web request
         :return: response with list of users
         """
         queryset = User.objects.all()
@@ -26,9 +26,15 @@ class UserViewSet(viewsets.ViewSet):
     @redirect_if_authorize
     def registration(self, request):
         """
-        method for registration
-        :param request: information about users
-        :return:
+        method for user registration
+        if user is authorize then we redirect him
+        :param request: web request that contain user fileds:
+                first_name
+                last_name
+                email
+                password
+                organization
+        :return: token for authorized user
         """
         validate_data = request.data
         if validate(validate_data, ['first_name', 'last_name', 'email', 'password', 'organization']):
@@ -48,6 +54,14 @@ class UserViewSet(viewsets.ViewSet):
 
     @redirect_if_authorize
     def login(self, request):
+        """
+        method for user authorization
+        if user is authorize then we redirect him
+        :param request: web request that contain user fileds:
+                email
+                password
+        :return: token for authorized user
+        """
         validate_data = request.data
         if validate(validate_data, ['email', 'password']):
             return ErrorResponse().not_valid()
@@ -58,5 +72,12 @@ class UserViewSet(viewsets.ViewSet):
         return Response({"token": token.key})
 
     def logout(self, request):
+        """
+        method for user logout
+        if user is authorize his token will be delete
+        :param request: a plain web request
+        :return: a response with status 200
+        """
         request.user.auth_token.delete()
+        # FIXME: (LEV) add check for user authorization
         return Response(status=200)
