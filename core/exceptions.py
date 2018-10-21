@@ -8,4 +8,4 @@ class ErrorResponse(object):
     def not_valid(self):
         self.response.status_code=400
         self.response.data = {"code": 400, "message": "invalid request"}
-        return  self.response
+        return self.response
