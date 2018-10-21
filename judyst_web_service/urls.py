@@ -24,6 +24,6 @@ router = routers.SimpleRouter()
 urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'^api/', include(router.urls)),
-    url(r'^api/users/', include('core.urls')),
-    url(r'^api/rest-auth/', include('rest_auth.urls')),
+    url(r'^api/user/', include('core.urls')),
+
 ]
