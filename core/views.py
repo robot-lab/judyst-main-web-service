@@ -1,4 +1,5 @@
 from rest_framework import viewsets
+from rest_framework.authentication import get_authorization_header
 from rest_framework.response import Response
 
 from core.models import CustomUser as User
@@ -79,6 +80,6 @@ class UserViewSet(viewsets.ViewSet):
         :param request: a plain web request
         :return: a response with status 200
         """
-        request.user.auth_token.delete()
-        # FIXME: (LEV) add check for user authorization
+        if 'Token' in get_authorization_header(request).decode():
+            request.user.auth_token.delete()
         return Response(status=200)
