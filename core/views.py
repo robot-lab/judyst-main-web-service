@@ -13,7 +13,6 @@ class UserViewSet(viewsets.ViewSet):
     """
     A simple ViewSet
     """
-
     def list(self, request):
         """
         simple method to see all users
