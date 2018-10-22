@@ -16,7 +16,7 @@ def get_token(username, password):
 
 def validate(data, fileds):
     """
-    validator for checkin are these fields in data
+    validator for checking are these fields in data
     :param data: data for validate
     :param fileds: must have fields
     :return: False if data is correct
