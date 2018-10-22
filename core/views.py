@@ -6,7 +6,7 @@ from core.models import CustomUser as User
 from core.serializers import UserSerializer
 from core.utils.decorators import redirect_if_authorize
 from core.utils.exceptions import ErrorResponse
-from core.utils.functions import get_token, validate
+from core.utils.functions import get_token, validate, send_email, get_user_or_none
 
 
 class UserViewSet(viewsets.ViewSet):
@@ -39,7 +39,7 @@ class UserViewSet(viewsets.ViewSet):
         validate_data = request.data
         if validate(validate_data, ['first_name', 'last_name', 'email', 'password', 'organization']):
             return ErrorResponse().not_valid()
-        if User.objects.all().get(username=validate_data['email']) is not None:
+        if get_user_or_none(validate_data['email']) is not None:
             return ErrorResponse().user_exist()
         try:
             user = User.objects.create(email=validate_data['email'], username=validate_data['email'],
@@ -50,7 +50,7 @@ class UserViewSet(viewsets.ViewSet):
             token = get_token(validate_data['email'], validate_data['password'])
         except Exception:
             return ErrorResponse().not_valid()
-        # FIXME: (Lev) add a email sending function
+        send_email("Not Implemented:  500", validate_data['email'])
         return Response({"token": token.key})
 
     @redirect_if_authorize

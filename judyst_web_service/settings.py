@@ -50,8 +50,6 @@ REST_FRAMEWORK = {
     ),
 }
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
 SITE_ID = 1
 
 MIDDLEWARE = [
@@ -114,6 +112,14 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTH_USER_MODEL = 'core.CustomUser'
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = conf['email']
+EMAIL_HOST_PASSWORD = conf['email_password']
+EMAIL_PORT = 587
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+EMAIL_FROM = EMAIL_HOST_USER
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
