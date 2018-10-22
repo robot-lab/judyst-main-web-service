@@ -2,8 +2,8 @@ from rest_framework import viewsets
 from rest_framework.authentication import get_authorization_header
 from rest_framework.response import Response
 
-from core.models import CustomUser as User
-from core.serializers import UserSerializer
+from core.models import CustomUser as User, Links
+from core.serializers import UserSerializer, LinksSerializer
 from core.utils.decorators import redirect_if_authorize
 from core.utils.exceptions import ErrorResponse
 from core.utils.functions import get_token, validate, send_email, get_user_or_none
@@ -82,3 +82,40 @@ class UserViewSet(viewsets.ViewSet):
         if 'Token' in get_authorization_header(request).decode():
             request.user.auth_token.delete()
         return Response(status=200)
+
+
+class SearchViewSet(viewsets.ViewSet):
+
+    def search(self, request):
+        # TODO: make this function beter
+        validate_data = request.data
+        print(validate_data)
+        if validate(validate_data, ['doc_id_from', 'doc_id_to']):
+            return ErrorResponse().not_valid()
+        # TODO: add check for empty(!)
+        if validate_data['doc_id_from'] != -1 and validate_data['doc_id_to'] != -1:
+            queryset = Links.objects.all().filter(doc_id_from=validate_data['doc_id_from'],
+                                                  doc_id_to=validate_data['doc_id_to'])
+        elif validate_data['doc_id_from'] != -1:
+            queryset = Links.objects.all().filter(doc_id_from=validate_data['doc_id_from'])
+        elif validate_data['doc_id_to'] != -1:
+            queryset = Links.objects.all().filter(doc_id_to=validate_data['doc_id_to'])
+        else:
+            queryset = None
+        serializer = LinksSerializer(queryset, many=queryset.count() > 1)
+        return Response(serializer.data)
+
+    def put(self, request):
+        # костыль TODO: DELETE
+        f = open('/home/korwin/jsonAllCleanLinks.json', 'r')
+        import json
+        js = json.loads(f.read())
+        print(len(js))
+        for _, item in enumerate(js):
+            Links.objects.create(doc_id_from=item['doc_id_from'], doc_id_to=item['doc_id_to'],
+                                 to_doc_title=item['to_doc_title'], citations_number=item['citations_number'],
+                                 contexts_list=item['contexts_list'], positions_list=item['positions_list'])
+            print(_)
+        queryset = Links.objects.all()
+        serializer = LinksSerializer(queryset)
+        return Response(serializer.data)
