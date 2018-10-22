@@ -87,7 +87,10 @@ WSGI_APPLICATION = 'judyst_web_service.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 # settings for database
-conf = json.loads(open('conf.json', 'r').read())
+if 'TRAVIS_CONF' in os.environ:
+    conf = json.loads(open('travis_conf.json', 'r').read())
+else:
+    conf = json.loads(open('conf.json', 'r').read())
 
 DATABASES = {
     'default': {
