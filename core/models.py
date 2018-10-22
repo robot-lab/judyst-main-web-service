@@ -3,9 +3,10 @@ from django.contrib.auth.models import AbstractUser
 
 
 class CustomUser(AbstractUser):
-    first_name = models.TextField(blank=True)
-    last_name = models.TextField(blank=True)
-    organization = models.TextField(blank=True)
+    # Magic numbers take from magic specifications.
+    first_name = models.CharField(blank=True, max_length=255)
+    last_name = models.CharField(blank=True, max_length=255)
+    organization = models.CharField(blank=True, max_length=1024)
     verificate = models.BooleanField(default=False)
 
     def __str__(self):
