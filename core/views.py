@@ -16,9 +16,13 @@ class UserViewSet(viewsets.ViewSet):
     """
     def list(self, request):
         """
-        simple method to see all users
-        :param request: a plain web request
-        :return: response with list of users
+        Simple method to see all users.
+
+        :param request: HttpRequest
+            A plain web request.
+
+        :return: HttpResponse
+            Response with list of users.
         """
         queryset = User.objects.all()
         serializer = UserSerializer(queryset, many=True)
@@ -27,15 +31,15 @@ class UserViewSet(viewsets.ViewSet):
     @redirect_if_authorize
     def registration(self, request):
         """
-        method for user registration
-        if user is authorize then we redirect him
-        :param request: web request that contain user fileds:
-                first_name
-                last_name
-                email
-                password
-                organization
-        :return: token for authorized user
+        Method for user registration. If user is authorize then we redirect
+        him.
+
+        :param request: HttpRequest
+            Web request that contain user fields: first_name, last_name, email,
+            password, organization.
+
+        :return: HttpResponse
+            Token for authorized user.
         """
         validate_data = request.data
         if is_not_valid_text_fields(validate_data, ['email', 'password']) or \
@@ -60,12 +64,14 @@ class UserViewSet(viewsets.ViewSet):
     @redirect_if_authorize
     def login(self, request):
         """
-        method for user authorization
-        if user is authorize then we redirect him
-        :param request: web request that contain user fields:
-                email
-                password
-        :return: token for authorized user
+        Method for user authorization. If user is authorize then we redirect
+        him.
+
+        :param request: HttpRequest
+            Web request that contain user fields: email, password.
+
+        :return: HttpResponse
+            Token for authorized user.
         """
         validate_data = request.data
         if is_not_valid_text_fields(validate_data, ['email', 'password']):
@@ -79,10 +85,13 @@ class UserViewSet(viewsets.ViewSet):
 
     def logout(self, request):
         """
-        method for user logout
-        if user is authorize his token will be delete
-        :param request: a plain web request
-        :return: a response with status 200
+        Method for user logout. If user is authorize his token will be delete.
+
+        :param request: HtpRequest
+            A plain web request.
+
+        :return: HttpResponse
+            A response with status 200.
         """
         if 'Token' in get_authorization_header(request).decode():
             request.user.auth_token.delete()
