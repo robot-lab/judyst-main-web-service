@@ -1,11 +1,13 @@
-from django.test import TestCase, TransactionTestCase
 from django.contrib.auth import authenticate
-from core.utils.exceptions import ErrorResponse
-from core.models import CustomUser
+from django.test import TestCase
 from rest_framework.authtoken.models import Token
-from core.utils.functions import get_token, validate
+
+from core.models import CustomUser
+from core.utils.exceptions import ErrorResponse
+from core.utils.functions import get_token
 
 
+# Error response code described in the technical specification.
 class TestErrorCode(TestCase):
 
     def test_not_valid_data(self):
