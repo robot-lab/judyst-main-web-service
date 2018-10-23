@@ -8,6 +8,7 @@ from rest_framework.authtoken.models import Token
 
 from core.models import CustomUser
 from core.tests.utils import get_dict_from_user, user_fields, login_fields
+# TODO (Danila) Add fields checks tests for registration and authorisation.
 
 
 class TestNoUser(TestCase):

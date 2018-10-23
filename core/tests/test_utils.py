@@ -10,7 +10,6 @@ from core.tests.utils import get_dict_from_user, user_fields, login_fields
 from core.models import CustomUser
 from core.utils.functions import get_token, is_not_valid_text_fields, \
     send_email, get_user_or_none, IsLatin
-# TODO (Danila) Add tests for validation function.
 
 
 class TestGetToken(TestCase):
