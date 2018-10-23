@@ -101,7 +101,7 @@ class UserViewSet(viewsets.ViewSet):
 class SearchViewSet(viewsets.ViewSet):
 
     def search(self, request):
-        # TO DO: make this function beter
+        # TO DO: make this function better
         validate_data = request.data
         print(validate_data)
         if is_not_valid_text_fields(validate_data, ['doc_id_from', 'doc_id_to']):
