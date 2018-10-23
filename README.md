@@ -3,6 +3,9 @@
 [![Build Status](https://travis-ci.com/robot-lab/judyst-main-web-service.svg?branch=master)](https://travis-ci.com/robot-lab/judyst-main-web-service) 
 [![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/robot-lab/judyst-main-web-service/blob/master/LICENSE)
 
+[![Deploy to Didgital Ocean](https://pp.userapi.com/c845321/v845321999/11c663/cKX19hpzHQI.jpg)](http://68.183.66.108:8000)
+[![Try in PWD](https://cdn.rawgit.com/play-with-docker/stacks/cff22438/assets/images/button.png)](https://cloud.docker.com/repository/docker/qio0/judyst/general)
+
 Проект “Юридическая аналитика” (или “Judical Analyst”) начал разрабатываться 
 в рамках “Летней Школы Python-разработчика” и сейчас продолжает развиваться 
 в курсе “Учебной практики” Санкт-Петербургского Государственного Университета 
