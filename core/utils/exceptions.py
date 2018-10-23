@@ -1,6 +1,7 @@
 from rest_framework.response import Response
 
 
+# Error response code described in the technical specification.
 class ErrorResponse(object):
     """class for error responses"""
 
