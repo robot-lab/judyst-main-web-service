@@ -156,11 +156,17 @@ def test_is_latin(param_is_latin):
                         ({'1': 'aa', '2': 'bb'}, ['2', '1'], 1, 3, True,
                          False),
                         ({'1': 'aa', '2': 'b2'}, ['2', '1'], None, 3, True,
-                         True)],
+                         True),
+                        ({'1': '111'}, ['1'], None, 3, False, False),
+                        ({'1': '111'}, ['1'], None, 2, False, True),
+                        ({'1': '111'}, ['1'], 3, None, False, False),
+                        ({'1': '111'}, ['1'], 4, None, False, True),
+                        ],
                 ids=["check inclusion", "empty field", "without field",
                      "many fields", "not all fields", "other order",
                      "with length checks", "short fields", "long fields",
-                     "only latin", "not only latin"])
+                     "only latin", "not only latin", "equal up border",
+                     "up border +1", "equal down border", "down border -1"])
 def param_is_not_valid_text_fields(request):
     return request.param
 
