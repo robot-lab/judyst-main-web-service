@@ -6,7 +6,8 @@ from core.models import CustomUser as User
 from core.serializers import UserSerializer
 from core.utils.decorators import redirect_if_authorize
 from core.utils.exceptions import ErrorResponse
-from core.utils.functions import get_token, validate, send_email, get_user_or_none
+from core.utils.functions import get_token, validate, send_email, \
+    get_user_or_none
 
 
 class UserViewSet(viewsets.ViewSet):
