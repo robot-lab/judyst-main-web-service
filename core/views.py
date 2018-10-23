@@ -59,7 +59,7 @@ class UserViewSet(viewsets.ViewSet):
         """
         method for user authorization
         if user is authorize then we redirect him
-        :param request: web request that contain user fileds:
+        :param request: web request that contain user fields:
                 email
                 password
         :return: token for authorized user

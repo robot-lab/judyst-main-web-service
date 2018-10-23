@@ -5,7 +5,8 @@ from core.models import CustomUser
 from rest_framework.authtoken.models import Token
 from core.utils.functions import get_token, validate, send_email, \
     get_user_or_none
-from core.tests.utils import get_dict_from_user
+from core.tests.utils import get_dict_from_user, user_fields, login_fields
+# TODO (Danila) Add tests for validation function.
 
 
 class TestGetToken(TestCase):
@@ -108,3 +109,16 @@ class TestGetDictFromUser(TestCase):
                   'id': user.id, 'organization': user.organization}
 
         self.assertEqual(result, get_dict_from_user(user))
+
+
+def test_user_fields():
+    assert 'email' in user_fields
+    assert 'password' in user_fields
+    assert 'first_name' in user_fields
+    assert 'last_name' in user_fields
+    assert 'organization' in user_fields
+
+
+def test_login_fields():
+    assert 'email' in login_fields
+    assert 'password' in login_fields
