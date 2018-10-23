@@ -1,8 +1,9 @@
 from django.test import TestCase
+
 from core.models import CustomUser
 
 
-# magic constants take from specification.
+# Magic constants take from specification.
 class TestUserModel(TestCase):
 
     @classmethod
