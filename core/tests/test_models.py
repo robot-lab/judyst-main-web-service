@@ -55,7 +55,7 @@ class TestUserModel(TestCase):
         organization_label = user._meta.get_field('organization').verbose_name
         max_length = user._meta.get_field('organization').max_length
         assert 'organization' == organization_label
-        assert 1024 == max_length
+        assert 255 == max_length
         assert 'My organisation' == user.organization
 
     def test_verificate(self):

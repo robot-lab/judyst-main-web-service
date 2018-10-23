@@ -8,8 +8,6 @@ from rest_framework.authtoken.models import Token
 
 from core.models import CustomUser
 from core.tests.utils import get_dict_from_user, user_fields, login_fields
-# TODO (Danila) Add fields checks tests for registration and authorisation.
-# TODO (Danila) Find way how user authorisation could be tested.
 
 
 class TestNoUser(TestCase):
@@ -143,7 +141,7 @@ class TestExistUsers(TestCase):
 
         resp = self.client.post(reverse('core:register'), context)
 
-        assert 0 == len(mail.outbox)
+        assert not len(mail.outbox)
 
         assert 400 == resp.status_code
         assert '{"code":400,"message":"user already exist"}' == \

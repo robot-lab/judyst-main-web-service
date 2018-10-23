@@ -6,7 +6,7 @@ from core.models import CustomUser as User, Links
 from core.serializers import UserSerializer, LinksSerializer
 from core.utils.decorators import redirect_if_authorize
 from core.utils.exceptions import ErrorResponse
-from core.utils.functions import get_token, validate, send_email, \
+from core.utils.functions import get_token, is_not_valid_text_fields, send_email, \
     get_user_or_none
 
 
@@ -38,7 +38,7 @@ class UserViewSet(viewsets.ViewSet):
         :return: token for authorized user
         """
         validate_data = request.data
-        if validate(validate_data, ['first_name', 'last_name', 'email', 'password', 'organization']):
+        if is_not_valid_text_fields(validate_data, ['first_name', 'last_name', 'email', 'password', 'organization']):
             return ErrorResponse().not_valid()
         if get_user_or_none(validate_data['email']) is not None:
             return ErrorResponse().user_exist()
@@ -65,7 +65,7 @@ class UserViewSet(viewsets.ViewSet):
         :return: token for authorized user
         """
         validate_data = request.data
-        if validate(validate_data, ['email', 'password']):
+        if is_not_valid_text_fields(validate_data, ['email', 'password']):
             return ErrorResponse().not_valid()
         try:
             token = get_token(validate_data['email'], validate_data['password'])
@@ -91,7 +91,7 @@ class SearchViewSet(viewsets.ViewSet):
         # TO DO: make this function beter
         validate_data = request.data
         print(validate_data)
-        if validate(validate_data, ['doc_id_from', 'doc_id_to']):
+        if is_not_valid_text_fields(validate_data, ['doc_id_from', 'doc_id_to']):
             return ErrorResponse().not_valid()
         # TO DO: add check for empty(!)
         if validate_data['doc_id_from'] != -1 and validate_data['doc_id_to'] != -1:

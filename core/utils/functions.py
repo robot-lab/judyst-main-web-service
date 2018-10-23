@@ -1,8 +1,19 @@
+import re
+
 from django.contrib.auth import authenticate
 from django.core.mail import EmailMessage
 from rest_framework.authtoken.models import Token
 
 from core.models import CustomUser as User
+
+
+class IsLatin:
+
+    check = re.compile(r'^[a-zA-Z]*$')
+
+    @classmethod
+    def check_line(cls, line):
+        return bool(cls.check.match(line))
 
 
 def get_token(username, password):
@@ -17,15 +28,26 @@ def get_token(username, password):
     return token
 
 
-def validate(data, fileds):
+def is_not_valid_text_fields(data, fields, max_length=None, min_length=None,
+                             only_latin=False):
     """
     validator for checking are these fields in data
     :param data: data for validate
-    :param fileds: must have fields
+    :param fields: must have fields
+    :param max_length: max_length of string field
+    :param min_length: min_length of string field
+    :param only_latin: Flag if this field may contain only latin characters.
     :return: False if data is correct
     """
-    for filed in fileds:
-        if data.get(filed) is None or data.get(filed) == "":
+    for filed in fields:
+        line = data.get(filed)
+        if not isinstance(line, str) or line == "":
+            return True
+        if max_length is not None and len(line) > max_length:
+            return True
+        if min_length is not None and len(line) < min_length:
+            return True
+        if only_latin and not IsLatin.check_line(line):
             return True
     return False
 

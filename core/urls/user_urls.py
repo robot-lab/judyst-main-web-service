@@ -2,6 +2,7 @@ from django.urls import path
 from core.apps import CoreConfig
 from core import views
 
+
 app_name = CoreConfig.name
 
 urlpatterns = [

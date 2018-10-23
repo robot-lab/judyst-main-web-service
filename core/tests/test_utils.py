@@ -1,3 +1,5 @@
+import pytest
+
 from django.core import mail
 from django.contrib.auth import authenticate
 from django.test import TestCase
@@ -6,8 +8,8 @@ from rest_framework.authtoken.models import Token
 
 from core.tests.utils import get_dict_from_user, user_fields, login_fields
 from core.models import CustomUser
-from core.utils.functions import get_token, validate, send_email, \
-    get_user_or_none
+from core.utils.functions import get_token, is_not_valid_text_fields, \
+    send_email, get_user_or_none, IsLatin
 # TODO (Danila) Add tests for validation function.
 
 
@@ -114,6 +116,56 @@ class TestGetDictFromUser(TestCase):
                            'id': user.id, 'organization': user.organization}
 
         assert expected_result == actual_result
+
+
+@pytest.fixture(scope="function",
+                params=[('qwerty1', False),
+                        ('qwerty', True)],
+                ids=["not latin", "latin"])
+def param_is_latin(request):
+    return request.param
+
+
+def test_is_latin(param_is_latin):
+    data, result = param_is_latin
+    assert result == IsLatin.check_line(data)
+
+
+@pytest.fixture(scope="function",
+                params=[({'1': '1'}, ['1'], None, None, False, False),
+                        ({'1': ''}, ['1'], None, None, False, True),
+                        ({'1': '1'}, ['2'], None, None, False, True),
+                        ({'1': '1', '2': '2'}, ['2', '1'], None, None, False,
+                         False),
+                        ({'1': '1', '2': '2'}, ['2', '3'], None, None, False,
+                         True),
+                        ({'1': '11', '2': '22'}, ['2', '1'], None, None, False,
+                         False),
+                        ({'1': '11', '2': '22'}, ['2', '1'], 1, 3, False,
+                         False),
+                        ({'1': '11', '2': '22'}, ['2', '1'], 3, 5, False,
+                         True),
+                        ({'1': '11', '2': '22'}, ['2', '1'], None, 1, False,
+                         True),
+                        ({'1': 'aa', '2': 'bb'}, ['2', '1'], 1, 3, True,
+                         False),
+                        ({'1': 'aa', '2': 'b2'}, ['2', '1'], None, 3, True,
+                         True)],
+                ids=["check inclusion", "empty field", "without field",
+                     "many fields", "not all fields", "other order",
+                     "with length checks", "short fields", "long fields",
+                     "only latin", "not only latin"])
+def param_is_not_valid_text_fields(request):
+    return request.param
+
+
+def test_is_not_valid_text_fields(param_is_not_valid_text_fields):
+    data, fields, min_length, max_length, only_latin, result = \
+        param_is_not_valid_text_fields
+    assert result == is_not_valid_text_fields(data, fields,
+                                              max_length=max_length,
+                                              min_length=min_length,
+                                              only_latin=only_latin)
 
 
 def test_user_fields():
