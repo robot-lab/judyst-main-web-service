@@ -23,4 +23,3 @@ login_fields = {'email': 'badEmail@gmail.com', 'password': 'p4thw0rd'}
 default_user_fields = {'email': 'badEmail@gmail.com', 'password': 'p4thw0rd',
                        'first_name': 'name', 'last_name': 'surname',
                        'organization': 'My organisation'}
-

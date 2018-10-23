@@ -1,7 +1,5 @@
 from json import loads as parser_to_dict
 
-import pytest
-
 from django.core import mail
 from django.test import TestCase
 from django.urls import reverse
@@ -12,7 +10,6 @@ from core.models import CustomUser
 from core.utils.functions import create_user_from_fields
 from core.tests.utils import get_dict_from_user, user_fields, login_fields, \
     default_user_fields
-# TODO (Danila) Add fields checks tests for registration and authorisation.
 
 
 def check_registration(resp, context):
@@ -153,7 +150,7 @@ class TestExistUsers(TestCase):
 
         resp = self.client.post(reverse('core:register'), context)
 
-        assert not len(mail.outbox)
+        assert not mail.outbox
 
         assert 400 == resp.status_code
         assert '{"code":400,"message":"user already exist"}' == \
@@ -200,7 +197,6 @@ class TestExistUsers(TestCase):
 
         check_registration(resp, context)
 
-    @pytest.mark.skip
     def test_register_long_incorrect_fields(self):
         context = user_fields.copy()
         context['first_name'] = 't'*256
@@ -213,3 +209,61 @@ class TestExistUsers(TestCase):
         assert '{"code":400,"message":"invalid request"}' == \
                resp.content.decode()
 
+    def test_register_one_symbol_fields(self):
+        context = user_fields.copy()
+        context['first_name'] = 't'
+        context['last_name'] = 'w'
+        context['organization'] = 'q'
+
+        resp = self.client.post(reverse('core:register'), context)
+
+        check_registration(resp, context)
+
+    def test_register_empty_fields(self):
+        context = user_fields.copy()
+        context['first_name'] = ''
+        context['last_name'] = ''
+        context['organization'] = ''
+
+        resp = self.client.post(reverse('core:register'), context)
+
+        assert 400 == resp.status_code
+        assert '{"code":400,"message":"invalid request"}' == \
+               resp.content.decode()
+
+    def test_register_no_fields(self):
+        resp = self.client.post(reverse('core:register'), {})
+
+        assert 400 == resp.status_code
+        assert '{"code":400,"message":"invalid request"}' == \
+               resp.content.decode()
+
+    def test_register_complicated_organisation(self):
+        context = user_fields.copy()
+        context['organization'] = 'qwert12345@g.organisation----lol'
+
+        resp = self.client.post(reverse('core:register'), context)
+
+        check_registration(resp, context)
+
+    def test_register_incorrect_fields(self):
+        context = user_fields.copy()
+        context['first_name'] = 'qwerty12345'
+        context['last_name'] = 'qwerty12345'
+        context['organization'] = 'qwerty12345'
+
+        resp = self.client.post(reverse('core:register'), context)
+
+        assert 400 == resp.status_code
+        assert '{"code":400,"message":"invalid request"}' == \
+               resp.content.decode()
+
+    def test_register_incorrect_email(self):
+        context = user_fields.copy()
+        context['email'] = 'qwerty12345'
+
+        resp = self.client.post(reverse('core:register'), context)
+
+        assert 400 == resp.status_code
+        assert '{"code":400,"message":"invalid request"}' == \
+               resp.content.decode()

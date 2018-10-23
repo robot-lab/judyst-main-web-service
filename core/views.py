@@ -6,8 +6,8 @@ from core.models import CustomUser as User, Links
 from core.serializers import UserSerializer, LinksSerializer
 from core.utils.decorators import redirect_if_authorize
 from core.utils.exceptions import ErrorResponse
-from core.utils.functions import get_token, is_not_valid_text_fields, send_email, \
-    get_user_or_none
+from core.utils.functions import get_token, is_not_valid_text_fields, \
+    send_email, get_user_or_none, create_user_from_fields, check_email
 
 
 class UserViewSet(viewsets.ViewSet):
@@ -38,17 +38,20 @@ class UserViewSet(viewsets.ViewSet):
         :return: token for authorized user
         """
         validate_data = request.data
-        if is_not_valid_text_fields(validate_data, ['first_name', 'last_name', 'email', 'password', 'organization']):
+        if is_not_valid_text_fields(validate_data, ['email', 'password']) or \
+                is_not_valid_text_fields(validate_data,
+                                         ['first_name', 'last_name'],
+                                         max_length=255, only_latin=True) or \
+                is_not_valid_text_fields(validate_data, ['organization'],
+                                         max_length=255) or \
+                not check_email(validate_data['email']):
             return ErrorResponse().not_valid()
         if get_user_or_none(validate_data['email']) is not None:
             return ErrorResponse().user_exist()
         try:
-            user = User.objects.create(email=validate_data['email'], username=validate_data['email'],
-                                       first_name=validate_data['first_name'], last_name=validate_data['last_name'],
-                                       organization=validate_data['organization'])
-            user.set_password(validate_data['password'])
-            user.save()
-            token = get_token(validate_data['email'], validate_data['password'])
+            create_user_from_fields(validate_data)
+            token = get_token(validate_data['email'],
+                              validate_data['password'])
         except Exception:
             return ErrorResponse().not_valid()
         send_email("Not Implemented:  500", validate_data['email'])
@@ -68,7 +71,8 @@ class UserViewSet(viewsets.ViewSet):
         if is_not_valid_text_fields(validate_data, ['email', 'password']):
             return ErrorResponse().not_valid()
         try:
-            token = get_token(validate_data['email'], validate_data['password'])
+            token = get_token(validate_data['email'],
+                              validate_data['password'])
         except Exception:
             return ErrorResponse().not_valid()
         return Response({"token": token.key})

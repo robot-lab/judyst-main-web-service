@@ -10,7 +10,8 @@ from core.tests.utils import get_dict_from_user, user_fields, login_fields, \
     default_user_fields
 from core.models import CustomUser
 from core.utils.functions import get_token, is_not_valid_text_fields, \
-    send_email, get_user_or_none, IsLatin, create_user_from_fields
+    send_email, get_user_or_none, IsLatin, create_user_from_fields, \
+    check_email
 
 
 class TestGetToken(TestCase):
@@ -109,7 +110,7 @@ class TestCreateUserFromDict(TestCase):
             user.delete()
 
     def test_create_user_from_fields(self):
-        create_user_from_fields(user_fields)
+        actual_user = create_user_from_fields(user_fields)
         users = CustomUser.objects.filter(email=user_fields['email'])
 
         assert 1 == len(users)
@@ -122,6 +123,8 @@ class TestCreateUserFromDict(TestCase):
                 assert user_fields[field] == user_dict[field]
             else:
                 assert user.check_password(user_fields[field])
+
+        assert get_dict_from_user(actual_user) == user_dict
 
 
 @pytest.fixture(scope="function",
@@ -178,6 +181,19 @@ def test_is_not_valid_text_fields(param_is_not_valid_text_fields):
                                               max_length=max_length,
                                               min_length=min_length,
                                               only_latin=only_latin)
+
+
+@pytest.fixture(scope="function",
+                params=[('test@gmail.com', True),
+                        ('test123', False)],
+                ids=["correct", "incorrect"])
+def param_check_email(request):
+    return request.param
+
+
+def test_check_email(param_check_email):
+    line, result = param_check_email
+    assert result == check_email(line)
 
 
 @pytest.fixture(scope="function",

@@ -65,6 +65,23 @@ def send_email(message, user_email):
     email.send()
 
 
+def check_email(line):
+    """
+    Function for validation users email.
+    :param line: str
+        String for checking if it is email.
+    :return: Boolean
+        True if it is correct email, False otherwise.
+    """
+    from django.core.validators import validate_email
+    from django.core.exceptions import ValidationError
+    try:
+        validate_email(line)
+        return True
+    except ValidationError:
+        return False
+
+
 def get_user_or_none(key):
     """
     util for get user or none if where no user
@@ -85,6 +102,8 @@ def create_user_from_fields(fields):
     :param fields: dict
         Dictionary with fields for user.
 
+    :return CustomUser
+        Created user.
     """
     user = User.objects.create(email=fields['email'], username=fields['email'],
                                first_name=fields['first_name'],
@@ -92,3 +111,4 @@ def create_user_from_fields(fields):
                                organization=fields['organization'])
     user.set_password(fields['password'])
     user.save()
+    return user
