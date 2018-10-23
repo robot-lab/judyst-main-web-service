@@ -2,6 +2,7 @@ from django.urls import path
 
 from core import views
 
+
 urlpatterns = [
     path('list', views.UserViewSet.as_view({'get': 'list'})),
     path('register', views.UserViewSet.as_view({'post': 'registration'})),
