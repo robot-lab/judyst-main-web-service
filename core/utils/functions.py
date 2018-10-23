@@ -37,7 +37,9 @@ def send_email(message, user_email):
     :param user_email: email of user
     :return: None
     """
-    email = EmailMessage('Verification', message, from_email='judical.analyst@gmail.com', to=[user_email])
+    email = EmailMessage('Verification', message,
+                         from_email='judical.analyst@gmail.com',
+                         to=[user_email])
     email.send()
 
 

@@ -6,7 +6,8 @@ from core.models import CustomUser as User, Links
 from core.serializers import UserSerializer, LinksSerializer
 from core.utils.decorators import redirect_if_authorize
 from core.utils.exceptions import ErrorResponse
-from core.utils.functions import get_token, validate, send_email, get_user_or_none
+from core.utils.functions import get_token, validate, send_email, \
+    get_user_or_none
 
 
 class UserViewSet(viewsets.ViewSet):
@@ -58,7 +59,7 @@ class UserViewSet(viewsets.ViewSet):
         """
         method for user authorization
         if user is authorize then we redirect him
-        :param request: web request that contain user fileds:
+        :param request: web request that contain user fields:
                 email
                 password
         :return: token for authorized user
