@@ -2,25 +2,13 @@ from django.core import mail
 from django.contrib.auth import authenticate
 from django.test import TestCase
 
-from core.models import CustomUser
 from rest_framework.authtoken.models import Token
+
+from core.tests.utils import get_dict_from_user, user_fields, login_fields
+from core.models import CustomUser
 from core.utils.functions import get_token, validate, send_email, \
     get_user_or_none
-from core.tests.utils import get_dict_from_user, user_fields, login_fields
 # TODO (Danila) Add tests for validation function.
-
-from core.models import CustomUser
-from core.utils.exceptions import ErrorResponse
-from core.utils.functions import get_token
-
-
-# Error response code described in the technical specification.
-class TestErrorCode(TestCase):
-
-    def test_not_valid_data(self):
-        response = ErrorResponse().not_valid()
-        self.assertEqual(response.data, {"code": 400,
-                                         "message": "invalid request"})
 
 
 class TestGetToken(TestCase):
@@ -43,11 +31,11 @@ class TestGetToken(TestCase):
     def test_get_token(self):
         session_user = authenticate(username='goodEmail@gmail.com',
                                     password='p4thw0rd')
-        right_token, _ = Token.objects.get_or_create(user=session_user)
+        expected_token, _ = Token.objects.get_or_create(user=session_user)
 
-        token = get_token('goodEmail@gmail.com', 'p4thw0rd')
+        actual_token = get_token('goodEmail@gmail.com', 'p4thw0rd')
 
-        self.assertEqual(right_token, token)
+        assert expected_token == actual_token
 
 
 class TestGetUserOrNone(TestCase):
@@ -69,13 +57,12 @@ class TestGetUserOrNone(TestCase):
 
     def test_get_user(self):
         actual_user = get_user_or_none('goodEmail@gmail.com')
-        right_user = CustomUser.objects.get(email='goodEmail@gmail.com')
-        self.assertEqual(right_user, actual_user)
+        expected_user = CustomUser.objects.get(email='goodEmail@gmail.com')
+        assert expected_user == actual_user
 
     def test_no_user(self):
         actual_user = get_user_or_none('badEmail@gmail.com')
-        right_user = None
-        self.assertEqual(right_user, actual_user)
+        assert actual_user is None
 
 
 class TestSendEmail(TestCase):
@@ -91,12 +78,13 @@ class TestSendEmail(TestCase):
     def test_send_email(self):
         send_email('qwerty12345', 'goodEmail@gmail.com')
 
-        self.assertEqual(len(mail.outbox), 1)
+        assert 1 == len(mail.outbox)
 
         message = mail.outbox[0]
 
-        self.assertEqual(message.body, 'qwerty12345')
-        self.assertEqual(message.to[0], 'goodEmail@gmail.com')
+        assert 'qwerty12345' == message.body
+        assert 1 == len(message.to)
+        assert 'goodEmail@gmail.com' == message.to[0]
 
 
 class TestGetDictFromUser(TestCase):
@@ -118,11 +106,14 @@ class TestGetDictFromUser(TestCase):
 
     def test_get_dict_from_user(self):
         user = CustomUser.objects.get(email='goodEmail@gmail.com')
-        result = {'first_name': user.first_name, 'last_name': user.last_name,
-                  'email': user.email, 'username': user.username,
-                  'id': user.id, 'organization': user.organization}
+        actual_result = get_dict_from_user(user)
 
-        self.assertEqual(result, get_dict_from_user(user))
+        expected_result = {'first_name': user.first_name,
+                           'last_name': user.last_name,
+                           'email': user.email, 'username': user.username,
+                           'id': user.id, 'organization': user.organization}
+
+        assert expected_result == actual_result
 
 
 def test_user_fields():

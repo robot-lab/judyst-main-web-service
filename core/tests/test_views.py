@@ -1,10 +1,13 @@
+from json import loads as parser_to_dict
+
 from django.core import mail
 from django.test import TestCase
 from django.urls import reverse
-from core.models import CustomUser
-import json
-from core.tests.utils import get_dict_from_user, user_fields, login_fields
+
 from rest_framework.authtoken.models import Token
+
+from core.models import CustomUser
+from core.tests.utils import get_dict_from_user, user_fields, login_fields
 # TODO (Danila) Add fields checks tests for registration and authorisation.
 # TODO (Danila) Find way how user authorisation could be tested.
 
@@ -15,7 +18,7 @@ class TestNoUser(TestCase):
         resp = self.client.get(reverse('core:list'))
 
         assert b'[]' == resp.content
-        self.assertEqual(200, resp.status_code)
+        assert 200 == resp.status_code
 
     def test_login_no_user(self):
         context = login_fields.copy()
@@ -55,39 +58,39 @@ class TestExistUsers(TestCase):
 
     def test_url_list_exist_at_desired_location(self):
         resp = self.client.get('/api/user/list')
-        self.assertEqual(200, resp.status_code)
+        assert 200 == resp.status_code
 
     def test_url_list_access_by_name(self):
         resp = self.client.get(reverse('core:list'))
-        self.assertEqual(200, resp.status_code)
+        assert 200 == resp.status_code
 
     def test_url_logout_exist_at_desired_location(self):
         resp = self.client.get('/api/user/logout')
-        self.assertEqual(200, resp.status_code)
+        assert 200 == resp.status_code
 
     def test_url_logout_access_by_name(self):
         resp = self.client.get(reverse('core:logout'))
-        self.assertEqual(200, resp.status_code)
+        assert 200 == resp.status_code
 
     def test_url_register_exist_at_desired_location(self):
         context = user_fields.copy()
         resp = self.client.post('/api/user/register', context)
-        self.assertEqual(200, resp.status_code)
+        assert 200 == resp.status_code
 
     def test_url_register_access_by_name(self):
         context = user_fields.copy()
         resp = self.client.post(reverse('core:register'), context)
-        self.assertEqual(200, resp.status_code)
+        assert 200 == resp.status_code
 
     def test_url_login_exist_at_desired_location(self):
         context = login_fields.copy()
         resp = self.client.post('/api/user/login', context)
-        self.assertEqual(200, resp.status_code)
+        assert 200 == resp.status_code
 
     def test_url_login_access_by_name(self):
         context = login_fields.copy()
         resp = self.client.post(reverse('core:login'), context)
-        self.assertEqual(200, resp.status_code)
+        assert 200 == resp.status_code
 
     def test_list(self):
         users = CustomUser.objects.all()
@@ -96,10 +99,10 @@ class TestExistUsers(TestCase):
             expected.append(get_dict_from_user(user))
 
         resp = self.client.get(reverse('core:list'))
-        actual = json.loads(resp.content.decode())
+        actual = parser_to_dict(resp.content.decode())
 
         assert expected == actual
-        self.assertEqual(200, resp.status_code)
+        assert 200 == resp.status_code
 
     def test_correct_registration(self):
         context = user_fields.copy()
@@ -126,12 +129,13 @@ class TestExistUsers(TestCase):
         assert '{"token":"' + str(expected_token) + '"}' == \
                resp.content.decode()
 
-        self.assertEqual(len(mail.outbox), 1)
+        assert 1 == len(mail.outbox)
 
         message = mail.outbox[0]
 
-        self.assertEqual(message.body, "Not Implemented:  500")
-        self.assertEqual(message.to[0], user_fields['email'])
+        assert 'Not Implemented:  500' == message.body
+        assert 1 == len(message.to)
+        assert user_fields['email'] == message.to[0]
 
     def test_registration_with_used_email(self):
         context = user_fields.copy()

@@ -25,46 +25,46 @@ class TestUserModel(TestCase):
     def test_name(self):
         user = CustomUser.objects.get(email='goodEmail@gmail.com')
         field_label = user._meta.get_field('first_name').verbose_name
-        self.assertEqual(field_label, 'first name')
         length = user._meta.get_field('first_name').max_length
-        self.assertEqual(length, 255)
-        self.assertEqual('name', user.first_name)
+        assert 'first name' == field_label
+        assert 255 == length
+        assert 'name' == user.first_name
 
     def test_surname(self):
         user = CustomUser.objects.get(email='goodEmail@gmail.com')
         field_label = user._meta.get_field('last_name').verbose_name
-        self.assertEqual(field_label, 'last name')
         length = user._meta.get_field('last_name').max_length
-        self.assertEqual(length, 255)
-        self.assertEqual('surname', user.last_name)
+        assert 'last name' == field_label
+        assert 255 == length
+        assert 'surname' == user.last_name
 
     def test_email(self):
         user = CustomUser.objects.get(email='goodEmail@gmail.com')
-        self.assertEqual(user.email, 'goodEmail@gmail.com')
+        assert 'goodEmail@gmail.com' == user.email
 
     def test_username(self):
         user = CustomUser.objects.get(email='goodEmail@gmail.com')
-        self.assertEqual(user.username, 'goodEmail@gmail.com')
+        assert 'goodEmail@gmail.com' == user.username
 
     def test_password(self):
         user = CustomUser.objects.get(email='goodEmail@gmail.com')
-        self.assertTrue(user.check_password('p4thw0rd'))
+        assert user.check_password('p4thw0rd')
 
     def test_organisation(self):
         user = CustomUser.objects.get(email='goodEmail@gmail.com')
         organization_label = user._meta.get_field('organization').verbose_name
-        self.assertEqual(organization_label, 'organization')
         max_length = user._meta.get_field('organization').max_length
-        self.assertEqual(max_length, 1024)
-        self.assertEqual(user.organization, 'My organisation')
+        assert 'organization' == organization_label
+        assert 1024 == max_length
+        assert 'My organisation' == user.organization
 
     def test_verificate(self):
         user = CustomUser.objects.get(email='goodEmail@gmail.com')
         verificate_label = user._meta.get_field('verificate').verbose_name
-        self.assertEqual(verificate_label, 'verificate')
         verificate_default = user._meta.get_field('verificate').default
-        self.assertEqual(verificate_default, False)
+        assert 'verificate' == verificate_label
+        assert isinstance(verificate_default, bool) and not verificate_default
 
     def test_to_string(self):
         user = CustomUser.objects.get(email='goodEmail@gmail.com')
-        self.assertEqual('goodEmail@gmail.com', str(user))
+        assert 'goodEmail@gmail.com' == str(user)
