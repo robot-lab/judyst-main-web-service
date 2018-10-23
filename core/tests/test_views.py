@@ -7,7 +7,9 @@ from django.urls import reverse
 from rest_framework.authtoken.models import Token
 
 from core.models import CustomUser
-from core.tests.utils import get_dict_from_user, user_fields, login_fields
+from core.utils.functions import create_user_from_fields
+from core.tests.utils import get_dict_from_user, user_fields, login_fields, \
+    default_user_fields
 # TODO (Danila) Add fields checks tests for registration and authorisation.
 
 
@@ -33,13 +35,7 @@ class TestExistUsers(TestCase):
 
     @classmethod
     def setUpClass(cls):
-        user = CustomUser.objects.create(email=login_fields['email'],
-                                         username=login_fields['email'],
-                                         first_name='name',
-                                         last_name='surname',
-                                         organization='My organisation')
-        user.set_password(login_fields['password'])
-        user.save()
+        create_user_from_fields(default_user_fields)
 
     @classmethod
     def tearDownClass(cls):
@@ -138,7 +134,7 @@ class TestExistUsers(TestCase):
 
     def test_registration_with_used_email(self):
         context = user_fields.copy()
-        context['email'] = 'badEmail@gmail.com'
+        context['email'] = default_user_fields['email']
 
         resp = self.client.post(reverse('core:register'), context)
 
@@ -162,4 +158,28 @@ class TestExistUsers(TestCase):
 
         assert 200 == resp.status_code
         assert '{"token":"' + str(expected_token) + '"}' == \
+               resp.content.decode()
+
+    def test_login_no_fields(self):
+        resp = self.client.post(reverse('core:login'), {})
+
+        assert 400 == resp.status_code
+        assert '{"code":400,"message":"invalid request"}' == \
+               resp.content.decode()
+
+    def test_login_empty_fields(self):
+        resp = self.client.post(reverse('core:login'),
+                                {'email': '', 'password': ''})
+
+        assert 400 == resp.status_code
+        assert '{"code":400,"message":"invalid request"}' == \
+               resp.content.decode()
+
+    # todo rewrite it
+    def test_login_long_correct_fields(self):
+        resp = self.client.post(reverse('core:login'),
+                                {'email': '', 'password': ''})
+
+        assert 400 == resp.status_code
+        assert '{"code":400,"message":"invalid request"}' == \
                resp.content.decode()

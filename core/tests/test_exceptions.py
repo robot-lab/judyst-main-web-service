@@ -3,6 +3,7 @@ from django.test import TestCase
 from core.utils.exceptions import ErrorResponse
 
 
+# Magic constants take from specification.
 class TestErrorCode(TestCase):
 
     def test_not_valid_data(self):

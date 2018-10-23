@@ -76,3 +76,19 @@ def get_user_or_none(key):
     except Exception:
         user = None
     return user
+
+
+def create_user_from_fields(fields):
+    """
+    Function for creating user from given fields. Fields are not checked.
+
+    :param fields: dict
+        Dictionary with fields for user.
+
+    """
+    user = User.objects.create(email=fields['email'], username=fields['email'],
+                               first_name=fields['first_name'],
+                               last_name=fields['last_name'],
+                               organization=fields['organization'])
+    user.set_password(fields['password'])
+    user.save()

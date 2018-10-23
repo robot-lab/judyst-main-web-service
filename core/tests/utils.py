@@ -1,6 +1,3 @@
-from core.serializers import UserSerializer
-
-
 def get_dict_from_user(user):
     """
     Function for getting json from user model.
@@ -22,3 +19,8 @@ user_fields = {'email': 'goodEmail@gmail.com', 'password': '12345',
 
 
 login_fields = {'email': 'badEmail@gmail.com', 'password': 'p4thw0rd'}
+
+default_user_fields = {'email': 'badEmail@gmail.com', 'password': 'p4thw0rd',
+                       'first_name': 'name', 'last_name': 'surname',
+                       'organization': 'My organisation'}
+

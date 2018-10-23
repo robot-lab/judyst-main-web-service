@@ -6,22 +6,17 @@ from django.test import TestCase
 
 from rest_framework.authtoken.models import Token
 
-from core.tests.utils import get_dict_from_user, user_fields, login_fields
+from core.tests.utils import get_dict_from_user, user_fields, login_fields, \
+    default_user_fields
 from core.models import CustomUser
 from core.utils.functions import get_token, is_not_valid_text_fields, \
-    send_email, get_user_or_none, IsLatin
+    send_email, get_user_or_none, IsLatin, create_user_from_fields
 
 
 class TestGetToken(TestCase):
     @classmethod
     def setUpClass(cls):
-        user = CustomUser.objects.create(email='goodEmail@gmail.com',
-                                         username='goodEmail@gmail.com',
-                                         first_name='name',
-                                         last_name='surname',
-                                         organization='My organisation')
-        user.set_password('p4thw0rd')
-        user.save()
+        create_user_from_fields(default_user_fields)
 
     @classmethod
     def tearDownClass(cls):
@@ -30,11 +25,12 @@ class TestGetToken(TestCase):
             user.delete()
 
     def test_get_token(self):
-        session_user = authenticate(username='goodEmail@gmail.com',
-                                    password='p4thw0rd')
+        session_user = authenticate(username=default_user_fields['email'],
+                                    password=default_user_fields['password'])
         expected_token, _ = Token.objects.get_or_create(user=session_user)
 
-        actual_token = get_token('goodEmail@gmail.com', 'p4thw0rd')
+        actual_token = get_token(default_user_fields['email'],
+                                 default_user_fields['password'])
 
         assert expected_token == actual_token
 
@@ -42,13 +38,7 @@ class TestGetToken(TestCase):
 class TestGetUserOrNone(TestCase):
     @classmethod
     def setUpClass(cls):
-        user = CustomUser.objects.create(email='goodEmail@gmail.com',
-                                         username='goodEmail@gmail.com',
-                                         first_name='name',
-                                         last_name='surname',
-                                         organization='My organisation')
-        user.set_password('p4thw0rd')
-        user.save()
+        create_user_from_fields(default_user_fields)
 
     @classmethod
     def tearDownClass(cls):
@@ -57,12 +47,13 @@ class TestGetUserOrNone(TestCase):
             user.delete()
 
     def test_get_user(self):
-        actual_user = get_user_or_none('goodEmail@gmail.com')
-        expected_user = CustomUser.objects.get(email='goodEmail@gmail.com')
+        actual_user = get_user_or_none(default_user_fields['email'])
+        expected_user = CustomUser.objects.get(
+            email=default_user_fields['email'])
         assert expected_user == actual_user
 
     def test_no_user(self):
-        actual_user = get_user_or_none('badEmail@gmail.com')
+        actual_user = get_user_or_none(user_fields['email'])
         assert actual_user is None
 
 
@@ -91,13 +82,7 @@ class TestSendEmail(TestCase):
 class TestGetDictFromUser(TestCase):
     @classmethod
     def setUpClass(cls):
-        user = CustomUser.objects.create(email='goodEmail@gmail.com',
-                                         username='goodEmail@gmail.com',
-                                         first_name='name',
-                                         last_name='surname',
-                                         organization='My organisation')
-        user.set_password('p4thw0rd')
-        user.save()
+        create_user_from_fields(default_user_fields)
 
     @classmethod
     def tearDownClass(cls):
@@ -106,7 +91,7 @@ class TestGetDictFromUser(TestCase):
             user.delete()
 
     def test_get_dict_from_user(self):
-        user = CustomUser.objects.get(email='goodEmail@gmail.com')
+        user = CustomUser.objects.get(email=default_user_fields['email'])
         actual_result = get_dict_from_user(user)
 
         expected_result = {'first_name': user.first_name,
@@ -115,6 +100,28 @@ class TestGetDictFromUser(TestCase):
                            'id': user.id, 'organization': user.organization}
 
         assert expected_result == actual_result
+
+
+class TestCreateUserFromDict(TestCase):
+    def tearDown(self):
+        users = CustomUser.objects.all()
+        for user in users:
+            user.delete()
+
+    def test_create_user_from_fields(self):
+        create_user_from_fields(user_fields)
+        users = CustomUser.objects.filter(email=user_fields['email'])
+
+        assert 1 == len(users)
+
+        user = users[0]
+
+        user_dict = get_dict_from_user(user)
+        for field in user_fields:
+            if field != 'password':
+                assert user_fields[field] == user_dict[field]
+            else:
+                assert user.check_password(user_fields[field])
 
 
 @pytest.fixture(scope="function",
@@ -167,12 +174,21 @@ def test_is_not_valid_text_fields(param_is_not_valid_text_fields):
                                               only_latin=only_latin)
 
 
-def test_user_fields():
-    assert 'email' in user_fields
-    assert 'password' in user_fields
-    assert 'first_name' in user_fields
-    assert 'last_name' in user_fields
-    assert 'organization' in user_fields
+@pytest.fixture(scope="function",
+                params=[(user_fields, ),
+                        (default_user_fields, )],
+                ids=["user_fields", "default_user_fields"])
+def param_user_fields(request):
+    return request.param
+
+
+def test_user_fields(param_user_fields):
+    fields = param_user_fields[0]
+    assert 'email' in fields
+    assert 'password' in fields
+    assert 'first_name' in fields
+    assert 'last_name' in fields
+    assert 'organization' in fields
 
 
 def test_login_fields():
