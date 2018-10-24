@@ -11,7 +11,7 @@ export default {
   data: function ()
   {
      return {
-        url : "/api/search/get",
+        url : "http://127.0.0.1:8000/api/search/get",
         searchResultsRaw: "[\
             {\"doc_id_from\": \"КСРФ/34-П/2018\",\"doc_id_to\": \"КСРФ/5-П/2007\",\"to_doc_title\": \"титл\",\"citations_number\": 1,\"contexts_list\": [\"Контектс\"],\"positions_list\": [9113]},\
             {\"doc_id_from\": \"КСРФ/34-П/2018\",\"doc_id_to\": \"КСРФ/5-П/2007\",\"to_doc_title\": \"титл\",\"citations_number\": 1,\"contexts_list\": [\"Контектс\"],\"positions_list\": [9113]}\
@@ -36,6 +36,9 @@ export default {
         var jsonReq = JSON.stringify(req)
         var xhr = new XMLHttpRequest()
         xhr.open('POST', this.url)
+        xhr.setRequestHeader("content-type", "application/json")
+        xhr.withCredentials = true;
+        
         xhr.send(jsonReq)
         var json = xhr.responseText
         //var json = this.searchResultsRaw

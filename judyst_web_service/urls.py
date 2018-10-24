@@ -29,5 +29,5 @@ urlpatterns = [
     url(r'^api/user/', include('core.urls.user_urls')),
     url(r'^api/search/', include('core.urls.search_urls')),
     url(r'', main),
-    url(r'<path:path>', static_delivery)
+    #url(r'<path:path>', static_delivery)
 ]

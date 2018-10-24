@@ -151,5 +151,12 @@ def main(request):
 
 def static_delivery(request, path=""):
     if os.path.isfile(BASE_DIR+'frontend/dist/' + path):
-        return FileResponse(open(BASE_DIR+'/frontend/dist/' + path, 'rb'))
-    return HttpResponseNotFound
+        response = FileResponse(open(BASE_DIR+'/frontend/dist/' + path, 'rb'))
+        if 'css'in path:
+            response['Content-Type'] = 'text/css'
+        if 'js' in path:
+            response['Content-Type'] = 'text/javascript'
+
+    else:
+        response = HttpResponseNotFound
+    return response
