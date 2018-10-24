@@ -120,9 +120,8 @@ def check_email(line, max_length=None):
     try:
         validate_email(line)
         if max_length:
-            return 0 < len(line) <= max_length
-        else:
-            return True
+            return len(line) <= max_length
+        return True
     except ValidationError:
         return False
 
