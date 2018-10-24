@@ -22,7 +22,8 @@ class TestGetToken(TestCase):
     @classmethod
     def tearDownClass(cls):
         users = CustomUser.objects.all()
-        map(lambda x: x.delete(), users)
+        for user in users:
+            user.delete()
 
     def test_get_token(self):
         session_user = authenticate(username=default_user_fields['email'],
@@ -43,7 +44,8 @@ class TestGetUserOrNone(TestCase):
     @classmethod
     def tearDownClass(cls):
         users = CustomUser.objects.all()
-        map(lambda x: x.delete(), users)
+        for user in users:
+            user.delete()
 
     def test_get_user(self):
         actual_user = get_user_or_none(default_user_fields['email'])
@@ -89,7 +91,8 @@ class TestGetDictFromUser(TestCase):
     @classmethod
     def tearDownClass(cls):
         users = CustomUser.objects.all()
-        map(lambda x: x.delete(), users)
+        for user in users:
+            user.delete()
 
     def test_get_dict_from_user(self):
         user = CustomUser.objects.get(email=default_user_fields['email'])
@@ -106,7 +109,8 @@ class TestGetDictFromUser(TestCase):
 class TestCreateUserFromDict(TestCase):
     def tearDown(self):
         users = CustomUser.objects.all()
-        map(lambda x: x.delete(), users)
+        for user in users:
+            user.delete()
 
     def test_create_user_from_fields(self):
         actual_user = create_user_from_fields(user_fields)

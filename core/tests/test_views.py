@@ -88,7 +88,8 @@ class TestExistUsers(TestCase):
     @classmethod
     def tearDownClass(cls):
         users = CustomUser.objects.all()
-        map(lambda x: x.delete(), users)
+        for user in users:
+            user.delete()
 
     def tearDown(self):
         mail.outbox.clear()

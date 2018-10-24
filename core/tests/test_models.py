@@ -17,7 +17,8 @@ class TestUserModel(TestCase):
     @classmethod
     def tearDownClass(cls):
         users = CustomUser.objects.all()
-        map(lambda x: x.delete(), users)
+        for user in users:
+            user.delete()
 
     def test_name(self):
         user = CustomUser.objects.get(email=default_user_fields['email'])
