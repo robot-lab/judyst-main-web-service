@@ -1,0 +1,10 @@
+web:
+  # Replace username/repo:tag with your name and image details.
+  image: 'ubuntu'
+
+  # Redeploy web app in case if it's image is updated.
+  autoredeploy: true
+
+  # Expose port 8000 of the container and map it to port 80 of host machine (droplet)
+  ports:
+    - '8000:8000'
