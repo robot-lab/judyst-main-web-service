@@ -15,6 +15,9 @@ class UserViewSet(viewsets.ViewSet):
     """
     A simple ViewSet
     """
+
+    text_field_max_length = 255
+
     def list(self, request):
         """
         Simple method to see all users.
@@ -46,9 +49,11 @@ class UserViewSet(viewsets.ViewSet):
         if is_not_valid_text_fields(validate_data, ['email', 'password']) or \
                 is_not_valid_text_fields(validate_data,
                                          ['first_name', 'last_name'],
-                                         max_length=255, only_latin=True) or \
+                                         max_length=self.text_field_max_length,
+                                         only_latin=True) or \
                 is_not_valid_text_fields(validate_data, ['organization'],
-                                         max_length=255) or \
+                                         max_length=self.text_field_max_length
+                                         ) or \
                 not check_email(validate_data['email']) or \
                 not check_password(validate_data['password']):
             return ErrorResponse().not_valid()

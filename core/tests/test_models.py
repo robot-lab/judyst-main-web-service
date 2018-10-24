@@ -8,6 +8,8 @@ from core.utils.functions import create_user_from_fields
 # Magic constants take from specification.
 class TestUserModel(TestCase):
 
+    text_field_max_length = 255
+
     @classmethod
     def setUpClass(cls):
         create_user_from_fields(default_user_fields)
@@ -15,15 +17,14 @@ class TestUserModel(TestCase):
     @classmethod
     def tearDownClass(cls):
         users = CustomUser.objects.all()
-        for user in users:
-            user.delete()
+        map(lambda x: x.delete(), users)
 
     def test_name(self):
         user = CustomUser.objects.get(email=default_user_fields['email'])
         field_label = user._meta.get_field('first_name').verbose_name
         length = user._meta.get_field('first_name').max_length
         assert 'first name' == field_label
-        assert 255 == length
+        assert self.text_field_max_length == length
         assert default_user_fields['first_name'] == user.first_name
 
     def test_surname(self):
@@ -31,7 +32,7 @@ class TestUserModel(TestCase):
         field_label = user._meta.get_field('last_name').verbose_name
         length = user._meta.get_field('last_name').max_length
         assert 'last name' == field_label
-        assert 255 == length
+        assert self.text_field_max_length == length
         assert default_user_fields['last_name'] == user.last_name
 
     def test_email(self):
@@ -51,7 +52,7 @@ class TestUserModel(TestCase):
         organization_label = user._meta.get_field('organization').verbose_name
         max_length = user._meta.get_field('organization').max_length
         assert 'organization' == organization_label
-        assert 255 == max_length
+        assert self.text_field_max_length == max_length
         assert default_user_fields['organization'] == user.organization
 
     def test_verificate(self):

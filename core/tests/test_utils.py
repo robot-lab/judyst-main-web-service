@@ -22,8 +22,7 @@ class TestGetToken(TestCase):
     @classmethod
     def tearDownClass(cls):
         users = CustomUser.objects.all()
-        for user in users:
-            user.delete()
+        map(lambda x: x.delete(), users)
 
     def test_get_token(self):
         session_user = authenticate(username=default_user_fields['email'],
@@ -44,8 +43,7 @@ class TestGetUserOrNone(TestCase):
     @classmethod
     def tearDownClass(cls):
         users = CustomUser.objects.all()
-        for user in users:
-            user.delete()
+        map(lambda x: x.delete(), users)
 
     def test_get_user(self):
         actual_user = get_user_or_none(default_user_fields['email'])
@@ -60,6 +58,9 @@ class TestGetUserOrNone(TestCase):
 
 class TestSendEmail(TestCase):
 
+    email_message = 'qwerty12345'
+    email_address = 'goodEmail@gmail.com'
+
     @classmethod
     def setUpClass(cls):
         mail.outbox.clear()
@@ -69,15 +70,15 @@ class TestSendEmail(TestCase):
         mail.outbox.clear()
 
     def test_send_email(self):
-        send_email('qwerty12345', 'goodEmail@gmail.com')
+        send_email(self.email_message, self.email_address)
 
         assert 1 == len(mail.outbox)
 
         message = mail.outbox[0]
 
-        assert 'qwerty12345' == message.body
+        assert self.email_message == message.body
         assert 1 == len(message.to)
-        assert 'goodEmail@gmail.com' == message.to[0]
+        assert self.email_address == message.to[0]
 
 
 class TestGetDictFromUser(TestCase):
@@ -88,8 +89,7 @@ class TestGetDictFromUser(TestCase):
     @classmethod
     def tearDownClass(cls):
         users = CustomUser.objects.all()
-        for user in users:
-            user.delete()
+        map(lambda x: x.delete(), users)
 
     def test_get_dict_from_user(self):
         user = CustomUser.objects.get(email=default_user_fields['email'])
@@ -106,8 +106,7 @@ class TestGetDictFromUser(TestCase):
 class TestCreateUserFromDict(TestCase):
     def tearDown(self):
         users = CustomUser.objects.all()
-        for user in users:
-            user.delete()
+        map(lambda x: x.delete(), users)
 
     def test_create_user_from_fields(self):
         actual_user = create_user_from_fields(user_fields)
