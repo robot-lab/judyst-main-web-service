@@ -1,5 +1,7 @@
 from json import loads as parser_to_dict
 
+import pytest
+
 from django.core import mail
 from django.test import TestCase
 from django.urls import reverse
@@ -42,6 +44,7 @@ class TestExistUsers(TestCase):
     user_already_exist_text = '{"code":400,"message":"user already exist"}'
     invalid_request_text = '{"code":400,"message":"invalid request"}'
     text_field_max_length = 255
+    email_field_max_length = 150
 
     def check_registration(self, resp, context):
         """
@@ -79,7 +82,7 @@ class TestExistUsers(TestCase):
 
         assert self.email_text == message.body
         assert 1 == len(message.to)
-        assert user_fields['email'] == message.to[0]
+        assert context['email'] == message.to[0]
 
     @classmethod
     def setUpClass(cls):
@@ -264,6 +267,84 @@ class TestExistUsers(TestCase):
     def test_register_incorrect_email(self):
         context = user_fields.copy()
         context['email'] = 'qwerty12345'
+
+        resp = self.client.post(reverse('core:register'), context)
+
+        assert self.error_status_code == resp.status_code
+        assert self.invalid_request_text == resp.content.decode()
+
+    def test_register_incorrect_email_dns_name(self):
+        context = user_fields.copy()
+        context['email'] = 'qwerty12345@mi:mail.com'
+
+        resp = self.client.post(reverse('core:register'), context)
+
+        assert self.error_status_code == resp.status_code
+        assert self.invalid_request_text == resp.content.decode()
+
+    def test_register_email_max_length(self):
+        context = user_fields.copy()
+        context['email'] = 'q'*(self.email_field_max_length-10) + '@gmail.com'
+
+        resp = self.client.post(reverse('core:register'), context)
+
+        self.check_registration(resp, context)
+
+    def test_register_email_more_than_max_length(self):
+        context = user_fields.copy()
+        context['email'] = 'q'*(self.email_field_max_length-9) + '@gmail.com'
+
+        resp = self.client.post(reverse('core:register'), context)
+
+        assert self.error_status_code == resp.status_code
+        assert self.invalid_request_text == resp.content.decode()
+
+    def test_empty_password(self):
+        context = user_fields.copy()
+        context['password'] = ''
+
+        resp = self.client.post(reverse('core:register'), context)
+
+        assert self.error_status_code == resp.status_code
+        assert self.invalid_request_text == resp.content.decode()
+
+    def test_too_short_password(self):
+        context = user_fields.copy()
+        context['password'] = '1234567'
+
+        resp = self.client.post(reverse('core:register'), context)
+
+        assert self.error_status_code == resp.status_code
+        assert self.invalid_request_text == resp.content.decode()
+
+    def test_short_password(self):
+        context = user_fields.copy()
+        context['password'] = '12345678'
+
+        resp = self.client.post(reverse('core:register'), context)
+
+        self.check_registration(resp, context)
+
+    def test_long_password(self):
+        context = user_fields.copy()
+        context['password'] = '1'*64
+
+        resp = self.client.post(reverse('core:register'), context)
+
+        self.check_registration(resp, context)
+
+    def test_too_long_password(self):
+        context = user_fields.copy()
+        context['password'] = '0'*65
+
+        resp = self.client.post(reverse('core:register'), context)
+
+        assert self.error_status_code == resp.status_code
+        assert self.invalid_request_text == resp.content.decode()
+
+    def test_password_incorrect_characters(self):
+        context = user_fields.copy()
+        context['password'] = 'password!'
 
         resp = self.client.post(reverse('core:register'), context)
 

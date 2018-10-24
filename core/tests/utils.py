@@ -13,13 +13,15 @@ def get_dict_from_user(user):
             'organization': user.organization}
 
 
-user_fields = {'email': 'goodEmail@gmail.com', 'password': '#########12345[]%&',
+user_fields = {'email': 'goodEmail@gmail.com',
+               'password': '#########12345[]%&',
                'first_name': 'name', 'last_name': 'surname',
                'organization': 'My organisation'}
 
 
 login_fields = {'email': 'badEmail@gmail.com', 'password': 'p4thw3450rd'}
 
-default_user_fields = {'email': 'badEmail@gmail.com', 'password': 'p4thw3450rd',
+default_user_fields = {'email': 'badEmail@gmail.com',
+                       'password': 'p4thw3450rd',
                        'first_name': 'name', 'last_name': 'surname',
                        'organization': 'My organisation'}

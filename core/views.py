@@ -17,6 +17,7 @@ class UserViewSet(viewsets.ViewSet):
     """
 
     text_field_max_length = 255
+    email_max_length = 150
 
     def list(self, request):
         """
@@ -54,7 +55,8 @@ class UserViewSet(viewsets.ViewSet):
                 is_not_valid_text_fields(validate_data, ['organization'],
                                          max_length=self.text_field_max_length
                                          ) or \
-                not check_email(validate_data['email']) or \
+                not check_email(validate_data['email'],
+                                max_length=self.email_max_length) or \
                 not check_password(validate_data['password']):
             return ErrorResponse().not_valid()
         if get_user_or_none(validate_data['email']) is not None:

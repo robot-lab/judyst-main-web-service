@@ -102,12 +102,15 @@ def send_email(message, user_email):
     email.send()
 
 
-def check_email(line):
+def check_email(line, max_length=None):
     """
     Function for validation users email.
 
     :param line: str
         String for checking if it is email.
+
+    :param max_length: int
+        Max length of email.
 
     :return: Boolean
         True if it is correct email, False otherwise.
@@ -116,7 +119,10 @@ def check_email(line):
     from django.core.exceptions import ValidationError
     try:
         validate_email(line)
-        return True
+        if max_length:
+            return 0 < len(line) <= max_length
+        else:
+            return True
     except ValidationError:
         return False
 

@@ -187,16 +187,20 @@ def test_is_not_valid_text_fields(param_is_not_valid_text_fields):
 
 
 @pytest.fixture(scope="function",
-                params=[('test@gmail.com', True),
-                        ('test123', False)],
-                ids=["correct", "incorrect"])
+                params=[('test@gmail.com', 150, True),
+                        ('test123', 150, False),
+                        ('q'*140+'@gamil.com', 150, True),
+                        ('q'*141+'@gmail.com', 150, False),
+                        ('q@t.ui', 150, True)],
+                ids=["correct", "incorrect", 'long email',
+                     'long incorrect email', 'short email'])
 def param_check_email(request):
     return request.param
 
 
 def test_check_email(param_check_email):
-    line, result = param_check_email
-    assert result == check_email(line)
+    line, max_length, result = param_check_email
+    assert result == check_email(line, max_length=max_length)
 
 
 @pytest.fixture(scope="function",
