@@ -1,6 +1,9 @@
 from rest_framework import viewsets
 from rest_framework.authentication import get_authorization_header
 from rest_framework.response import Response
+from django.http import FileResponse, HttpResponseNotFound
+from judyst_web_service.settings import BASE_DIR
+import os
 
 from core.models import CustomUser as User, Links
 from core.serializers import UserSerializer, LinksSerializer
@@ -140,3 +143,13 @@ class SearchViewSet(viewsets.ViewSet):
         queryset = Links.objects.all()
         serializer = LinksSerializer(queryset)
         return Response(serializer.data)
+
+
+def main(request):
+    return FileResponse(open(BASE_DIR+'/frontend/dist/index.html', 'rb'))
+
+
+def static_delivery(request, path=""):
+    if os.path.isfile(BASE_DIR+'frontend/dist/' + path):
+        return FileResponse(open(BASE_DIR+'/frontend/dist/' + path, 'rb'))
+    return HttpResponseNotFound

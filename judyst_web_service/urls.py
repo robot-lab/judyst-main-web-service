@@ -17,6 +17,7 @@ from django.conf.urls import url
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
+from core.views import main, static_delivery
 
 
 router = routers.SimpleRouter()
@@ -26,5 +27,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'^api/', include(router.urls)),
     url(r'^api/user/', include('core.urls.user_urls')),
-    url(r'^api/search/', include('core.urls.search_urls'))
+    url(r'^api/search/', include('core.urls.search_urls')),
+    url(r'', main),
+    url(r'<path:path>', static_delivery)
 ]
