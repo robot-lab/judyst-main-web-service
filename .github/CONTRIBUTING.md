@@ -11,7 +11,7 @@
 - [Инструкция по разработке](https://github.com/robot-lab/judyst-main-web-service/wiki/Development-instruction);
 - [Инструкция по аналитике](https://github.com/robot-lab/judyst-main-web-service/wiki/Business-&-system-analyst's-instruction);
 - [Инструкция по тестированию](https://github.com/robot-lab/judyst-main-web-service/wiki/Test-instruction);
-- [Инструкция по исследованию](https://github.com/robot-lab/judyst-main-web-service/wiki/Team-members).
+- [Инструкция по исследованию](https://github.com/robot-lab/judyst-main-web-service/wiki/Research-Instruction).
 
 Также Вы можете ознакомиться с другой информацией о проекте, компонентах и команде в [Wiki](https://github.com/robot-lab/judyst-main-web-service/wiki) этого репозитория.
 
