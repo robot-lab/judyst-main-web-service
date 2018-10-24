@@ -3,6 +3,7 @@
         <input name="Document-from" type="text" placeholder="###-Type/Year" value="any" id="input-uid-from" class = "form-control" required autofocus>
         <input name="Document-to" type="text" placeholder="###-Type/Year" value="any" id="input-uid-to" class = "form-control" required >
         <button class="btn btn-lg btn-primary btn-block" type="button" id="search-start-button" v-on:click="SearchButtonClick()">Поиск</button>
+    <p>{{tmp}}</p>
     </form>
 </template>
 <script>
@@ -16,6 +17,7 @@ export default {
             {\"doc_id_from\": \"КСРФ/34-П/2018\",\"doc_id_to\": \"КСРФ/5-П/2007\",\"to_doc_title\": \"титл\",\"citations_number\": 1,\"contexts_list\": [\"Контектс\"],\"positions_list\": [9113]},\
             {\"doc_id_from\": \"КСРФ/34-П/2018\",\"doc_id_to\": \"КСРФ/5-П/2007\",\"to_doc_title\": \"титл\",\"citations_number\": 1,\"contexts_list\": [\"Контектс\"],\"positions_list\": [9113]}\
         ]",
+        tmp:"none"
      } 
   },
   methods:{
@@ -45,6 +47,7 @@ export default {
         var json = xhr.responseText
         //var json = this.searchResultsRaw
         var linkList = JSON.parse(json)
+        this.tmp = linkList.length
         var ret = []
         for (var i = 0; i < linkList.length; i ++)
             ret.push({id: i, Link: linkList[i]})

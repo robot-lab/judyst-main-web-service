@@ -8,7 +8,8 @@
            <span> <p>Контекст цитаты: {{CleanLink.contexts_list[i]}} </p></span>
            <a href="#">Позиция в тексте</a>
         </div>
-        <hr color=#00008B>
+        
+        <hr color="#0000ff">
     </div>
 </template>
 

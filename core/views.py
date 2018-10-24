@@ -12,6 +12,7 @@ from core.utils.exceptions import ErrorResponse
 from core.utils.functions import get_token, is_not_valid_text_fields, \
     send_email, get_user_or_none, create_user_from_fields, check_email, \
     check_password
+from django.db.models import Q
 
 
 class UserViewSet(viewsets.ViewSet):
@@ -118,8 +119,8 @@ class SearchViewSet(viewsets.ViewSet):
             return ErrorResponse().not_valid()
         # TO DO: add check for empty(!)
         if validate_data['doc_id_from'] != -1 and validate_data['doc_id_to'] != -1:
-            queryset = Links.objects.all().filter(doc_id_from=validate_data['doc_id_from'],
-                                                  doc_id_to=validate_data['doc_id_to'])
+            queryset = Links.objects.all().filter(Q(doc_id_from=validate_data['doc_id_from'])|
+                                                  Q(doc_id_to=validate_data['doc_id_to']))
         elif validate_data['doc_id_from'] != -1:
             queryset = Links.objects.all().filter(doc_id_from=validate_data['doc_id_from'])
         elif validate_data['doc_id_to'] != -1:
