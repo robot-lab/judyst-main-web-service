@@ -44,7 +44,7 @@ class TestUserModel(TestCase):
 
     def test_password(self):
         user = CustomUser.objects.get(email=default_user_fields['email'])
-        assert user.check_password('p4thw0rd')
+        assert user.check_password(default_user_fields['password'])
 
     def test_organisation(self):
         user = CustomUser.objects.get(email=default_user_fields['email'])

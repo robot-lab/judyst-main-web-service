@@ -10,7 +10,7 @@ from core.tests.utils import get_dict_from_user, user_fields, login_fields, \
     default_user_fields
 from core.models import CustomUser
 from core.utils.functions import get_token, is_not_valid_text_fields, \
-    send_email, get_user_or_none, IsLatin, create_user_from_fields, \
+    send_email, get_user_or_none, CheckText, create_user_from_fields, \
     check_email
 
 
@@ -137,7 +137,7 @@ def param_is_latin(request):
 
 def test_is_latin(param_is_latin):
     data, result = param_is_latin
-    assert result == IsLatin.check_line(data)
+    assert result == CheckText.check_line(data)
 
 
 @pytest.fixture(scope="function",

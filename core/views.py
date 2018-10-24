@@ -7,7 +7,8 @@ from core.serializers import UserSerializer, LinksSerializer
 from core.utils.decorators import redirect_if_authorize
 from core.utils.exceptions import ErrorResponse
 from core.utils.functions import get_token, is_not_valid_text_fields, \
-    send_email, get_user_or_none, create_user_from_fields, check_email
+    send_email, get_user_or_none, create_user_from_fields, check_email, \
+    check_password
 
 
 class UserViewSet(viewsets.ViewSet):
@@ -48,7 +49,8 @@ class UserViewSet(viewsets.ViewSet):
                                          max_length=255, only_latin=True) or \
                 is_not_valid_text_fields(validate_data, ['organization'],
                                          max_length=255) or \
-                not check_email(validate_data['email']):
+                not check_email(validate_data['email']) or \
+                not check_password(validate_data['password']):
             return ErrorResponse().not_valid()
         if get_user_or_none(validate_data['email']) is not None:
             return ErrorResponse().user_exist()
