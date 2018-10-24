@@ -1,4 +1,4 @@
 ### profile may optionally select or skip tests
 
 # (optional) list skipped tests here:
-skips: ['B322', 'B105']
+skips: ['B322', 'B105', 'B101']

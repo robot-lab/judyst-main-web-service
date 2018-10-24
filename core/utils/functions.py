@@ -13,7 +13,8 @@ class CheckText:
     """
 
     validators = {'IsLatin': re.compile(r'^[a-zA-Z]*$'),
-                  'Password': re.compile(r'^[\#-\&\[\]\_\:\;a-zA-Z,0-9]{8,64}$')}
+                  'Password':
+                      re.compile(r'^[\#-\&\[\]\_\:\;a-zA-Z,0-9]{8,64}$')}
 
     @classmethod
     def check_line(cls, line, check='IsLatin'):
