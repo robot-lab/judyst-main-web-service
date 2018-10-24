@@ -1,15 +1,19 @@
 from json import loads as parser_to_dict
 
+import random
+
 from django.core import mail
 from django.test import TestCase
 from django.urls import reverse
 
 from rest_framework.authtoken.models import Token
 
-from core.models import CustomUser
+from core.models import CustomUser, Links
 from core.utils.functions import create_user_from_fields
 from core.tests.utils import get_dict_from_user, user_fields, login_fields, \
-    default_user_fields
+    default_user_fields, set_links_in_db_from_file
+
+# TODO (Danila) Create tests for search
 
 
 def check_registration(resp, context):
@@ -267,3 +271,16 @@ class TestExistUsers(TestCase):
         assert 400 == resp.status_code
         assert '{"code":400,"message":"invalid request"}' == \
                resp.content.decode()
+
+
+class TestSearchView(TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        set_links_in_db_from_file('core/tests/links_example.json')
+
+    @classmethod
+    def tearDownClass(cls):
+        links = Links.objects.all()
+        map(lambda x: x.delete(), links)
+

@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate
 from django.core.mail import EmailMessage
 from rest_framework.authtoken.models import Token
 
-from core.models import CustomUser as User
+from core.models import CustomUser as User, Links
 
 
 class IsLatin:
@@ -151,3 +151,21 @@ def create_user_from_fields(fields):
     user.set_password(fields['password'])
     user.save()
     return user
+
+
+def create_link_from_fields(fields):
+    """
+    Function for creating link from given fields. Fields are not checked.
+
+    :param fields: Dict
+        Dictionary with fields for link.
+
+    :return: Link
+        Created link.
+    """
+    return Links.objects.create(doc_id_from=fields['doc_id_from'],
+                                doc_id_to=fields['doc_id_to'],
+                                to_doc_title=fields['to_doc_title'],
+                                citations_number=fields['citations_number'],
+                                contexts_list=fields['contexts_list'],
+                                positions_list=fields['positions_list'])

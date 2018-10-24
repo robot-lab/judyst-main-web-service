@@ -7,11 +7,12 @@ from django.test import TestCase
 from rest_framework.authtoken.models import Token
 
 from core.tests.utils import get_dict_from_user, user_fields, login_fields, \
-    default_user_fields
-from core.models import CustomUser
+    default_user_fields, set_links_in_db_from_file, \
+    set_links_in_db_from_list, link_fields, get_dict_from_link
+from core.models import CustomUser, Links
 from core.utils.functions import get_token, is_not_valid_text_fields, \
     send_email, get_user_or_none, IsLatin, create_user_from_fields, \
-    check_email
+    check_email, create_link_from_fields
 
 
 class TestGetToken(TestCase):
@@ -127,6 +128,64 @@ class TestCreateUserFromDict(TestCase):
         assert get_dict_from_user(actual_user) == user_dict
 
 
+class TestLinksFunctions(TestCase):
+
+    def tearDown(self):
+        links = Links.objects.all()
+        for link in links:
+            link.delete()
+
+    def test_links_insertion_from_file(self):
+        num = set_links_in_db_from_file('core/tests/links_example.json')
+
+        assert 7 == num
+        assert 7 == len(Links.objects.all())
+
+    def test_links_insertion_from_list(self):
+        actual_link = set_links_in_db_from_list([link_fields])
+
+        assert 1 == actual_link
+
+        links = Links.objects.filter(doc_id_to=link_fields['doc_id_to'])
+
+        assert 1 == len(links)
+
+        stored_link = links[0]
+
+        assert link_fields == get_dict_from_link(stored_link)
+
+    def test_get_dict_from_link(self):
+        expected_link = Links.objects.create(
+            doc_id_from=link_fields['doc_id_from'],
+            doc_id_to=link_fields['doc_id_to'],
+            to_doc_title=link_fields['to_doc_title'],
+            citations_number=link_fields['citations_number'],
+            contexts_list=link_fields['contexts_list'],
+            positions_list=link_fields['positions_list'])
+
+        actual_dict = get_dict_from_link(expected_link)
+
+        assert expected_link.doc_id_to == actual_dict['doc_id_to']
+        assert expected_link.doc_id_from == actual_dict['doc_id_from']
+        assert expected_link.to_doc_title == actual_dict['to_doc_title']
+        assert expected_link.citations_number == \
+               actual_dict['citations_number']
+        assert expected_link.contexts_list == actual_dict['contexts_list']
+        assert expected_link.positions_list == actual_dict['positions_list']
+
+    def test_create_link_from_field(self):
+        actual_link = create_link_from_fields(link_fields)
+
+        links = Links.objects.filter(doc_id_to=link_fields['doc_id_to'])
+
+        assert 1 == len(links)
+
+        stored_link = links[0]
+
+        assert link_fields == get_dict_from_link(actual_link)
+        assert link_fields == get_dict_from_link(stored_link)
+
+
 @pytest.fixture(scope="function",
                 params=[('qwerty1', False),
                         ('qwerty', True)],
@@ -207,12 +266,32 @@ def param_user_fields(request):
 def test_user_fields(param_user_fields):
     fields = param_user_fields[0]
     assert 'email' in fields
+    assert isinstance(fields['email'], str)
     assert 'password' in fields
+    assert isinstance(fields['password'], str)
     assert 'first_name' in fields
+    assert isinstance(fields['first_name'], str)
     assert 'last_name' in fields
+    assert isinstance(fields['last_name'], str)
     assert 'organization' in fields
+    assert isinstance(fields['organization'], str)
 
 
 def test_login_fields():
     assert 'email' in login_fields
+    assert isinstance(login_fields['email'], str)
     assert 'password' in login_fields
+    assert isinstance(login_fields['password'], str)
+
+
+def test_link_fields():
+    assert 'doc_id_from' in link_fields
+    assert isinstance(link_fields['doc_id_from'], str)
+    assert 'doc_id_to' in link_fields
+    assert isinstance(link_fields['doc_id_to'], str)
+    assert 'citations_number' in link_fields
+    assert isinstance(link_fields['citations_number'], int)
+    assert 'contexts_list' in link_fields
+    assert isinstance(link_fields['contexts_list'], list)
+    assert 'positions_list' in link_fields
+    assert isinstance(link_fields['positions_list'], list)

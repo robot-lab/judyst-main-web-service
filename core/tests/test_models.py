@@ -3,6 +3,7 @@ from django.test import TestCase
 from core.tests.utils import default_user_fields
 from core.models import CustomUser
 from core.utils.functions import create_user_from_fields
+# TODO (Danila) Create tests for link model.
 
 
 # Magic constants take from specification.
@@ -64,3 +65,5 @@ class TestUserModel(TestCase):
     def test_to_string(self):
         user = CustomUser.objects.get(email=default_user_fields['email'])
         assert default_user_fields['email'] == str(user)
+
+

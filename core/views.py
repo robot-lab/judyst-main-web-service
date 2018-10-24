@@ -101,12 +101,11 @@ class UserViewSet(viewsets.ViewSet):
 class SearchViewSet(viewsets.ViewSet):
 
     def search(self, request):
-        # TO DO: make this function better
+        # TODO: (Lev) make this function better
         validate_data = request.data
         print(validate_data)
         if is_not_valid_text_fields(validate_data, ['doc_id_from', 'doc_id_to']):
             return ErrorResponse().not_valid()
-        # TO DO: add check for empty(!)
         if validate_data['doc_id_from'] != -1 and validate_data['doc_id_to'] != -1:
             queryset = Links.objects.all().filter(doc_id_from=validate_data['doc_id_from'],
                                                   doc_id_to=validate_data['doc_id_to'])
@@ -115,12 +114,12 @@ class SearchViewSet(viewsets.ViewSet):
         elif validate_data['doc_id_to'] != -1:
             queryset = Links.objects.all().filter(doc_id_to=validate_data['doc_id_to'])
         else:
-            queryset = None
+            queryset = []
         serializer = LinksSerializer(queryset, many=queryset.count() > 1)
         return Response(serializer.data)
 
     def put(self, request):
-        # костыль TO DO: DELETE
+        # костыль TODO: DELETE
         f = open('/home/korwin/jsonAllCleanLinks.json', 'r')
         import json
         js = json.loads(f.read())
