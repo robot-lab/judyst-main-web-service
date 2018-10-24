@@ -75,7 +75,7 @@ def is_not_valid_text_fields(data, fields, max_length=None, min_length=None,
     """
     for filed in fields:
         line = data.get(filed)
-        if not isinstance(line, str) or line == "":
+        if line is None or line == "":
             return True
         if max_length is not None and len(line) > max_length:
             return True

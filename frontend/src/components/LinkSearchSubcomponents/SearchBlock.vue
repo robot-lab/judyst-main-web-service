@@ -15,7 +15,7 @@ export default {
         searchResultsRaw: "[\
             {\"doc_id_from\": \"КСРФ/34-П/2018\",\"doc_id_to\": \"КСРФ/5-П/2007\",\"to_doc_title\": \"титл\",\"citations_number\": 1,\"contexts_list\": [\"Контектс\"],\"positions_list\": [9113]},\
             {\"doc_id_from\": \"КСРФ/34-П/2018\",\"doc_id_to\": \"КСРФ/5-П/2007\",\"to_doc_title\": \"титл\",\"citations_number\": 1,\"contexts_list\": [\"Контектс\"],\"positions_list\": [9113]}\
-        ]"
+        ]",
      } 
   },
   methods:{
@@ -35,8 +35,10 @@ export default {
         var req = {doc_id_from:idFrom,doc_id_to:idTo}
         var jsonReq = JSON.stringify(req)
         var xhr = new XMLHttpRequest()
-        xhr.open('POST', this.url)
+        xhr.open('POST', this.url, false)
         xhr.setRequestHeader("content-type", "application/json")
+        xhr.setRequestHeader("Access-Control-Allow-Origin", "*")
+        
         xhr.withCredentials = true;
         
         xhr.send(jsonReq)

@@ -127,6 +127,7 @@ class SearchViewSet(viewsets.ViewSet):
         else:
             queryset = None
         serializer = LinksSerializer(queryset, many=queryset.count() > 1)
+        print(serializer.data)
         return Response(serializer.data)
 
     def put(self, request):
