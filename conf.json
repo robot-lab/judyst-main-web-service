@@ -1,0 +1,9 @@
+{
+  "user": "postgres",
+  "password": "qwerty",
+  "host": "127.0.0.1",
+  "port": "5432",
+  "db_name": "database",
+  "email": "judical.analyst@gmail.com",
+  "email_password": "axcaxs123QWE#@!"
+}
