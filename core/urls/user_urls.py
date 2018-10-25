@@ -3,7 +3,7 @@ from core.apps import CoreConfig
 from core import views
 
 
-app_name = CoreConfig.name
+app_name = CoreConfig.name + '_user'
 
 urlpatterns = [
     path('list', views.UserViewSet.as_view({'get': 'list'}), name='list'),

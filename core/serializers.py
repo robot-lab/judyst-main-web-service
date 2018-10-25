@@ -18,4 +18,5 @@ class LinksSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Links
-        fields = ('doc_id_from', 'doc_id_to', 'to_doc_title', 'citations_number', 'contexts_list', 'positions_list')
+        fields = ('doc_id_from', 'doc_id_to', 'to_doc_title',
+                  'citations_number', 'contexts_list', 'positions_list', 'id')

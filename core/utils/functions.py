@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate
 from django.core.mail import EmailMessage
 from rest_framework.authtoken.models import Token
 
-from core.models import CustomUser as User
+from core.models import CustomUser as User, Links
 
 
 class CheckText:
@@ -83,6 +83,29 @@ def is_not_valid_text_fields(data, fields, max_length=None, min_length=None,
         if min_length is not None and len(line) < min_length:
             return True
         if only_latin and not CheckText.check_line(line):
+            return True
+    return False
+
+
+def is_not_fields_include(data, fields):
+    """
+    Function for checking including list of fields in data dictionary.
+
+    :param data: Dict
+        Dictionary for checking.
+
+    :param fields: list
+        List of fields for checking.
+
+    :return: boolean
+        True if exist field in fields which is not present in  data, False
+        otherwise.
+    """
+    for filed in fields:
+        line = data.get(filed)
+        if line is None:
+            return True
+        if isinstance(line, str) and line == "":
             return True
     return False
 
@@ -174,3 +197,21 @@ def create_user_from_fields(fields):
     user.set_password(fields['password'])
     user.save()
     return user
+
+
+def create_link_from_fields(fields):
+    """
+    Function for creating link from given fields. Fields are not checked.
+
+    :param fields: Dict
+        Dictionary with fields for link.
+
+    :return: Link
+        Created link.
+    """
+    return Links.objects.create(doc_id_from=fields['doc_id_from'],
+                                doc_id_to=fields['doc_id_to'],
+                                to_doc_title=fields['to_doc_title'],
+                                citations_number=fields['citations_number'],
+                                contexts_list=fields['contexts_list'],
+                                positions_list=fields['positions_list'])
