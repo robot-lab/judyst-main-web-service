@@ -25,7 +25,7 @@ class TestNoUser(TestCase):
     invalid_request_text = '{"code":400,"message":"invalid request"}'
 
     def test_list(self):
-        resp = self.client.get(reverse('core:list'))
+        resp = self.client.get(reverse('core_user:list'))
 
         assert self.empty_list == resp.content.decode()
         assert self.ok_status_code == resp.status_code
@@ -33,7 +33,7 @@ class TestNoUser(TestCase):
     def test_login_no_user(self):
         context = login_fields.copy()
 
-        resp = self.client.post(reverse('core:login'),
+        resp = self.client.post(reverse('core_user:login'),
                                 convert_to_json(context),
                                 content_type="application/json")
 
@@ -311,7 +311,9 @@ class TestExistUsers(TestCase):
         context = user_fields.copy()
         context['email'] = 'qwerty12345@mi:mail.com'
 
-        resp = self.client.post(reverse('core:register'), context)
+        resp = self.client.post(reverse('core_user:register'),
+                                convert_to_json(context),
+                                content_type="application/json")
 
         assert self.error_status_code == resp.status_code
         assert self.invalid_request_text == resp.content.decode()
@@ -320,7 +322,9 @@ class TestExistUsers(TestCase):
         context = user_fields.copy()
         context['email'] = 'q'*(self.email_field_max_length-10) + '@gmail.com'
 
-        resp = self.client.post(reverse('core:register'), context)
+        resp = self.client.post(reverse('core_user:register'),
+                                convert_to_json(context),
+                                content_type="application/json")
 
         self.check_registration(resp, context)
 
@@ -328,7 +332,9 @@ class TestExistUsers(TestCase):
         context = user_fields.copy()
         context['email'] = 'q'*(self.email_field_max_length-9) + '@gmail.com'
 
-        resp = self.client.post(reverse('core:register'), context)
+        resp = self.client.post(reverse('core_user:register'),
+                                convert_to_json(context),
+                                content_type="application/json")
 
         assert self.error_status_code == resp.status_code
         assert self.invalid_request_text == resp.content.decode()
@@ -337,7 +343,9 @@ class TestExistUsers(TestCase):
         context = user_fields.copy()
         context['password'] = ''
 
-        resp = self.client.post(reverse('core:register'), context)
+        resp = self.client.post(reverse('core_user:register'),
+                                convert_to_json(context),
+                                content_type="application/json")
 
         assert self.error_status_code == resp.status_code
         assert self.invalid_request_text == resp.content.decode()
@@ -346,7 +354,9 @@ class TestExistUsers(TestCase):
         context = user_fields.copy()
         context['password'] = '1234567'
 
-        resp = self.client.post(reverse('core:register'), context)
+        resp = self.client.post(reverse('core_user:register'),
+                                convert_to_json(context),
+                                content_type="application/json")
 
         assert self.error_status_code == resp.status_code
         assert self.invalid_request_text == resp.content.decode()
@@ -355,7 +365,9 @@ class TestExistUsers(TestCase):
         context = user_fields.copy()
         context['password'] = '12345678'
 
-        resp = self.client.post(reverse('core:register'), context)
+        resp = self.client.post(reverse('core_user:register'),
+                                convert_to_json(context),
+                                content_type="application/json")
 
         self.check_registration(resp, context)
 
@@ -363,7 +375,9 @@ class TestExistUsers(TestCase):
         context = user_fields.copy()
         context['password'] = '1'*64
 
-        resp = self.client.post(reverse('core:register'), context)
+        resp = self.client.post(reverse('core_user:register'),
+                                convert_to_json(context),
+                                content_type="application/json")
 
         self.check_registration(resp, context)
 
@@ -371,7 +385,9 @@ class TestExistUsers(TestCase):
         context = user_fields.copy()
         context['password'] = '0'*65
 
-        resp = self.client.post(reverse('core:register'), context)
+        resp = self.client.post(reverse('core_user:register'),
+                                convert_to_json(context),
+                                content_type="application/json")
 
         assert self.error_status_code == resp.status_code
         assert self.invalid_request_text == resp.content.decode()
@@ -380,7 +396,9 @@ class TestExistUsers(TestCase):
         context = user_fields.copy()
         context['password'] = 'password!'
 
-        resp = self.client.post(reverse('core:register'), context)
+        resp = self.client.post(reverse('core_user:register'),
+                                convert_to_json(context),
+                                content_type="application/json")
 
         assert self.error_status_code == resp.status_code
         assert self.invalid_request_text == resp.content.decode()
