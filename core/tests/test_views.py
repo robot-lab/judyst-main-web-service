@@ -1,6 +1,5 @@
 from json import loads as parser_to_dict
-
-import random
+from json import dumps as convert_to_json
 
 from django.core import mail
 from django.test import TestCase
@@ -11,7 +10,7 @@ from rest_framework.authtoken.models import Token
 from core.models import CustomUser, Links
 from core.utils.functions import create_user_from_fields
 from core.tests.utils import get_dict_from_user, user_fields, login_fields, \
-    default_user_fields, set_links_in_db_from_file
+    default_user_fields, set_links_in_db_from_file, search_link_fields
 
 # TODO (Danila) Create tests for search
 
@@ -58,7 +57,7 @@ def check_registration(resp, context):
 class TestNoUser(TestCase):
 
     def test_list(self):
-        resp = self.client.get(reverse('core:list'))
+        resp = self.client.get(reverse('core_user:list'))
 
         assert b'[]' == resp.content
         assert 200 == resp.status_code
@@ -66,7 +65,9 @@ class TestNoUser(TestCase):
     def test_login_no_user(self):
         context = login_fields.copy()
 
-        resp = self.client.post(reverse('core:login'), context)
+        resp = self.client.post(reverse('core_user:login'),
+                                convert_to_json(context),
+                                content_type="application/json")
 
         assert 400 == resp.status_code
         assert '{"code":400,"message":"invalid request"}' == \
@@ -87,7 +88,6 @@ class TestExistUsers(TestCase):
 
     def tearDown(self):
         mail.outbox.clear()
-
         users = CustomUser.objects.all()
         for user in users:
             if user.username != login_fields['email']:
@@ -98,7 +98,7 @@ class TestExistUsers(TestCase):
         assert 200 == resp.status_code
 
     def test_url_list_access_by_name(self):
-        resp = self.client.get(reverse('core:list'))
+        resp = self.client.get(reverse('core_user:list'))
         assert 200 == resp.status_code
 
     def test_url_logout_exist_at_desired_location(self):
@@ -106,27 +106,34 @@ class TestExistUsers(TestCase):
         assert 200 == resp.status_code
 
     def test_url_logout_access_by_name(self):
-        resp = self.client.get(reverse('core:logout'))
+        resp = self.client.get(reverse('core_user:logout'))
         assert 200 == resp.status_code
 
     def test_url_register_exist_at_desired_location(self):
         context = user_fields.copy()
-        resp = self.client.post('/api/user/register', context)
+        resp = self.client.post('/api/user/register',
+                                convert_to_json(context),
+                                content_type="application/json")
         assert 200 == resp.status_code
 
     def test_url_register_access_by_name(self):
         context = user_fields.copy()
-        resp = self.client.post(reverse('core:register'), context)
+        resp = self.client.post(reverse('core_user:register'),
+                                convert_to_json(context),
+                                content_type="application/json")
         assert 200 == resp.status_code
 
     def test_url_login_exist_at_desired_location(self):
         context = login_fields.copy()
-        resp = self.client.post('/api/user/login', context)
+        resp = self.client.post('/api/user/login', convert_to_json(context),
+                                content_type="application/json")
         assert 200 == resp.status_code
 
     def test_url_login_access_by_name(self):
         context = login_fields.copy()
-        resp = self.client.post(reverse('core:login'), context)
+        resp = self.client.post(reverse('core_user:login'),
+                                convert_to_json(context),
+                                content_type="application/json")
         assert 200 == resp.status_code
 
     def test_list(self):
@@ -135,7 +142,7 @@ class TestExistUsers(TestCase):
         for user in users:
             expected.append(get_dict_from_user(user))
 
-        resp = self.client.get(reverse('core:list'))
+        resp = self.client.get(reverse('core_user:list'))
         actual = parser_to_dict(resp.content.decode())
 
         assert expected == actual
@@ -144,7 +151,9 @@ class TestExistUsers(TestCase):
     def test_correct_registration(self):
         context = user_fields.copy()
 
-        resp = self.client.post(reverse('core:register'), context)
+        resp = self.client.post(reverse('core_user:register'),
+                                convert_to_json(context),
+                                content_type="application/json")
 
         check_registration(resp, context)
 
@@ -152,7 +161,9 @@ class TestExistUsers(TestCase):
         context = user_fields.copy()
         context['email'] = default_user_fields['email']
 
-        resp = self.client.post(reverse('core:register'), context)
+        resp = self.client.post(reverse('core_user:register'),
+                                convert_to_json(context),
+                                content_type="application/json")
 
         assert not mail.outbox
 
@@ -163,7 +174,9 @@ class TestExistUsers(TestCase):
     def test_login_correct(self):
         context = login_fields.copy()
 
-        resp = self.client.post(reverse('core:login'), context)
+        resp = self.client.post(reverse('core_user:login'),
+                                convert_to_json(context),
+                                content_type="application/json")
 
         users = CustomUser.objects.filter(username=context['email'])
 
@@ -177,14 +190,14 @@ class TestExistUsers(TestCase):
                resp.content.decode()
 
     def test_login_no_fields(self):
-        resp = self.client.post(reverse('core:login'), {})
+        resp = self.client.post(reverse('core_user:login'), {})
 
         assert 400 == resp.status_code
         assert '{"code":400,"message":"invalid request"}' == \
                resp.content.decode()
 
     def test_login_empty_fields(self):
-        resp = self.client.post(reverse('core:login'),
+        resp = self.client.post(reverse('core_user:login'),
                                 {'email': '', 'password': ''})
 
         assert 400 == resp.status_code
@@ -197,7 +210,9 @@ class TestExistUsers(TestCase):
         context['last_name'] = 'w'*255
         context['organization'] = 'q'*255
 
-        resp = self.client.post(reverse('core:register'), context)
+        resp = self.client.post(reverse('core_user:register'),
+                                convert_to_json(context),
+                                content_type="application/json")
 
         check_registration(resp, context)
 
@@ -207,7 +222,9 @@ class TestExistUsers(TestCase):
         context['last_name'] = 'w'*256
         context['organization'] = 'q'*256
 
-        resp = self.client.post(reverse('core:register'), context)
+        resp = self.client.post(reverse('core_user:register'),
+                                convert_to_json(context),
+                                content_type="application/json")
 
         assert 400 == resp.status_code
         assert '{"code":400,"message":"invalid request"}' == \
@@ -219,7 +236,9 @@ class TestExistUsers(TestCase):
         context['last_name'] = 'w'
         context['organization'] = 'q'
 
-        resp = self.client.post(reverse('core:register'), context)
+        resp = self.client.post(reverse('core_user:register'),
+                                convert_to_json(context),
+                                content_type="application/json")
 
         check_registration(resp, context)
 
@@ -229,14 +248,16 @@ class TestExistUsers(TestCase):
         context['last_name'] = ''
         context['organization'] = ''
 
-        resp = self.client.post(reverse('core:register'), context)
+        resp = self.client.post(reverse('core_user:register'),
+                                convert_to_json(context),
+                                content_type="application/json")
 
         assert 400 == resp.status_code
         assert '{"code":400,"message":"invalid request"}' == \
                resp.content.decode()
 
     def test_register_no_fields(self):
-        resp = self.client.post(reverse('core:register'), {})
+        resp = self.client.post(reverse('core_user:register'), {})
 
         assert 400 == resp.status_code
         assert '{"code":400,"message":"invalid request"}' == \
@@ -246,7 +267,9 @@ class TestExistUsers(TestCase):
         context = user_fields.copy()
         context['organization'] = 'qwert12345@g.organisation----lol'
 
-        resp = self.client.post(reverse('core:register'), context)
+        resp = self.client.post(reverse('core_user:register'),
+                                convert_to_json(context),
+                                content_type="application/json")
 
         check_registration(resp, context)
 
@@ -256,7 +279,9 @@ class TestExistUsers(TestCase):
         context['last_name'] = 'qwerty12345'
         context['organization'] = 'qwerty12345'
 
-        resp = self.client.post(reverse('core:register'), context)
+        resp = self.client.post(reverse('core_user:register'),
+                                convert_to_json(context),
+                                content_type="application/json")
 
         assert 400 == resp.status_code
         assert '{"code":400,"message":"invalid request"}' == \
@@ -266,7 +291,9 @@ class TestExistUsers(TestCase):
         context = user_fields.copy()
         context['email'] = 'qwerty12345'
 
-        resp = self.client.post(reverse('core:register'), context)
+        resp = self.client.post(reverse('core_user:register'),
+                                convert_to_json(context),
+                                content_type="application/json")
 
         assert 400 == resp.status_code
         assert '{"code":400,"message":"invalid request"}' == \
@@ -275,6 +302,10 @@ class TestExistUsers(TestCase):
 
 class TestSearchView(TestCase):
 
+    ok_status_code = 200
+    incorrect_status_code = 400
+    incorrect_message = '{"code":400,"message":"invalid request"}'
+
     @classmethod
     def setUpClass(cls):
         set_links_in_db_from_file('core/tests/links_example.json')
@@ -282,5 +313,30 @@ class TestSearchView(TestCase):
     @classmethod
     def tearDownClass(cls):
         links = Links.objects.all()
-        map(lambda x: x.delete(), links)
+        for link in links:
+            link.delete()
+
+    def test_url_search_access_by_name(self):
+        context = search_link_fields.copy()
+        context['doc_id_to'] = -1
+        resp = self.client.post(reverse('core:search'),
+                                convert_to_json(context),
+                                content_type="application/json")
+        assert self.ok_status_code == resp.status_code
+
+    def test_url_search_access_by_url(self):
+        context = search_link_fields.copy()
+        context['doc_id_to'] = -1
+
+        resp = self.client.post('/api/search/get', convert_to_json(context),
+                                content_type="application/json")
+        assert self.ok_status_code == resp.status_code
+
+    def test_empty_query(self):
+        context = {'doc_id_to': -1, 'doc_id_from': -1}
+
+        resp = self.client.post('/api/search/get', convert_to_json(context),
+                                content_type="application/json")
+        assert self.incorrect_status_code == resp.status_code
+        assert self.incorrect_message == resp.content.decode()
 

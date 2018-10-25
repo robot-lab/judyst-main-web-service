@@ -71,7 +71,6 @@ def set_links_in_db_from_file(file_name):
     """
     with open(file_name, "r", encoding="UTF-8") as f_in:
         links = json.load(f_in)
-        print(links[0])
         return set_links_in_db_from_list(links)
 
 
@@ -86,8 +85,11 @@ default_user_fields = {'email': 'badEmail@gmail.com', 'password': 'p4thw0rd',
                        'first_name': 'name', 'last_name': 'surname',
                        'organization': 'My organisation'}
 
-link_fields = {'doc_id_from': 'КСРФ/36-п/2018', 'doc_id_to': 'КСРФ/4-П/1996',
-               'to_doc_title': 'много текста\nочень много текста\xa0',
+link_fields = {'doc_id_from': u'КСРФ/36-п/2018', 'doc_id_to': u'КСРФ/4-П/1996',
+               'to_doc_title': u'много текста\nочень много текста\xa0',
                'citations_number': 1,
-               'contexts_list': ['много тескста 2\nсовсем много текста\x0c5'],
+               'contexts_list': [u'много тескста 2\nсовсем много текста\x0c5'],
                'positions_list': [7918]}
+
+search_link_fields = {'doc_id_from': u'КСРФ/36-П/2018',
+                      'doc_id_to': u'КСРФ/4-П/1996'}

@@ -223,12 +223,14 @@ def test_is_latin(param_is_latin):
                         ({'1': '111'}, ['1'], None, 2, False, True),
                         ({'1': '111'}, ['1'], 3, None, False, False),
                         ({'1': '111'}, ['1'], 4, None, False, True),
+                        ({'1': 1}, ['1'], None, None, False, True)
                         ],
                 ids=["check inclusion", "empty field", "without field",
                      "many fields", "not all fields", "other order",
                      "with length checks", "short fields", "long fields",
                      "only latin", "not only latin", "equal up border",
-                     "up border +1", "equal down border", "down border -1"])
+                     "up border +1", "equal down border", "down border -1",
+                     "not a string"])
 def param_is_not_valid_text_fields(request):
     return request.param
 
@@ -253,6 +255,23 @@ def param_check_email(request):
 def test_check_email(param_check_email):
     line, result = param_check_email
     assert result == check_email(line)
+
+
+@pytest.fixture(scope="function",
+                params=[({'1': '11'}, ['1'], False),
+                        ({'1': '11'}, ['2'], True),
+                        ({'1': '11', '2': '22'}, ['1', '2'], False),
+                        ({'1': '11', '2': '22'}, ['1', '3'], True),
+                        ({'1': 11, '2': 2.2}, ['1', '2'], False)],
+                ids=["correct", "incorrect", "many fields",
+                     "many fields incorrect", "not string"])
+def param_is_not_fields_include(request):
+    return request.param
+
+
+def test_is_not_fields_include(param_is_not_fields_include):
+    data, fields, result = param_is_not_fields_include
+    assert result == is_not_fields_include(data, fields)
 
 
 @pytest.fixture(scope="function",
@@ -295,3 +314,10 @@ def test_link_fields():
     assert isinstance(link_fields['contexts_list'], list)
     assert 'positions_list' in link_fields
     assert isinstance(link_fields['positions_list'], list)
+
+
+def test_search_link_fields():
+    assert 'doc_id_from' in search_link_fields
+    assert isinstance(search_link_fields['doc_id_from'], str)
+    assert 'doc_id_to' in search_link_fields
+    assert isinstance(search_link_fields['doc_id_to'], str)

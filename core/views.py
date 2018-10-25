@@ -7,7 +7,8 @@ from core.serializers import UserSerializer, LinksSerializer
 from core.utils.decorators import redirect_if_authorize
 from core.utils.exceptions import ErrorResponse
 from core.utils.functions import get_token, is_not_valid_text_fields, \
-    send_email, get_user_or_none, create_user_from_fields, check_email
+    send_email, get_user_or_none, create_user_from_fields, check_email, \
+    is_not_fields_include
 
 
 class UserViewSet(viewsets.ViewSet):
@@ -103,19 +104,20 @@ class SearchViewSet(viewsets.ViewSet):
     def search(self, request):
         # TODO: (Lev) make this function better
         validate_data = request.data
-        print(validate_data)
-        if is_not_valid_text_fields(validate_data, ['doc_id_from', 'doc_id_to']):
+        if is_not_fields_include(validate_data, ['doc_id_from', 'doc_id_to']):
             return ErrorResponse().not_valid()
         if validate_data['doc_id_from'] != -1 and validate_data['doc_id_to'] != -1:
-            queryset = Links.objects.all().filter(doc_id_from=validate_data['doc_id_from'],
-                                                  doc_id_to=validate_data['doc_id_to'])
+            queryset = Links.objects.all().filter(doc_id_from=validate_data['doc_id_from'])\
+                .filter(doc_id_to=validate_data['doc_id_to'])
         elif validate_data['doc_id_from'] != -1:
             queryset = Links.objects.all().filter(doc_id_from=validate_data['doc_id_from'])
         elif validate_data['doc_id_to'] != -1:
             queryset = Links.objects.all().filter(doc_id_to=validate_data['doc_id_to'])
         else:
             queryset = []
-        serializer = LinksSerializer(queryset, many=queryset.count() > 1)
+        if not len(queryset):
+            return ErrorResponse().not_valid()
+        serializer = LinksSerializer(queryset, many=True)
         return Response(serializer.data)
 
     def put(self, request):

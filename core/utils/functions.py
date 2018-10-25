@@ -82,6 +82,29 @@ def is_not_valid_text_fields(data, fields, max_length=None, min_length=None,
     return False
 
 
+def is_not_fields_include(data, fields):
+    """
+    Function for checking including list of fields in data dictionary.
+
+    :param data: Dict
+        Dictionary for checking.
+
+    :param fields: list
+        List of fields for checking.
+
+    :return: boolean
+        True if exist field in fields which is not present in  data, False
+        otherwise.
+    """
+    for filed in fields:
+        line = data.get(filed)
+        if line is None:
+            return True
+        if isinstance(line, str) and line == "":
+            return True
+    return False
+
+
 def send_email(message, user_email):
     """
     It's a function for sending email.
