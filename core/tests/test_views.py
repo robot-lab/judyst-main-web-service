@@ -151,9 +151,7 @@ class TestExistUsers(TestCase):
 
     def test_list(self):
         users = CustomUser.objects.all()
-        expected = []
-        for user in users:
-            expected.append(get_dict_from_user(user))
+        expected = [get_dict_from_user(user) for user in users]
 
         resp = self.client.get(reverse('core_user:list'))
         actual = parser_to_dict(resp.content.decode())
