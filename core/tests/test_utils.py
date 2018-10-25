@@ -76,13 +76,15 @@ class TestSendEmail(TestCase):
     def test_send_email(self):
         send_email(self.email_message, self.email_address)
 
+        # Check that was added exactly one message.
         assert 1 == len(mail.outbox)
 
         message = mail.outbox[0]
 
-        assert self.email_message == message.body
+        # Check that was send to exactly one address.
         assert 1 == len(message.to)
         assert self.email_address == message.to[0]
+        assert self.email_message == message.body
 
 
 class TestGetDictFromUser(TestCase):
@@ -118,6 +120,7 @@ class TestCreateUserFromDict(TestCase):
         actual_user = create_user_from_fields(user_fields)
         users = CustomUser.objects.filter(email=user_fields['email'])
 
+        # Check tha was added exactly one user.
         assert 1 == len(users)
 
         user = users[0]
@@ -142,17 +145,19 @@ class TestLinksFunctions(TestCase):
     def test_links_insertion_from_file(self):
         num = set_links_in_db_from_file('core/tests/links_example.json')
 
+        # Check that was added exactly 7 links.(links_example.json contains
+        # 7 links.)
         assert 7 == num
         assert 7 == len(Links.objects.all())
 
     def test_links_insertion_from_list(self):
         actual_link = set_links_in_db_from_list([link_fields])
 
-        assert 1 == actual_link
-
         links = Links.objects.filter(doc_id_to=link_fields['doc_id_to'])
 
+        # Check that was added exactly one link.
         assert 1 == len(links)
+        assert 1 == actual_link
 
         stored_link = links[0]
 
@@ -186,6 +191,7 @@ class TestLinksFunctions(TestCase):
 
         links = Links.objects.filter(doc_id_to=link_fields['doc_id_to'])
 
+        # Check that was added exactly one link.
         assert 1 == len(links)
 
         stored_link = links[0]
@@ -343,6 +349,7 @@ def test_equal_lists_raise(params_equal_lists_raise):
         is_equal_lists(list1, list2)
 
 
+# Need to test this function on any type of data.
 @pytest.fixture(scope="function",
                 params=[(["1989"], ['1989'], True),
                         (['1989'], ['1990'], False),

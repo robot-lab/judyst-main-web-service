@@ -45,6 +45,7 @@ class TestExistUsers(TestCase):
     invalid_request_text = '{"code":400,"message":"invalid request"}'
     text_field_max_length = 255
     email_field_max_length = 150
+    password_max_size = 64
 
     def check_registration(self, resp, context):
         """
@@ -58,6 +59,7 @@ class TestExistUsers(TestCase):
         """
         users = CustomUser.objects.filter(username=context['email'])
 
+        # Check tha was added exactly one user.
         assert 1 == len(users)
 
         user = users[0]
@@ -76,13 +78,15 @@ class TestExistUsers(TestCase):
         assert '{"token":"' + str(expected_token) + '"}' == \
                resp.content.decode()
 
+        # Check that was added exactly one message.
         assert 1 == len(mail.outbox)
 
         message = mail.outbox[0]
 
-        assert self.email_text == message.body
+        # Check that was send to exactly one address.
         assert 1 == len(message.to)
         assert context['email'] == message.to[0]
+        assert self.email_text == message.body
 
     @classmethod
     def setUpClass(cls):
@@ -179,6 +183,7 @@ class TestExistUsers(TestCase):
 
         users = CustomUser.objects.filter(username=context['email'])
 
+        # Check tha was added exactly one user.
         assert 1 == len(users)
 
         user = users[0]
@@ -346,7 +351,7 @@ class TestExistUsers(TestCase):
 
     def test_long_password(self):
         context = user_fields.copy()
-        context['password'] = '1'*64
+        context['password'] = '1'*self.password_max_size
 
         resp = self.client.post(reverse('core_user:register'), dumps(context),
                                 content_type="application/json")
@@ -355,7 +360,7 @@ class TestExistUsers(TestCase):
 
     def test_too_long_password(self):
         context = user_fields.copy()
-        context['password'] = '0'*65
+        context['password'] = '0'*(self.password_max_size + 1)
 
         resp = self.client.post(reverse('core_user:register'), dumps(context),
                                 content_type="application/json")
@@ -379,6 +384,7 @@ class TestSearchView(TestCase):
     ok_status_code = 200
     incorrect_status_code = 400
     invalid_request_text = '{"code":400,"message":"invalid request"}'
+    erase_message = -1
 
     @classmethod
     def setUpClass(cls):
@@ -393,7 +399,7 @@ class TestSearchView(TestCase):
             link.delete()
 
     def test_url_search_access_by_name(self):
-        context = {'doc_id_to': -1,
+        context = {'doc_id_to': self.erase_message,
                    'doc_id_from': self.links[0]['doc_id_from']}
 
         resp = self.client.post(reverse('core:search'), dumps(context),
@@ -401,7 +407,7 @@ class TestSearchView(TestCase):
         assert self.ok_status_code == resp.status_code
 
     def test_url_search_access_by_url(self):
-        context = {'doc_id_to': -1,
+        context = {'doc_id_to': self.erase_message,
                    'doc_id_from': self.links[0]['doc_id_from']}
 
         resp = self.client.post('/api/search/get', dumps(context),
@@ -409,7 +415,8 @@ class TestSearchView(TestCase):
         assert self.ok_status_code == resp.status_code
 
     def test_empty_query(self):
-        context = {'doc_id_to': -1, 'doc_id_from': -1}
+        context = {'doc_id_to': self.erase_message,
+                   'doc_id_from': self.erase_message}
 
         resp = self.client.post('/api/search/get', dumps(context),
                                 content_type="application/json")
@@ -417,7 +424,7 @@ class TestSearchView(TestCase):
         assert self.invalid_request_text == resp.content.decode()
 
     def test_search_all_links(self):
-        context = {'doc_id_to': -1,
+        context = {'doc_id_to': self.erase_message,
                    'doc_id_from': self.links[0]['doc_id_from']}
 
         resp = self.client.post('/api/search/get', dumps(context),
@@ -427,7 +434,8 @@ class TestSearchView(TestCase):
         assert is_equal_lists(self.links, loads(resp.content.decode()))
 
     def test_search_no_links_found(self):
-        context = {'doc_id_to': -1, 'doc_id_from': "no such file"}
+        context = {'doc_id_to': self.erase_message,
+                   'doc_id_from': "no such file"}
 
         resp = self.client.post('/api/search/get', dumps(context),
                                 content_type="application/json")
@@ -436,24 +444,31 @@ class TestSearchView(TestCase):
         assert self.invalid_request_text == resp.content.decode()
 
     def test_search_one_link_one_field_doc_id_to(self):
-        context = {'doc_id_to': self.links[0]['doc_id_to'],
-                   'doc_id_from': -1}
+        # Random number from 0 - 6.
+        link_number = 0
+
+        context = {'doc_id_to': self.links[link_number]['doc_id_to'],
+                   'doc_id_from': self.erase_message}
 
         resp = self.client.post('/api/search/get', dumps(context),
                                 content_type="application/json")
 
         assert self.ok_status_code == resp.status_code
-        assert is_equal_lists(self.links[0:1], loads(resp.content.decode()))
+        assert is_equal_lists(self.links[link_number:link_number + 1],
+                              loads(resp.content.decode()))
 
     def test_search_one_link_two_field(self):
-        context = {'doc_id_to': self.links[1]['doc_id_to'],
-                   'doc_id_from': self.links[1]['doc_id_from']}
+        # Random number from 0 - 6.
+        link_number = 1
+        context = {'doc_id_to': self.links[link_number]['doc_id_to'],
+                   'doc_id_from': self.links[link_number]['doc_id_from']}
 
         resp = self.client.post('/api/search/get', dumps(context),
                                 content_type="application/json")
 
         assert self.ok_status_code == resp.status_code
-        assert is_equal_lists(self.links[1:2], loads(resp.content.decode()))
+        assert is_equal_lists(self.links[link_number:link_number + 1],
+                              loads(resp.content.decode()))
 
     def test_search_not_link(self):
         context = {'doc_id_to': 'it is not a link',
@@ -482,13 +497,15 @@ class TestSearchView(TestCase):
         assert self.invalid_request_text == resp.content.decode()
 
     def test_search_one_link_one_field_doc_id_from(self):
-        link_fields = self.links[0].copy()
+        # Random number from 0 - 6.
+        link_number = 1
+        link_fields = self.links[link_number].copy()
         link_fields['doc_id_to'], link_fields['doc_id_from'] = \
             link_fields['doc_id_from'], link_fields['doc_id_to']
 
         set_links_in_db_from_list([link_fields])
 
-        context = {'doc_id_to': -1,
+        context = {'doc_id_to': self.erase_message,
                    'doc_id_from': link_fields['doc_id_from']}
 
         resp = self.client.post('/api/search/get', dumps(context),
