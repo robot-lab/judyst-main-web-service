@@ -80,7 +80,7 @@ def is_equal_lists(list1, list2):
         raise TypeError
     for elem1 in list1:
         flag = False
-        for i in range(len(list2)):
+        for i, elem2 in enumerate(list2):
             if list2[i] == elem1:
                 del list2[i]
                 flag = True
