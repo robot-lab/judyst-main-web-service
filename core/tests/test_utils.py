@@ -8,11 +8,12 @@ from rest_framework.authtoken.models import Token
 
 from core.tests.utils import get_dict_from_user, user_fields, login_fields, \
     default_user_fields, set_links_in_db_from_file, \
-    set_links_in_db_from_list, link_fields, get_dict_from_link
+    set_links_in_db_from_list, link_fields, get_dict_from_link, \
+    search_link_fields
 from core.models import CustomUser, Links
 from core.utils.functions import get_token, is_not_valid_text_fields, \
     send_email, get_user_or_none, IsLatin, create_user_from_fields, \
-    check_email, create_link_from_fields
+    check_email, create_link_from_fields, is_not_fields_include
 
 
 class TestGetToken(TestCase):
