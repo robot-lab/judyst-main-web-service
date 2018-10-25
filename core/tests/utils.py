@@ -1,4 +1,4 @@
-from core.models import Links
+from core.utils.functions import create_link_from_fields
 import json
 
 
@@ -31,7 +31,7 @@ def get_dict_from_link(link):
             'to_doc_title': link.to_doc_title,
             'citations_number': link.citations_number,
             'contexts_list': link.contexts_list,
-            'positions_list': link.positions_list}
+            'positions_list': link.positions_list, 'id': link.id}
 
 
 def set_links_in_db_from_list(links):
@@ -46,16 +46,8 @@ def set_links_in_db_from_list(links):
     """
     result = 0
     for link in links:
-        try:
-            Links.objects.create(doc_id_from=link['doc_id_from'],
-                                 doc_id_to=link['doc_id_to'],
-                                 to_doc_title=link['to_doc_title'],
-                                 citations_number=link['citations_number'],
-                                 contexts_list=link['contexts_list'],
-                                 positions_list=link['positions_list'])
-            result += 1
-        except Exception:
-            pass
+        create_link_from_fields(link)
+        result += 1
     return result
 
 
@@ -72,6 +64,30 @@ def set_links_in_db_from_file(file_name):
     with open(file_name, "r", encoding="UTF-8") as f_in:
         links = json.load(f_in)
         return set_links_in_db_from_list(links)
+
+
+def is_equal_lists(list1, list2):
+    """
+    Function for checking if list1 and list2 equal.
+    :param list1: list
+        First list for checking.
+    :param list2: list
+        Second list for checking.
+    :return:
+        True if equal, False otherwise.
+    """
+    if not isinstance(list1, list) or not isinstance(list2, list):
+        raise TypeError
+    for elem1 in list1:
+        flag = False
+        for i in range(len(list2)):
+            if list2[i] == elem1:
+                del list2[i]
+                flag = True
+                break
+        if not flag:
+            return False
+    return not list2
 
 
 user_fields = {'email': 'goodEmail@gmail.com',
@@ -92,6 +108,3 @@ link_fields = {'doc_id_from': u'КСРФ/36-п/2018', 'doc_id_to': u'КСРФ/4-
                'citations_number': 1,
                'contexts_list': [u'много тескста 2\nсовсем много текста\x0c5'],
                'positions_list': [7918]}
-
-search_link_fields = {'doc_id_from': u'КСРФ/36-П/2018',
-                      'doc_id_to': u'КСРФ/4-П/1996'}

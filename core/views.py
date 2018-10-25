@@ -110,20 +110,23 @@ class UserViewSet(viewsets.ViewSet):
 class SearchViewSet(viewsets.ViewSet):
 
     def search(self, request):
-        # TODO: (Lev) make this function better
         validate_data = request.data
         if is_not_fields_include(validate_data, ['doc_id_from', 'doc_id_to']):
             return ErrorResponse().not_valid()
-        if validate_data['doc_id_from'] != -1 and validate_data['doc_id_to'] != -1:
-            queryset = Links.objects.all().filter(doc_id_from=validate_data['doc_id_from'])\
+        if validate_data['doc_id_from'] != -1 and\
+                validate_data['doc_id_to'] != -1:
+            queryset = Links.objects.all().filter(
+                doc_id_from=validate_data['doc_id_from'])\
                 .filter(doc_id_to=validate_data['doc_id_to'])
         elif validate_data['doc_id_from'] != -1:
-            queryset = Links.objects.all().filter(doc_id_from=validate_data['doc_id_from'])
+            queryset = Links.objects.all().filter(
+                doc_id_from=validate_data['doc_id_from'])
         elif validate_data['doc_id_to'] != -1:
-            queryset = Links.objects.all().filter(doc_id_to=validate_data['doc_id_to'])
+            queryset = Links.objects.all().filter(
+                doc_id_to=validate_data['doc_id_to'])
         else:
             queryset = []
-        if not len(queryset):
+        if not queryset:
             return ErrorResponse().not_valid()
         serializer = LinksSerializer(queryset, many=True)
         return Response(serializer.data)

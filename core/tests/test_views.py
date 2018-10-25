@@ -1,7 +1,4 @@
-from json import loads as parser_to_dict
-from json import dumps as convert_to_json
-
-import pytest
+from json import loads, dumps, load
 
 from django.core import mail
 from django.test import TestCase
@@ -12,9 +9,8 @@ from rest_framework.authtoken.models import Token
 from core.models import CustomUser, Links
 from core.utils.functions import create_user_from_fields
 from core.tests.utils import get_dict_from_user, user_fields, login_fields, \
-    default_user_fields, set_links_in_db_from_file, search_link_fields
-
-# TODO (Danila) Create tests for search
+    default_user_fields, set_links_in_db_from_file, is_equal_lists, \
+    get_dict_from_link, set_links_in_db_from_list
 
 
 class TestNoUser(TestCase):
@@ -33,8 +29,7 @@ class TestNoUser(TestCase):
     def test_login_no_user(self):
         context = login_fields.copy()
 
-        resp = self.client.post(reverse('core_user:login'),
-                                convert_to_json(context),
+        resp = self.client.post(reverse('core_user:login'), dumps(context),
                                 content_type="application/json")
 
         assert self.error_status_code == resp.status_code
@@ -124,28 +119,25 @@ class TestExistUsers(TestCase):
 
     def test_url_register_exist_at_desired_location(self):
         context = user_fields.copy()
-        resp = self.client.post('/api/user/register',
-                                convert_to_json(context),
+        resp = self.client.post('/api/user/register', dumps(context),
                                 content_type="application/json")
         assert self.ok_status_code == resp.status_code
 
     def test_url_register_access_by_name(self):
         context = user_fields.copy()
-        resp = self.client.post(reverse('core_user:register'),
-                                convert_to_json(context),
+        resp = self.client.post(reverse('core_user:register'), dumps(context),
                                 content_type="application/json")
         assert self.ok_status_code == resp.status_code
 
     def test_url_login_exist_at_desired_location(self):
         context = login_fields.copy()
-        resp = self.client.post('/api/user/login', convert_to_json(context),
+        resp = self.client.post('/api/user/login', dumps(context),
                                 content_type="application/json")
         assert self.ok_status_code == resp.status_code
 
     def test_url_login_access_by_name(self):
         context = login_fields.copy()
-        resp = self.client.post(reverse('core_user:login'),
-                                convert_to_json(context),
+        resp = self.client.post(reverse('core_user:login'), dumps(context),
                                 content_type="application/json")
         assert self.ok_status_code == resp.status_code
 
@@ -154,7 +146,7 @@ class TestExistUsers(TestCase):
         expected = [get_dict_from_user(user) for user in users]
 
         resp = self.client.get(reverse('core_user:list'))
-        actual = parser_to_dict(resp.content.decode())
+        actual = loads(resp.content.decode())
 
         assert expected == actual
         assert self.ok_status_code == resp.status_code
@@ -162,8 +154,7 @@ class TestExistUsers(TestCase):
     def test_correct_registration(self):
         context = user_fields.copy()
 
-        resp = self.client.post(reverse('core_user:register'),
-                                convert_to_json(context),
+        resp = self.client.post(reverse('core_user:register'), dumps(context),
                                 content_type="application/json")
 
         self.check_registration(resp, context)
@@ -172,8 +163,7 @@ class TestExistUsers(TestCase):
         context = user_fields.copy()
         context['email'] = default_user_fields['email']
 
-        resp = self.client.post(reverse('core_user:register'),
-                                convert_to_json(context),
+        resp = self.client.post(reverse('core_user:register'), dumps(context),
                                 content_type="application/json")
 
         assert not mail.outbox
@@ -184,8 +174,7 @@ class TestExistUsers(TestCase):
     def test_login_correct(self):
         context = login_fields.copy()
 
-        resp = self.client.post(reverse('core_user:login'),
-                                convert_to_json(context),
+        resp = self.client.post(reverse('core_user:login'), dumps(context),
                                 content_type="application/json")
 
         users = CustomUser.objects.filter(username=context['email'])
@@ -200,8 +189,7 @@ class TestExistUsers(TestCase):
                resp.content.decode()
 
     def test_login_no_fields(self):
-        resp = self.client.post(reverse('core_user:login'),
-                                convert_to_json({}),
+        resp = self.client.post(reverse('core_user:login'), dumps({}),
                                 content_type="application/json")
 
         assert self.error_status_code == resp.status_code
@@ -209,7 +197,7 @@ class TestExistUsers(TestCase):
 
     def test_login_empty_fields(self):
         resp = self.client.post(reverse('core_user:login'),
-                                convert_to_json({'email': '', 'password': ''}),
+                                dumps({'email': '', 'password': ''}),
                                 content_type="application/json")
 
         assert self.error_status_code == resp.status_code
@@ -221,8 +209,7 @@ class TestExistUsers(TestCase):
         context['last_name'] = 'w'*self.text_field_max_length
         context['organization'] = 'q'*self.text_field_max_length
 
-        resp = self.client.post(reverse('core_user:register'),
-                                convert_to_json(context),
+        resp = self.client.post(reverse('core_user:register'), dumps(context),
                                 content_type="application/json")
 
         self.check_registration(resp, context)
@@ -233,8 +220,7 @@ class TestExistUsers(TestCase):
         context['last_name'] = 'w'*(self.text_field_max_length+1)
         context['organization'] = 'q'*(self.text_field_max_length+1)
 
-        resp = self.client.post(reverse('core_user:register'),
-                                convert_to_json(context),
+        resp = self.client.post(reverse('core_user:register'), dumps(context),
                                 content_type="application/json")
 
         assert self.error_status_code == resp.status_code
@@ -246,8 +232,7 @@ class TestExistUsers(TestCase):
         context['last_name'] = 'w'
         context['organization'] = 'q'
 
-        resp = self.client.post(reverse('core_user:register'),
-                                convert_to_json(context),
+        resp = self.client.post(reverse('core_user:register'), dumps(context),
                                 content_type="application/json")
 
         self.check_registration(resp, context)
@@ -258,8 +243,7 @@ class TestExistUsers(TestCase):
         context['last_name'] = ''
         context['organization'] = ''
 
-        resp = self.client.post(reverse('core_user:register'),
-                                convert_to_json(context),
+        resp = self.client.post(reverse('core_user:register'), dumps(context),
                                 content_type="application/json")
 
         assert self.error_status_code == resp.status_code
@@ -275,8 +259,7 @@ class TestExistUsers(TestCase):
         context = user_fields.copy()
         context['organization'] = 'qwert12345@g.organisation----lol'
 
-        resp = self.client.post(reverse('core_user:register'),
-                                convert_to_json(context),
+        resp = self.client.post(reverse('core_user:register'), dumps(context),
                                 content_type="application/json")
 
         self.check_registration(resp, context)
@@ -287,8 +270,7 @@ class TestExistUsers(TestCase):
         context['last_name'] = 'qwerty12345'
         context['organization'] = 'qwerty12345'
 
-        resp = self.client.post(reverse('core_user:register'),
-                                convert_to_json(context),
+        resp = self.client.post(reverse('core_user:register'), dumps(context),
                                 content_type="application/json")
 
         assert self.error_status_code == resp.status_code
@@ -298,8 +280,7 @@ class TestExistUsers(TestCase):
         context = user_fields.copy()
         context['email'] = 'qwerty12345'
 
-        resp = self.client.post(reverse('core_user:register'),
-                                convert_to_json(context),
+        resp = self.client.post(reverse('core_user:register'), dumps(context),
                                 content_type="application/json")
 
         assert self.error_status_code == resp.status_code
@@ -309,8 +290,7 @@ class TestExistUsers(TestCase):
         context = user_fields.copy()
         context['email'] = 'qwerty12345@mi:mail.com'
 
-        resp = self.client.post(reverse('core_user:register'),
-                                convert_to_json(context),
+        resp = self.client.post(reverse('core_user:register'), dumps(context),
                                 content_type="application/json")
 
         assert self.error_status_code == resp.status_code
@@ -320,8 +300,7 @@ class TestExistUsers(TestCase):
         context = user_fields.copy()
         context['email'] = 'q'*(self.email_field_max_length-10) + '@gmail.com'
 
-        resp = self.client.post(reverse('core_user:register'),
-                                convert_to_json(context),
+        resp = self.client.post(reverse('core_user:register'), dumps(context),
                                 content_type="application/json")
 
         self.check_registration(resp, context)
@@ -330,8 +309,7 @@ class TestExistUsers(TestCase):
         context = user_fields.copy()
         context['email'] = 'q'*(self.email_field_max_length-9) + '@gmail.com'
 
-        resp = self.client.post(reverse('core_user:register'),
-                                convert_to_json(context),
+        resp = self.client.post(reverse('core_user:register'), dumps(context),
                                 content_type="application/json")
 
         assert self.error_status_code == resp.status_code
@@ -341,8 +319,7 @@ class TestExistUsers(TestCase):
         context = user_fields.copy()
         context['password'] = ''
 
-        resp = self.client.post(reverse('core_user:register'),
-                                convert_to_json(context),
+        resp = self.client.post(reverse('core_user:register'), dumps(context),
                                 content_type="application/json")
 
         assert self.error_status_code == resp.status_code
@@ -352,8 +329,7 @@ class TestExistUsers(TestCase):
         context = user_fields.copy()
         context['password'] = '1234567'
 
-        resp = self.client.post(reverse('core_user:register'),
-                                convert_to_json(context),
+        resp = self.client.post(reverse('core_user:register'), dumps(context),
                                 content_type="application/json")
 
         assert self.error_status_code == resp.status_code
@@ -363,8 +339,7 @@ class TestExistUsers(TestCase):
         context = user_fields.copy()
         context['password'] = '12345678'
 
-        resp = self.client.post(reverse('core_user:register'),
-                                convert_to_json(context),
+        resp = self.client.post(reverse('core_user:register'), dumps(context),
                                 content_type="application/json")
 
         self.check_registration(resp, context)
@@ -373,8 +348,7 @@ class TestExistUsers(TestCase):
         context = user_fields.copy()
         context['password'] = '1'*64
 
-        resp = self.client.post(reverse('core_user:register'),
-                                convert_to_json(context),
+        resp = self.client.post(reverse('core_user:register'), dumps(context),
                                 content_type="application/json")
 
         self.check_registration(resp, context)
@@ -383,8 +357,7 @@ class TestExistUsers(TestCase):
         context = user_fields.copy()
         context['password'] = '0'*65
 
-        resp = self.client.post(reverse('core_user:register'),
-                                convert_to_json(context),
+        resp = self.client.post(reverse('core_user:register'), dumps(context),
                                 content_type="application/json")
 
         assert self.error_status_code == resp.status_code
@@ -394,8 +367,7 @@ class TestExistUsers(TestCase):
         context = user_fields.copy()
         context['password'] = 'password!'
 
-        resp = self.client.post(reverse('core_user:register'),
-                                convert_to_json(context),
+        resp = self.client.post(reverse('core_user:register'), dumps(context),
                                 content_type="application/json")
 
         assert self.error_status_code == resp.status_code
@@ -406,11 +378,13 @@ class TestSearchView(TestCase):
 
     ok_status_code = 200
     incorrect_status_code = 400
-    incorrect_message = '{"code":400,"message":"invalid request"}'
+    invalid_request_text = '{"code":400,"message":"invalid request"}'
 
     @classmethod
     def setUpClass(cls):
         set_links_in_db_from_file('core/tests/links_example.json')
+        links = Links.objects.all()
+        cls.links = [get_dict_from_link(link) for link in links]
 
     @classmethod
     def tearDownClass(cls):
@@ -419,26 +393,110 @@ class TestSearchView(TestCase):
             link.delete()
 
     def test_url_search_access_by_name(self):
-        context = search_link_fields.copy()
-        context['doc_id_to'] = -1
-        resp = self.client.post(reverse('core:search'),
-                                convert_to_json(context),
+        context = {'doc_id_to': -1,
+                   'doc_id_from': self.links[0]['doc_id_from']}
+
+        resp = self.client.post(reverse('core:search'), dumps(context),
                                 content_type="application/json")
         assert self.ok_status_code == resp.status_code
 
     def test_url_search_access_by_url(self):
-        context = search_link_fields.copy()
-        context['doc_id_to'] = -1
+        context = {'doc_id_to': -1,
+                   'doc_id_from': self.links[0]['doc_id_from']}
 
-        resp = self.client.post('/api/search/get', convert_to_json(context),
+        resp = self.client.post('/api/search/get', dumps(context),
                                 content_type="application/json")
         assert self.ok_status_code == resp.status_code
 
     def test_empty_query(self):
         context = {'doc_id_to': -1, 'doc_id_from': -1}
 
-        resp = self.client.post('/api/search/get', convert_to_json(context),
+        resp = self.client.post('/api/search/get', dumps(context),
                                 content_type="application/json")
         assert self.incorrect_status_code == resp.status_code
-        assert self.incorrect_message == resp.content.decode()
+        assert self.invalid_request_text == resp.content.decode()
 
+    def test_search_all_links(self):
+        context = {'doc_id_to': -1,
+                   'doc_id_from': self.links[0]['doc_id_from']}
+
+        resp = self.client.post('/api/search/get', dumps(context),
+                                content_type="application/json")
+
+        assert self.ok_status_code == resp.status_code
+        assert is_equal_lists(self.links, loads(resp.content.decode()))
+
+    def test_search_no_links_found(self):
+        context = {'doc_id_to': -1, 'doc_id_from': "no such file"}
+
+        resp = self.client.post('/api/search/get', dumps(context),
+                                content_type="application/json")
+
+        assert self.incorrect_status_code == resp.status_code
+        assert self.invalid_request_text == resp.content.decode()
+
+    def test_search_one_link_one_field_doc_id_to(self):
+        context = {'doc_id_to': self.links[0]['doc_id_to'],
+                   'doc_id_from': -1}
+
+        resp = self.client.post('/api/search/get', dumps(context),
+                                content_type="application/json")
+
+        assert self.ok_status_code == resp.status_code
+        assert is_equal_lists(self.links[0:1], loads(resp.content.decode()))
+
+    def test_search_one_link_two_field(self):
+        context = {'doc_id_to': self.links[1]['doc_id_to'],
+                   'doc_id_from': self.links[1]['doc_id_from']}
+
+        resp = self.client.post('/api/search/get', dumps(context),
+                                content_type="application/json")
+
+        assert self.ok_status_code == resp.status_code
+        assert is_equal_lists(self.links[1:2], loads(resp.content.decode()))
+
+    def test_search_not_link(self):
+        context = {'doc_id_to': 'it is not a link',
+                   'doc_id_from': 'it is not a link, too'}
+
+        resp = self.client.post('/api/search/get', dumps(context),
+                                content_type="application/json")
+
+        assert self.incorrect_status_code == resp.status_code
+        assert self.invalid_request_text == resp.content.decode()
+
+    def test_search_empty_fields(self):
+        context = {'doc_id_to': '', 'doc_id_from': ''}
+
+        resp = self.client.post('/api/search/get', dumps(context),
+                                content_type="application/json")
+
+        assert self.incorrect_status_code == resp.status_code
+        assert self.invalid_request_text == resp.content.decode()
+
+    def test_search_no_fields(self):
+        resp = self.client.post('/api/search/get', dumps({}),
+                                content_type="application/json")
+
+        assert self.incorrect_status_code == resp.status_code
+        assert self.invalid_request_text == resp.content.decode()
+
+    def test_search_one_link_one_field_doc_id_from(self):
+        link_fields = self.links[0].copy()
+        link_fields['doc_id_to'], link_fields['doc_id_from'] = \
+            link_fields['doc_id_from'], link_fields['doc_id_to']
+
+        set_links_in_db_from_list([link_fields])
+
+        context = {'doc_id_to': -1,
+                   'doc_id_from': link_fields['doc_id_from']}
+
+        resp = self.client.post('/api/search/get', dumps(context),
+                                content_type="application/json")
+
+        link = Links.objects.get(doc_id_from=link_fields['doc_id_from'])
+        link_fields['id'] = link.id
+        link.delete()
+
+        assert self.ok_status_code == resp.status_code
+        assert is_equal_lists([link_fields], loads(resp.content.decode()))

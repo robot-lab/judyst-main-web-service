@@ -9,7 +9,7 @@ from rest_framework.authtoken.models import Token
 from core.tests.utils import get_dict_from_user, user_fields, login_fields, \
     default_user_fields, set_links_in_db_from_file, \
     set_links_in_db_from_list, link_fields, get_dict_from_link, \
-    search_link_fields
+    is_equal_lists
 from core.models import CustomUser, Links
 from core.utils.functions import get_token, is_not_valid_text_fields, \
     send_email, get_user_or_none, CheckText, create_user_from_fields, \
@@ -156,7 +156,10 @@ class TestLinksFunctions(TestCase):
 
         stored_link = links[0]
 
-        assert link_fields == get_dict_from_link(stored_link)
+        expected_fields = link_fields.copy()
+        expected_fields['id'] = stored_link.id
+
+        assert expected_fields == get_dict_from_link(stored_link)
 
     def test_get_dict_from_link(self):
         expected_link = Links.objects.create(
@@ -176,6 +179,7 @@ class TestLinksFunctions(TestCase):
                actual_dict['citations_number']
         assert expected_link.contexts_list == actual_dict['contexts_list']
         assert expected_link.positions_list == actual_dict['positions_list']
+        assert expected_link.id == actual_dict['id']
 
     def test_create_link_from_field(self):
         actual_link = create_link_from_fields(link_fields)
@@ -186,8 +190,11 @@ class TestLinksFunctions(TestCase):
 
         stored_link = links[0]
 
-        assert link_fields == get_dict_from_link(actual_link)
-        assert link_fields == get_dict_from_link(stored_link)
+        expected_fields = link_fields.copy()
+        expected_fields['id'] = stored_link.id
+
+        assert expected_fields == get_dict_from_link(actual_link)
+        assert expected_fields == get_dict_from_link(stored_link)
 
 
 @pytest.fixture(scope="function",
@@ -324,8 +331,40 @@ def test_link_fields():
     assert isinstance(link_fields['positions_list'], list)
 
 
-def test_search_link_fields():
-    assert 'doc_id_from' in search_link_fields
-    assert isinstance(search_link_fields['doc_id_from'], str)
-    assert 'doc_id_to' in search_link_fields
-    assert isinstance(search_link_fields['doc_id_to'], str)
+@pytest.fixture(scope="function", params=[(TypeError, "121", [7])],
+                ids=["not list and not string"])
+def params_equal_lists_raise(request):
+    return request.param
+
+
+def test_equal_lists_raise(params_equal_lists_raise):
+    error, list1, list2 = params_equal_lists_raise
+    with pytest.raises(error):
+        is_equal_lists(list1, list2)
+
+
+@pytest.fixture(scope="function",
+                params=[(["1989"], ['1989'], True),
+                        (['1989'], ['1990'], False),
+                        (['1989', '1990'], ['1990', '1989'], True),
+                        (['1989'], ['1990', '1989'], False),
+                        ([], [], True),
+                        (['1989', '1989'], ['1990'], False),
+                        (['1989', '1990'], ['1989', '1990'], True),
+                        (['1989', '1989'], ['1989', '1989'], True),
+                        (['1989', '1990'], ['1989', '1990', '1989'], False),
+                        ([12, 1], [1, 12], True),
+                        ([{}, {}], [{}, {}, {}], False)],
+                ids=["same list one element", 'different element',
+                     'different order', 'first smaller than second',
+                     'empty lists', 'first bigger than second',
+                     'same list many elements', 'same list with repetitions',
+                     'equal after deleting repetitions', 'not string',
+                     'different number of empty dictionaries'])
+def params_equal_lists(request):
+    return request.param
+
+
+def test_equal_lists(params_equal_lists):
+    list1, list2, result = params_equal_lists
+    assert result == is_equal_lists(list1, list2)
