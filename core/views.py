@@ -138,7 +138,8 @@ class SearchViewSet(viewsets.ViewSet):
         js = json.loads(f.read())
         print(len(js))
         for _, item in enumerate(js):
-            Links.objects.create(doc_id_from=item['doc_id_from'], doc_id_to=item['doc_id_to'],
+            Links.objects.create(doc_id_from=item['doc_id_from'],
+                                 doc_id_to=item['doc_id_to'],
                                  to_doc_title=item['to_doc_title'], citations_number=item['citations_number'],
                                  contexts_list=item['contexts_list'], positions_list=item['positions_list'])
             print(_)
