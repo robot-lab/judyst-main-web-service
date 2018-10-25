@@ -12,7 +12,7 @@ from core.tests.utils import get_dict_from_user, user_fields, login_fields, \
     search_link_fields
 from core.models import CustomUser, Links
 from core.utils.functions import get_token, is_not_valid_text_fields, \
-    send_email, get_user_or_none, IsLatin, create_user_from_fields, \
+    send_email, get_user_or_none, CheckText, create_user_from_fields, \
     check_email, create_link_from_fields, is_not_fields_include
 
 
@@ -62,6 +62,9 @@ class TestGetUserOrNone(TestCase):
 
 class TestSendEmail(TestCase):
 
+    email_message = 'qwerty12345'
+    email_address = 'goodEmail@gmail.com'
+
     @classmethod
     def setUpClass(cls):
         mail.outbox.clear()
@@ -71,15 +74,15 @@ class TestSendEmail(TestCase):
         mail.outbox.clear()
 
     def test_send_email(self):
-        send_email('qwerty12345', 'goodEmail@gmail.com')
+        send_email(self.email_message, self.email_address)
 
         assert 1 == len(mail.outbox)
 
         message = mail.outbox[0]
 
-        assert 'qwerty12345' == message.body
+        assert self.email_message == message.body
         assert 1 == len(message.to)
-        assert 'goodEmail@gmail.com' == message.to[0]
+        assert self.email_address == message.to[0]
 
 
 class TestGetDictFromUser(TestCase):
@@ -197,7 +200,7 @@ def param_is_latin(request):
 
 def test_is_latin(param_is_latin):
     data, result = param_is_latin
-    assert result == IsLatin.check_line(data)
+    assert result == CheckText.check_line(data)
 
 
 @pytest.fixture(scope="function",
@@ -246,16 +249,20 @@ def test_is_not_valid_text_fields(param_is_not_valid_text_fields):
 
 
 @pytest.fixture(scope="function",
-                params=[('test@gmail.com', True),
-                        ('test123', False)],
-                ids=["correct", "incorrect"])
+                params=[('test@gmail.com', 150, True),
+                        ('test123', 150, False),
+                        ('q'*140+'@gamil.com', 150, True),
+                        ('q'*141+'@gmail.com', 150, False),
+                        ('q@t.ui', 150, True)],
+                ids=["correct", "incorrect", 'long email',
+                     'long incorrect email', 'short email'])
 def param_check_email(request):
     return request.param
 
 
 def test_check_email(param_check_email):
-    line, result = param_check_email
-    assert result == check_email(line)
+    line, max_length, result = param_check_email
+    assert result == check_email(line, max_length=max_length)
 
 
 @pytest.fixture(scope="function",

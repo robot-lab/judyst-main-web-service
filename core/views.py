@@ -8,13 +8,17 @@ from core.utils.decorators import redirect_if_authorize
 from core.utils.exceptions import ErrorResponse
 from core.utils.functions import get_token, is_not_valid_text_fields, \
     send_email, get_user_or_none, create_user_from_fields, check_email, \
-    is_not_fields_include
+    is_not_fields_include, check_password
 
 
 class UserViewSet(viewsets.ViewSet):
     """
     A simple ViewSet
     """
+
+    text_field_max_length = 255
+    email_max_length = 150
+
     def list(self, request):
         """
         Simple method to see all users.
@@ -46,10 +50,14 @@ class UserViewSet(viewsets.ViewSet):
         if is_not_valid_text_fields(validate_data, ['email', 'password']) or \
                 is_not_valid_text_fields(validate_data,
                                          ['first_name', 'last_name'],
-                                         max_length=255, only_latin=True) or \
+                                         max_length=self.text_field_max_length,
+                                         only_latin=True) or \
                 is_not_valid_text_fields(validate_data, ['organization'],
-                                         max_length=255) or \
-                not check_email(validate_data['email']):
+                                         max_length=self.text_field_max_length
+                                         ) or \
+                not check_email(validate_data['email'],
+                                max_length=self.email_max_length) or \
+                not check_password(validate_data['password']):
             return ErrorResponse().not_valid()
         if get_user_or_none(validate_data['email']) is not None:
             return ErrorResponse().user_exist()
@@ -121,7 +129,7 @@ class SearchViewSet(viewsets.ViewSet):
         return Response(serializer.data)
 
     def put(self, request):
-        # костыль TODO: DELETE
+        # костыль TO DO: DELETE
         f = open('/home/korwin/jsonAllCleanLinks.json', 'r')
         import json
         js = json.loads(f.read())

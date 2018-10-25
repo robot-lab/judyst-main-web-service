@@ -7,25 +7,30 @@ from rest_framework.authtoken.models import Token
 from core.models import CustomUser as User, Links
 
 
-class IsLatin:
+class CheckText:
     """
     Class for checking is string consist of latin characters.
     """
 
-    check = re.compile(r'^[a-zA-Z]*$')
+    validators = {'IsLatin': re.compile(r'^[a-zA-Z]*$'),
+                  'Password':
+                      re.compile(r'^[\#-\&\[\]\_\:\;a-zA-Z,0-9]{8,64}$')}
 
     @classmethod
-    def check_line(cls, line):
+    def check_line(cls, line, check='IsLatin'):
         """
         Function for checking if string consist of latin characters.
 
         :param line: str
             String for checking.
 
+        :param check: str
+            Type of checking.
+
         :return: bool
             True if string consist only of latin characters, false otherwise.
         """
-        return bool(cls.check.match(line))
+        return bool(cls.validators[check].match(line))
 
 
 def get_token(username, password):
@@ -77,7 +82,7 @@ def is_not_valid_text_fields(data, fields, max_length=None, min_length=None,
             return True
         if min_length is not None and len(line) < min_length:
             return True
-        if only_latin and not IsLatin.check_line(line):
+        if only_latin and not CheckText.check_line(line):
             return True
     return False
 
@@ -121,12 +126,15 @@ def send_email(message, user_email):
     email.send()
 
 
-def check_email(line):
+def check_email(line, max_length=None):
     """
     Function for validation users email.
 
     :param line: str
         String for checking if it is email.
+
+    :param max_length: int
+        Max length of email.
 
     :return: Boolean
         True if it is correct email, False otherwise.
@@ -135,9 +143,24 @@ def check_email(line):
     from django.core.exceptions import ValidationError
     try:
         validate_email(line)
+        if max_length:
+            return len(line) <= max_length
         return True
     except ValidationError:
         return False
+
+
+def check_password(line):
+    """
+    Function for validation users password.
+
+    :param line: str
+        String for checking if it is password.
+
+    :return: Boolean
+        True if it is correct password, False otherwise.
+    """
+    return CheckText.check_line(line, 'Password')
 
 
 def get_user_or_none(key):

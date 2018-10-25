@@ -74,14 +74,16 @@ def set_links_in_db_from_file(file_name):
         return set_links_in_db_from_list(links)
 
 
-user_fields = {'email': 'goodEmail@gmail.com', 'password': '12345',
+user_fields = {'email': 'goodEmail@gmail.com',
+               'password': '#########12345[]%&',
                'first_name': 'name', 'last_name': 'surname',
                'organization': 'My organisation'}
 
 
-login_fields = {'email': 'badEmail@gmail.com', 'password': 'p4thw0rd'}
+login_fields = {'email': 'badEmail@gmail.com', 'password': 'p4thw3450rd'}
 
-default_user_fields = {'email': 'badEmail@gmail.com', 'password': 'p4thw0rd',
+default_user_fields = {'email': 'badEmail@gmail.com',
+                       'password': 'p4thw3450rd',
                        'first_name': 'name', 'last_name': 'surname',
                        'organization': 'My organisation'}
 
