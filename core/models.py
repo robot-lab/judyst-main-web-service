@@ -1,5 +1,5 @@
 from django.contrib.auth.models import AbstractUser
-from django.contrib.postgres.fields import ArrayField
+from django.contrib.postgres.fields import JSONField, ArrayField
 from django.db import models
 
 
@@ -14,10 +14,20 @@ class CustomUser(AbstractUser):
         return self.email
 
 
+class Documents(models.Model):
+    doc_id = models.TextField(primary_key=True, blank=False, )
+    super_type = models.TextField()
+    release_date = models.DateField()
+    doc_type = models.TextField()
+    title = models.TextField()
+    text_source_url = models.URLField()
+    text = models.TextField()
+
+
 class Links(models.Model):
     doc_id_from = models.TextField(blank=False, null=False)
+    doc_fk = models.ForeignKey(null=True, on_delete=models.CASCADE, related_name='links_for_doc')
     doc_id_to = models.TextField(blank=False, null=False)
     to_doc_title = models.TextField()
     citations_number = models.IntegerField()
-    contexts_list = ArrayField(models.TextField())
-    positions_list = ArrayField(models.IntegerField())
+    positions_list = ArrayField(JSONField(blank=True), blank=True)
