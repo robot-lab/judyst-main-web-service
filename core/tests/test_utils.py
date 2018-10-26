@@ -1,5 +1,7 @@
 import pytest
 
+import json
+
 from django.core import mail
 from django.contrib.auth import authenticate
 from django.test import TestCase
@@ -375,3 +377,9 @@ def params_equal_lists(request):
 def test_equal_lists(params_equal_lists):
     list1, list2, result = params_equal_lists
     assert result == is_equal_lists(list1, list2)
+
+
+def test_used_production_db():
+    with open('cong.json', 'r') as f_in:
+        conf = json.load(f_in)
+        assert conf['host'] == "68.183.66.108"
