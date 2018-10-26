@@ -8,7 +8,6 @@ class CustomUser(AbstractUser):
     first_name = models.CharField(blank=True, max_length=255)
     last_name = models.CharField(blank=True, max_length=255)
     organization = models.CharField(blank=True, max_length=255)
-    verificate = models.BooleanField(default=False)
 
     def __str__(self):
         return self.email
@@ -26,7 +25,7 @@ class Documents(models.Model):
 
 class Links(models.Model):
     doc_id_from = models.TextField(blank=False, null=False)
-    doc_fk = models.ForeignKey(null=True, on_delete=models.CASCADE, related_name='links_for_doc')
+    doc_fk = models.ForeignKey(to=Documents,null=True, on_delete=models.CASCADE, related_name='links_for_doc')
     doc_id_to = models.TextField(blank=False, null=False)
     to_doc_title = models.TextField()
     citations_number = models.IntegerField()
