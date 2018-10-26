@@ -380,6 +380,6 @@ def test_equal_lists(params_equal_lists):
 
 
 def test_used_production_db():
-    with open('cong.json', 'r') as f_in:
+    with open('conf.json', 'r') as f_in:
         conf = json.load(f_in)
         assert conf['host'] == "68.183.66.108"
