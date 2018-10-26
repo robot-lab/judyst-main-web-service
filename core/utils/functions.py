@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate
 from django.core.mail import EmailMessage
 from rest_framework.authtoken.models import Token
 
-from core.models import CustomUser as User
+from core.models import CustomUser as User, Links
 
 
 class CheckText:
@@ -13,7 +13,8 @@ class CheckText:
     """
 
     validators = {'IsLatin': re.compile(r'^[a-zA-Z]*$'),
-                  'Password': re.compile(r'^[\#-\&\[\]\_\:\;a-zA-Z,0-9]{8,64}$')}
+                  'Password':
+                      re.compile(r'^[\#-\&\[\]\_\:\;a-zA-Z,0-9]{8,64}$')}
 
     @classmethod
     def check_line(cls, line, check='IsLatin'):
@@ -86,6 +87,29 @@ def is_not_valid_text_fields(data, fields, max_length=None, min_length=None,
     return False
 
 
+def is_not_fields_include(data, fields):
+    """
+    Function for checking including list of fields in data dictionary.
+
+    :param data: Dict
+        Dictionary for checking.
+
+    :param fields: list
+        List of fields for checking.
+
+    :return: boolean
+        True if exist field in fields which is not present in  data, False
+        otherwise.
+    """
+    for filed in fields:
+        line = data.get(filed)
+        if line is None:
+            return True
+        if isinstance(line, str) and line == "":
+            return True
+    return False
+
+
 def send_email(message, user_email):
     """
     It's a function for sending email.
@@ -102,12 +126,15 @@ def send_email(message, user_email):
     email.send()
 
 
-def check_email(line):
+def check_email(line, max_length=None):
     """
     Function for validation users email.
 
     :param line: str
         String for checking if it is email.
+
+    :param max_length: int
+        Max length of email.
 
     :return: Boolean
         True if it is correct email, False otherwise.
@@ -116,6 +143,8 @@ def check_email(line):
     from django.core.exceptions import ValidationError
     try:
         validate_email(line)
+        if max_length:
+            return len(line) <= max_length
         return True
     except ValidationError:
         return False
@@ -168,3 +197,21 @@ def create_user_from_fields(fields):
     user.set_password(fields['password'])
     user.save()
     return user
+
+
+def create_link_from_fields(fields):
+    """
+    Function for creating link from given fields. Fields are not checked.
+
+    :param fields: Dict
+        Dictionary with fields for link.
+
+    :return: Link
+        Created link.
+    """
+    return Links.objects.create(doc_id_from=fields['doc_id_from'],
+                                doc_id_to=fields['doc_id_to'],
+                                to_doc_title=fields['to_doc_title'],
+                                citations_number=fields['citations_number'],
+                                contexts_list=fields['contexts_list'],
+                                positions_list=fields['positions_list'])

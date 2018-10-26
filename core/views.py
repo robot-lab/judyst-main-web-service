@@ -11,8 +11,7 @@ from core.utils.decorators import redirect_if_authorize
 from core.utils.exceptions import ErrorResponse
 from core.utils.functions import get_token, is_not_valid_text_fields, \
     send_email, get_user_or_none, create_user_from_fields, check_email, \
-    check_password
-from django.db.models import Q
+    is_not_fields_include, check_password
 
 
 class UserViewSet(viewsets.ViewSet):
@@ -21,6 +20,7 @@ class UserViewSet(viewsets.ViewSet):
     """
 
     text_field_max_length = 255
+    email_max_length = 150
 
     def list(self, request):
         """
@@ -58,7 +58,8 @@ class UserViewSet(viewsets.ViewSet):
                 is_not_valid_text_fields(validate_data, ['organization'],
                                          max_length=self.text_field_max_length
                                          ) or \
-                not check_email(validate_data['email']) or \
+                not check_email(validate_data['email'],
+                                max_length=self.email_max_length) or \
                 not check_password(validate_data['password']):
             return ErrorResponse().not_valid()
         if get_user_or_none(validate_data['email']) is not None:
@@ -112,23 +113,25 @@ class UserViewSet(viewsets.ViewSet):
 class SearchViewSet(viewsets.ViewSet):
 
     def search(self, request):
-        # TO DO: make this function better
         validate_data = request.data
-        print(validate_data)
-        if is_not_valid_text_fields(validate_data, ['doc_id_from', 'doc_id_to']):
+        if is_not_fields_include(validate_data, ['doc_id_from', 'doc_id_to']):
             return ErrorResponse().not_valid()
-        # TO DO: add check for empty(!)
-        if validate_data['doc_id_from'] != -1 and validate_data['doc_id_to'] != -1:
-            queryset = Links.objects.all().filter(Q(doc_id_from=validate_data['doc_id_from'])|
-                                                  Q(doc_id_to=validate_data['doc_id_to']))
+        if validate_data['doc_id_from'] != -1 and\
+                validate_data['doc_id_to'] != -1:
+            queryset = Links.objects.all().filter(
+                doc_id_from=validate_data['doc_id_from'])\
+                .filter(doc_id_to=validate_data['doc_id_to'])
         elif validate_data['doc_id_from'] != -1:
-            queryset = Links.objects.all().filter(doc_id_from=validate_data['doc_id_from'])
+            queryset = Links.objects.all().filter(
+                doc_id_from=validate_data['doc_id_from'])
         elif validate_data['doc_id_to'] != -1:
-            queryset = Links.objects.all().filter(doc_id_to=validate_data['doc_id_to'])
+            queryset = Links.objects.all().filter(
+                doc_id_to=validate_data['doc_id_to'])
         else:
-            queryset = None
-        serializer = LinksSerializer(queryset, many=queryset.count() > 1)
-        print(serializer.data)
+            queryset = []
+        if not queryset:
+            return ErrorResponse().not_valid()
+        serializer = LinksSerializer(queryset, many=True)
         return Response(serializer.data)
 
     def put(self, request):
@@ -138,7 +141,8 @@ class SearchViewSet(viewsets.ViewSet):
         js = json.loads(f.read())
         print(len(js))
         for _, item in enumerate(js):
-            Links.objects.create(doc_id_from=item['doc_id_from'], doc_id_to=item['doc_id_to'],
+            Links.objects.create(doc_id_from=item['doc_id_from'],
+                                 doc_id_to=item['doc_id_to'],
                                  to_doc_title=item['to_doc_title'], citations_number=item['citations_number'],
                                  contexts_list=item['contexts_list'], positions_list=item['positions_list'])
             print(_)
