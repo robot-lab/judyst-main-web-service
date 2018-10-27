@@ -8,7 +8,8 @@
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">Judistt</a>
+            <a class="navbar-brand" href="#">Judist</a>
+            <a class="navbar-text"> </a>
           </div>
         
         </div><!--/.container-fluid -->

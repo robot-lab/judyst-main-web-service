@@ -1,6 +1,6 @@
 <template>
 <div class="workspace container ">
-    <LinkSearch/>
+    <router-view/>
 </div>
 </template>
 

@@ -11,8 +11,12 @@ import LinkSearch from './components/LinkSearch.vue'
 import Footer from './components/Footer.vue'
 import Navbar from './components/Navbar.vue'
 import Workspace from './components/Workspace.vue'
+
+import Router from './routes/router.js'
+
 export default {
   name: 'app',
+  router: Router.Router,
   components: {
     Footer,
     Navbar,
