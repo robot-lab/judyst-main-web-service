@@ -13,9 +13,13 @@ from core.models import *
 class ModelData(object):
 
     def __init__(self, data_base):
-        self.__data_base = data_base
+        self.__models_dict = {
+            "Documents": Documents,
+            "CustomUser": CustomUser,
+            "Links": Links
+        }
 
-    def get_data(self, data_field, **kwargs):
+    def get_data(self, data_field, model_name=None, **kwargs):
         """
         получить значение поля {data_field} из строки из {data_base}
         соответствующей условию {**kwargs}
@@ -23,17 +27,23 @@ class ModelData(object):
         :param data_field: str
             поле из базы данных информацию из корого надо получить
 
+        :param model_name: str
+            имя модели с которой надо работать
+
         :param kwargs: field="str"
             условие для выбора подходящей строки, допустим:
             doc_id="КСРФ/2-П/2007"
 
-        :return: data_field type
+        :return: data_field value
             возвращает значение из этого поля строки удовлетворяющей условию
         """
+        data_base = self.__models_dict.get(model_name)
+        if data_base is None:
+            return None
         model = None
         result = None
         try:
-            model = self.__data_base.objects.get(**kwargs)
+            model = data_base.objects.get(**kwargs)
             result = getattr(model, data_field)
         except model.DoesNotExist:
             print('no such model exist')
@@ -41,35 +51,74 @@ class ModelData(object):
             print("something went wrong, may be not correct params")
         return result
 
-    def get_all_data(self, data_field):
+    def get_all_data(self, data_field, model_name=None):
         """
         функция для получения значения поля {data_field} из всех строк таблицы
 
         :param data_field: str
             наименование этого поля
 
+        :param model_name: str
+            имя модели с которой надо работать
+
         :return: List
             всех значений этого поля в таблице
         """
         result = []
+        data_base = self.__models_dict.get(model_name)
+        if data_base is None:
+            return None
         try:
-            for model in self.__data_base.objects.all():
+            for model in data_base.objects.all():
                 result.append(getattr(model, data_field))
         except Exception:
             print("no such field in table")
         return result
 
-    def put_data(self, **kwargs):
+    def create_data(self, model_name=None, **kwargs):
         """
-        функция для того что бы добавить эту информацию в таблицу
+        функция для того что бы создать строку с этой информацией в таблицу
+
+        :param model_name: str
+            имя модели с которой надо работать
 
         :param kwargs: field1="str", field2="str"
             информация которую надо добавить
 
-        :return: Тщту
+        :return: None
         """
+        data_base = self.__models_dict.get(model_name)
+        if data_base is None:
+            return None
         try:
-            model = self.__data_base.objects.create(**kwargs)
+            model = data_base.objects.create(**kwargs)
+            model.save()
+        except Exception:
+            print("something went wrong, may be not correct params")
+
+    def edit_data(self, data, model_name=None, **kwargs):
+        """
+        функция для того что бы редактировать строку с этой информацией в таблицу
+
+        :param data: {"field1":"str", "field2":"str"}
+            информация которую надо добавить
+
+        :param model_name: str
+            имя модели с которой надо работать
+
+        :param kwargs: field="str"
+            условие для выбора подходящей строки, допустим:
+            doc_id="КСРФ/2-П/2007"
+
+        :return: None
+        """
+        data_base = self.__models_dict.get(model_name)
+        if data_base is None:
+            return None
+        try:
+            model = data_base.objects.get(**kwargs)
+            for key, value in data.items():
+                setattr(model, key, value)
             model.save()
         except Exception:
             print("something went wrong, may be not correct params")
@@ -78,4 +127,7 @@ class ModelData(object):
 if __name__ == '__main__':
 
     a = ModelData(CustomUser)
-    print(a.get_data("email", username="korwin@mail.ru"))
+    print(a.get_data("email", "CustomUser", username="korwin@mail.ru"))
+    a.create_data("CustomUser", username="levozavr@mail.ru", email="levozavr@mail.ru", password="aaaassss")
+    a.edit_data({"email": "lev@mail.ru"}, "CustomUser", username="korwin@mail.ru")
+    print(a.get_all_data("email", "CustomUser"))
