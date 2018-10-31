@@ -124,4 +124,4 @@ class SearchViewSet(viewsets.ViewSet):
         if is_not_fields_include(validate_data, ['doc_id_from', 'doc_id_to']):
             return ErrorResponse().not_valid()
         queryset = get_links(validate_data)
-        return  Response({"size": len(queryset)})
+        return Response({"size": len(queryset)})

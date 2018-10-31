@@ -25,8 +25,11 @@ class Documents(models.Model):
 
 class Links(models.Model):
     doc_id_from = models.TextField(blank=False, null=False)
-    doc_fk = models.ForeignKey(to=Documents,null=True, on_delete=models.CASCADE, related_name='links_for_doc')
+    doc_fk = models.ForeignKey(to=Documents, null=True, blank=True,
+                               on_delete=models.CASCADE, related_name='links_for_doc')
     doc_id_to = models.TextField(blank=False, null=False)
     to_doc_title = models.TextField()
     citations_number = models.IntegerField()
-    positions_list = ArrayField(JSONField(blank=True), blank=True)
+    positions_list = ArrayField(models.TextField(blank=True), blank=True)
+    """
+    positions_list - массив строк где лежат строки после json.dumps(dict)"""
