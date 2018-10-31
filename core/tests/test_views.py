@@ -1,3 +1,5 @@
+import pytest
+
 from json import loads, dumps, load
 
 from django.core import mail
@@ -11,6 +13,9 @@ from core.utils.functions import create_user_from_fields
 from core.tests.utils import get_dict_from_user, user_fields, login_fields, \
     default_user_fields, set_links_in_db_from_file, is_equal_lists, \
     get_dict_from_link, set_links_in_db_from_list
+
+# TODO (Danila) test search links view
+# TODO (Danila) test number_of_links_view
 
 
 class TestNoUser(TestCase):
@@ -379,6 +384,7 @@ class TestExistUsers(TestCase):
         assert self.invalid_request_text == resp.content.decode()
 
 
+@pytest.mark.skip
 class TestSearchView(TestCase):
 
     ok_status_code = 200

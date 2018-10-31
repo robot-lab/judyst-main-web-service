@@ -1,9 +1,14 @@
+import pytest
+
 from django.test import TestCase
 
 from core.tests.utils import default_user_fields, link_fields
 from core.models import CustomUser, Links
 from core.utils.functions import create_user_from_fields, \
     create_link_from_fields
+
+# TODO (Danila) Test link model
+# TODO (Danila) TEst document model.
 
 
 # Magic constants take from specification.
@@ -69,6 +74,7 @@ class TestUserModel(TestCase):
         assert default_user_fields['email'] == str(user)
 
 
+@pytest.mark.skip
 class TestLinksModel(TestCase):
 
     @classmethod
