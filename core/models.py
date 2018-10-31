@@ -31,3 +31,5 @@ class Links(models.Model):
     to_doc_title = models.TextField()
     citations_number = models.IntegerField()
     positions_list = ArrayField(models.TextField(blank=True), blank=True)
+    """
+    positions_list - массив строк где лежат строки после json.dumps(dict)"""
