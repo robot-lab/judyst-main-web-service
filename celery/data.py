@@ -1,7 +1,9 @@
-
+# encoding: utf-8
 import django
 import os
+import sys
 
+sys.path.append('../')
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "judyst_web_service.settings")
 django.setup()
 
@@ -12,7 +14,7 @@ from core.models import *
 
 class ModelData(object):
 
-    def __init__(self, data_base):
+    def __init__(self):
         self.__models_dict = {
             "Documents": Documents,
             "CustomUser": CustomUser,
@@ -45,10 +47,13 @@ class ModelData(object):
         try:
             model = data_base.objects.get(**kwargs)
             result = getattr(model, data_field)
-        except model.DoesNotExist:
-            print('no such model exist')
-        except Exception:
-            print("something went wrong, may be not correct params")
+        except data_base.DoesNotExist:
+            # print(f'no such model exist {model_name}')
+            pass
+        except Exception as e:
+            print(e)
+
+            print(f"something went wrong, may be not correct {kwargs}")
         return result
 
     def get_all_data(self, data_field, model_name=None):
@@ -93,12 +98,15 @@ class ModelData(object):
         try:
             model = data_base.objects.create(**kwargs)
             model.save()
-        except Exception:
-            print("something went wrong, may be not correct params")
+        except Exception as e:
+            print(e)
+
+            print(f"something went wrong, may be not correct {kwargs}")
 
     def edit_data(self, data, model_name=None, **kwargs):
         """
-        функция для того что бы редактировать строку с этой информацией в таблицу
+        функция для того что бы редактировать строку с этой информацией
+        в таблицу
 
         :param data: {"field1":"str", "field2":"str"}
             информация которую надо добавить
@@ -120,14 +128,18 @@ class ModelData(object):
             for key, value in data.items():
                 setattr(model, key, value)
             model.save()
-        except Exception:
-            print("something went wrong, may be not correct params")
+        except Exception as e:
+            print(e)
+
+            print(f"something went wrong, may be not correct {kwargs}")
 
 
 if __name__ == '__main__':
-
-    a = ModelData(CustomUser)
-    print(a.get_data("email", "CustomUser", username="korwin@mail.ru"))
-    a.create_data("CustomUser", username="levozavr@mail.ru", email="levozavr@mail.ru", password="aaaassss")
-    a.edit_data({"email": "lev@mail.ru"}, "CustomUser", username="korwin@mail.ru")
-    print(a.get_all_data("email", "CustomUser"))
+    # a = ModelData(CustomUser)
+    # print(a.get_data("email", "CustomUser", username="korwin@mail.ru"))
+    # a.create_data("CustomUser", username="levozavr@mail.ru",
+    #                email="levozavr@mail.ru", password="aaaassss")
+    # a.edit_data({"email": "lev@mail.ru"}, "CustomUser",
+    #               username="korwin@mail.ru")
+    # print(a.get_all_data("email", "CustomUser"))
+    pass
