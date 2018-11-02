@@ -29,7 +29,6 @@ class Links(models.Model):
     doc_fk = models.ForeignKey(to=Documents, null=True, blank=True,
                                on_delete=models.CASCADE, related_name='links_for_doc')
     doc_id_to = models.TextField(blank=False, null=False)
-    to_doc_title = models.TextField()
     citations_number = models.IntegerField()
     positions_list = ArrayField(models.TextField(blank=True), blank=True)
     """
