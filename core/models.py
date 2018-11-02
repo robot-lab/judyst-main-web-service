@@ -16,7 +16,7 @@ class CustomUser(AbstractUser):
 class Documents(models.Model):
     doc_id = models.TextField(primary_key=True, blank=False, )
     super_type = models.TextField()
-    release_date = models.DateField()
+    release_date = models.TextField()
     doc_type = models.TextField()
     title = models.TextField()
     text_source_url = models.URLField()
