@@ -31,7 +31,7 @@ def special_link_serializer(link):
         'to_doc_title': link.to_doc_title,
         'citations_number': link.citations_number,
         'positions_list': [json.loads(_) for _ in link.positions_list],
-        'text': document.tex
+        'text': document.text
     }
     return serializer
 
