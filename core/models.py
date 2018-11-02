@@ -19,11 +19,9 @@ class Documents(models.Model):
     super_type = models.TextField()
     release_date = models.TextField()
     doc_type = models.TextField()
-    to_doc_title = models.TextField()
     title = models.TextField()
     text_source_url = models.URLField()
     text = models.TextField()
-
 
 
 class Links(models.Model):

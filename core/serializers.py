@@ -25,10 +25,11 @@ def special_link_serializer(link):
         dict for serializing
     """
     document = Documents.objects.all().get(doc_id=link.doc_id_from)
+    document_to = Documents.objects.all().get(doc_id=link.doc_id_to)
     serializer = {
         'doc_id_from': link.doc_id_from,
         'doc_id_to': link.doc_id_to,
-        'to_doc_title': document.to_doc_title,
+        'to_doc_title': document_to.title,
         'citations_number': link.citations_number,
         'positions_list': [json.loads(_) for _ in link.positions_list],
         'text': document.text
