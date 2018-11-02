@@ -1,15 +1,14 @@
 <template>
    <div class= "container link-container">
-        <span> <p>Цитирующий документ: {{CleanLink.doc_id_from}} </p></span>
+        <!-- <span> <p>Цитирующий документ: {{CleanLink.doc_id_from}} </p></span>
         <span> <p>Цитируемый документ: {{CleanLink.doc_id_to}} </p></span>
         <span> <p>Заголовок цитируемого документа: {{CleanLink.to_doc_title}} </p></span>
         <span> <p>Количество упоминаний: {{CleanLink.citations_number}} </p></span>
         <div v-for="i in CitationsRange" :key="i">
-           <span> <p>Контекст цитаты: {{CleanLink.contexts_list[i]}} </p></span>
-           <a href="#">Позиция в тексте</a>
-        </div>
-        
-        <hr color="#0000ff">
+           <span> <p>Контекст цитаты: {{CleanLink.contexts[i].before}} <b>{{CleanLink.contexts[i].citation}}</b> {{CleanLink.contexts[i].after}} </p></span>
+           <a href="#">Перейти к цитате в тексте</a>
+        </div> -->
+        <p>{{CleanLink}}</p>
     </div>
 </template>
 

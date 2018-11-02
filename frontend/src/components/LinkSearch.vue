@@ -1,7 +1,10 @@
 <template>
   <div class="link-search-main">
-      <SearchBlock class="search-block"  v-on:SearchResultsReceived="searchResults=$event"/>
-      <SearchResultsBlock v-if="searchResults != null" v-bind:Links="searchResults" />
+      <SearchBlock class="search-block"  v-on:SearchResultsReceived="SearchResult=$event"/>
+      <SearchResultsBlock v-if="SearchResult != null"
+                          v-bind:LinksCount="SearchResult.Size"
+                          v-bind:IdFrom="SearchResult.IdFrom" 
+                          v-bind:IdTo="SearchResult.IdTo" />
   </div>
 </template>
 
@@ -13,7 +16,7 @@ export default {
   data: function() {
       return {
     
-        searchResults: null
+        SearchResult: null
 
       }
   },

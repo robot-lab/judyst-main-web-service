@@ -1,5 +1,8 @@
 <template>
+<div>
+<p>I'm here</p>
 <span> <a v-for="range in PageLinkList" :key="range[0]" v-on:click="$emit('PageChanged', range)"> </a></span>    
+</div>
 </template>
 
 

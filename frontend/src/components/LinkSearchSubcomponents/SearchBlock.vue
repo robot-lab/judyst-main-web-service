@@ -24,9 +24,9 @@ export default {
       SearchButtonClick: function () {
         var idFrom = document.getElementById("input-uid-from").value
         var idTo = document.getElementById("input-uid-to").value
-        if (idFrom == 'any')
+        if (idFrom == 'any' || idFrom == '')
             idFrom = -1
-        if (idTo == 'any')
+        if (idTo == 'any' || idTo == '')
             idTo = -1
         if (idTo == idFrom)
         {
@@ -45,11 +45,9 @@ export default {
         xhr.send(jsonReq)
         var json = xhr.responseText
         //var json = this.searchResultsRaw
-        var linkList = JSON.parse(json)
-        this.tmp = linkList.length
-        var ret = []
-        for (var i = 0; i < linkList.length; i ++)
-            ret.push({id: i, Link: linkList[i]})
+        var linkCount = JSON.parse(json)
+        this.tmp = linkCount
+        var ret = {Size: linkCount.size, IdFrom: idFrom, IdTo: idTo}
         this.$emit('SearchResultsReceived', ret)
         return
     
