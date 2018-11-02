@@ -15,7 +15,9 @@ from core.tests.utils import get_dict_from_user, user_fields, login_fields, \
 from core.models import CustomUser, Links
 from core.utils.functions import get_token, is_not_valid_text_fields, \
     send_email, get_user_or_none, CheckText, create_user_from_fields, \
-    check_email, create_link_from_fields, is_not_fields_include
+    check_email, create_link_from_fields, is_not_fields_include, get_links
+
+# TODO (Danila) Create tests for `get_links`
 
 
 class TestGetToken(TestCase):
@@ -137,6 +139,7 @@ class TestCreateUserFromDict(TestCase):
         assert get_dict_from_user(actual_user) == user_dict
 
 
+@pytest.mark.skip
 class TestLinksFunctions(TestCase):
 
     def tearDown(self):
