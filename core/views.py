@@ -130,7 +130,7 @@ class SearchViewSet(viewsets.ViewSet):
         return Response({"size": len(queryset)})
 
 def main(request):
-    return FileResponse(open(BASE_DIR+'/frontend/dist/index.html', 'rb'))
+    return FileResponse(open(BASE_DIR+'/frontend/dist/static/index.html', 'rb'))
 
 
 def static_delivery(request, path=""):

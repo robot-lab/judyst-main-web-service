@@ -1,9 +1,9 @@
 <template>
     <form class = "form-edit">
-        <input name="Document-from" type="text" placeholder="###-Type/Year" value="any" id="input-uid-from" class = "form-control" required autofocus>
-        <input name="Document-to" type="text" placeholder="###-Type/Year" value="any" id="input-uid-to" class = "form-control" required >
+        <input name="Document-from" type="text" placeholder="any" value="" id="input-uid-from" class = "form-control" required autofocus>
+        <input name="Document-to" type="text" placeholder="any" value="" id="input-uid-to" class = "form-control" required >
         <button class="btn btn-lg btn-primary btn-block" type="button" id="search-start-button" v-on:click="SearchButtonClick()">Поиск</button>
-    <p>{{tmp}}</p>
+    <!-- <p>{{tmp}}</p> -->
     </form>
 </template>
 <script>
@@ -37,18 +37,27 @@ export default {
         var req = {doc_id_from:idFrom,doc_id_to:idTo}
         var jsonReq = JSON.stringify(req)
         var xhr = new XMLHttpRequest()
-        xhr.open('POST', this.url, false)
+        xhr.open('POST', this.url, true)
         xhr.setRequestHeader("content-type", "application/json")
         
         xhr.withCredentials = true;
-        
+        var vue = this;        
         xhr.send(jsonReq)
-        var json = xhr.responseText
-        //var json = this.searchResultsRaw
-        var linkCount = JSON.parse(json)
-        this.tmp = linkCount
-        var ret = {Size: linkCount.size, IdFrom: idFrom, IdTo: idTo}
-        this.$emit('SearchResultsReceived', ret)
+
+        xhr.onreadystatechange = function () {
+            if (this.readyState != 4) return;
+            if (this.status != 200) {
+                alert( 'ошибка: ' + (this.status ? this.statusText : 'запрос не удался') );
+                return;
+            }
+            var json = xhr.responseText
+            //var json = this.searchResultsRaw
+            var linkCount = JSON.parse(json)
+            vue.tmp = linkCount
+            var ret = {Size: linkCount.size, IdFrom: idFrom, IdTo: idTo}
+            vue.$emit('SearchResultsReceived', ret)            
+        }
+
         return
     
       }
