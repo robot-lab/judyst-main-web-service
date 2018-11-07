@@ -30,7 +30,6 @@ def get_dict_from_link(link):
     return {'doc_id_from': link.doc_id_from, 'doc_id_to': link.doc_id_to,
             'to_doc_title': link.to_doc_title,
             'citations_number': link.citations_number,
-            'contexts_list': link.contexts_list,
             'positions_list': link.positions_list, 'id': link.id}
 
 
@@ -106,5 +105,7 @@ default_user_fields = {'email': 'badEmail@gmail.com',
 link_fields = {'doc_id_from': 'КСРФ/36-п/2018', 'doc_id_to': 'КСРФ/4-П/1996',
                'to_doc_title': 'много текста\nочень много текста\xa0',
                'citations_number': 1,
-               'contexts_list': ['много тескста 2\nсовсем много текста\x0c5'],
-               'positions_list': [7918]}
+               'positions_list': ['{"context_start": 15918,'\
+                                   '"context_end": 15972,'\
+                                   '"citation_start": 15850,'\
+                                   '"citation_end": 15950}']}

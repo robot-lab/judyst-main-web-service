@@ -137,7 +137,6 @@ class TestCreateUserFromDict(TestCase):
         assert get_dict_from_user(actual_user) == user_dict
 
 
-@pytest.mark.skip
 class TestLinksFunctions(TestCase):
 
     def tearDown(self):
@@ -334,8 +333,6 @@ def test_link_fields():
     assert isinstance(link_fields['doc_id_to'], str)
     assert 'citations_number' in link_fields
     assert isinstance(link_fields['citations_number'], int)
-    assert 'contexts_list' in link_fields
-    assert isinstance(link_fields['contexts_list'], list)
     assert 'positions_list' in link_fields
     assert isinstance(link_fields['positions_list'], list)
 
