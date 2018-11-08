@@ -1,5 +1,22 @@
-from core.utils.functions import create_link_from_fields
+import pytest
+
+from core.utils.functions import create_link_from_fields, \
+    create_user_from_fields
+from core.models import CustomUser
 import json
+
+
+def from_params_to_id(val):
+    """
+    Function for creating string from test params.
+
+    :param val: tuple
+        Params of tests.
+
+    :return:
+        String presentation of params.
+    """
+    return "params: {0}".format(str(val))
 
 
 def get_dict_from_user(user):
@@ -90,10 +107,10 @@ def is_equal_lists(list1, list2):
     return not list2
 
 
-user_fields = {'email': 'goodEmail@gmail.com',
-               'password': '#########12345[]%&',
-               'first_name': 'name', 'last_name': 'surname',
-               'organization': 'My organisation'}
+another_user_fields = {'email': 'goodEmail@gmail.com',
+                       'password': '#########12345[]%&',
+                       'first_name': 'name', 'last_name': 'surname',
+                       'organization': 'My organisation'}
 
 
 login_fields = {'email': 'badEmail@gmail.com', 'password': 'p4thw3450rd'}
@@ -108,3 +125,48 @@ link_fields = {'doc_id_from': 'КСРФ/36-п/2018', 'doc_id_to': 'КСРФ/4-П
                'citations_number': 1,
                'contexts_list': ['много тескста 2\nсовсем много текста\x0c5'],
                'positions_list': [7918]}
+
+
+# Magic constants take from specification.
+class TestConstants:
+    """
+    Enum with 'magic' constants for testing.
+    """
+    email_text = 'Not Implemented:  500'
+    ok_status_code = 200
+    error_status_code = 400
+    user_already_exist_text = '{"code":400,"message":"user already exist"}'
+    invalid_request_text = '{"code":400,"message":"invalid request"}'
+    text_field_max_length = 255
+    email_field_max_length = 150
+    password_max_size = 64
+    invalid_message = "invalid request"
+    user_exist_message = "user already exist"
+    email_message = 'qwerty12345'
+    email_address = 'goodEmail@gmail.com'
+
+
+@pytest.yield_fixture()
+def default_user_in_bd(request, db):
+    """
+    Pytest fixture which add default user to db.
+    """
+    user = create_user_from_fields(default_user_fields)
+    yield user
+    users = CustomUser.objects.all()
+    for user in users:
+        user.delete()
+
+
+@pytest.yield_fixture()
+def default_user_in_bd_logged_in(request, db, client):
+    """
+    Pytest fixture which add default user to db.
+    """
+    user = create_user_from_fields(default_user_fields)
+    client.force_login(user=user)
+    yield user
+    client.logout()
+    users = CustomUser.objects.all()
+    for user in users:
+        user.delete()
