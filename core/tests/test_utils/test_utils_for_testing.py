@@ -84,4 +84,3 @@ def params_equal_lists(request):
 def test_equal_lists(params_equal_lists):
     list1, list2, result = params_equal_lists
     assert result == is_equal_lists(list1, list2)
-
