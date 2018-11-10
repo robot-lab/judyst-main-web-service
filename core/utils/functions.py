@@ -213,7 +213,6 @@ def create_link_from_fields(fields):
                                 doc_id_to=fields['doc_id_to'],
                                 to_doc_title=fields['to_doc_title'],
                                 citations_number=fields['citations_number'],
-                                contexts_list=fields['contexts_list'],
                                 positions_list=fields['positions_list'])
 
 
