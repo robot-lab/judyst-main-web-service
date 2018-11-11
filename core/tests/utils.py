@@ -138,10 +138,10 @@ class TestConstants:
     error_status_code = 400
     invalid_message = "invalid request"
     user_exist_message = "user already exist"
-    user_already_exist_text = f'{"code":{error_status_code},' \
-                              f'"message":"{user_exist_message}"}'
-    invalid_request_text = f'{"code":{error_status_code},' \
-                           f'"message":"{invalid_message}"}'
+    user_already_exist_text = f'{{"code":{error_status_code},' \
+                              f'"message":"{user_exist_message}"}}'
+    invalid_request_text = f'{{"code":{error_status_code},' \
+                           f'"message":"{invalid_message}"}}'
     text_field_max_length = 255
     email_field_max_length = 150
     password_max_size = 64
