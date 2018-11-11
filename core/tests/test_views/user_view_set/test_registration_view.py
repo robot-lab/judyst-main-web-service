@@ -3,18 +3,16 @@ Test registration view.
 """
 import pytest
 
-from json import loads, dumps
+from json import dumps
 
 from django.urls import reverse
 
 from rest_framework.authtoken.models import Token
 
-from core.models import CustomUser, Links
-from core.utils.functions import create_user_from_fields
-from core.tests.utils import get_dict_from_user, another_user_fields, login_fields, \
-    default_user_fields, set_links_in_db_from_file, is_equal_lists, \
-    get_dict_from_link, set_links_in_db_from_list, TestConstants, \
-    default_user_in_bd, default_user_in_bd_logged_in
+from core.models import CustomUser
+from core.tests.utils import get_dict_from_user, another_user_fields, \
+    default_user_fields, TestConstants, default_user_in_bd, \
+    default_user_in_bd_logged_in
 from core.tests.test_views.user_view_set.fields_values import \
     param_password_field, param_email_field, param_organization_field, \
     param_text_field
@@ -48,7 +46,7 @@ def check_registration(resp, context, mailoutbox):
 
     assert TestConstants.ok_status_code == resp.status_code
 
-    assert {"token": expected_token} == loads(resp.content.decode())
+    assert f'{"token":"{str(expected_token)}"}' == resp.content.decode()
 
     # Check that was added exactly one message.
     assert 1 == len(mailoutbox)

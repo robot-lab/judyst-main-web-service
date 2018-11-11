@@ -134,17 +134,17 @@ class TestConstants:
     Magic constants take from specification.
     """
     email_text = 'Not Implemented:  500'
-    password_max_size = 64
-    text_field_max_length = 255
-    email_field_max_length = 150
     ok_status_code = 200
     error_status_code = 400
     invalid_message = "invalid request"
     user_exist_message = "user already exist"
-    user_already_exist_text = json.dumps({"code": error_status_code,
-                                          "message": user_exist_message})
-    invalid_request_text = json.dumps({"code": error_status_code,
-                                       "message": invalid_message})
+    user_already_exist_text = f'{"code":{error_status_code},' \
+                              f'"message":"{user_exist_message}"}'
+    invalid_request_text = f'{"code":{error_status_code},' \
+                           f'"message":"{invalid_message}"}'
+    text_field_max_length = 255
+    email_field_max_length = 150
+    password_max_size = 64
     email_message = 'qwerty12345'
     email_address = 'goodEmail@gmail.com'
 

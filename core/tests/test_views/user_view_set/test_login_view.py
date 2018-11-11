@@ -75,7 +75,7 @@ def test_login_fields_check_correction(client, param_email_field,
     if email_correction and password_correction:
         expected_token, _ = Token.objects.get_or_create(user=user)
         assert TestConstants.ok_status_code == resp.status_code
-        assert {"token": expected_token} == loads(resp.content.decode())
+        assert f'{"token":"{str(expected_token)}"}' == resp.content.decode()
     else:
         assert TestConstants.error_status_code == resp.status_code
         assert TestConstants.invalid_request_text == resp.content.decode()
@@ -97,4 +97,4 @@ def test_login_already_logged_in(client, default_user_in_bd_logged_in):
     expected_token, _ = Token.objects.get_or_create(user=user)
 
     assert TestConstants.ok_status_code == resp.status_code
-    assert {"token": expected_token} == loads(resp.content.decode())
+    assert f'{"token":"{str(expected_token)}"}' == resp.content.decode()
