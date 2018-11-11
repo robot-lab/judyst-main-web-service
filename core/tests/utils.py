@@ -127,21 +127,24 @@ link_fields = {'doc_id_from': 'КСРФ/36-п/2018', 'doc_id_to': 'КСРФ/4-П
                'positions_list': [7918]}
 
 
-# Magic constants take from specification.
 class TestConstants:
     """
     Enum with 'magic' constants for testing.
+
+    Magic constants take from specification.
     """
     email_text = 'Not Implemented:  500'
-    ok_status_code = 200
-    error_status_code = 400
-    user_already_exist_text = '{"code":400,"message":"user already exist"}'
-    invalid_request_text = '{"code":400,"message":"invalid request"}'
+    password_max_size = 64
     text_field_max_length = 255
     email_field_max_length = 150
-    password_max_size = 64
+    ok_status_code = 200
+    error_status_code = 400
     invalid_message = "invalid request"
     user_exist_message = "user already exist"
+    user_already_exist_text = json.dumps({"code": error_status_code,
+                                          "message": user_exist_message})
+    invalid_request_text = json.dumps({"code": error_status_code,
+                                       "message": invalid_message})
     email_message = 'qwerty12345'
     email_address = 'goodEmail@gmail.com'
 

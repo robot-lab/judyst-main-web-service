@@ -1,3 +1,7 @@
+"""
+Fixtures with different values for fields.
+Need to test views with given fields values for checking correction of working.
+"""
 import pytest
 
 from core.tests.utils import TestConstants

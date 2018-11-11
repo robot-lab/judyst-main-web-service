@@ -1,4 +1,7 @@
 """
+This is unsupported legacy code.
+Would be supported lately.
+
 Test functions connected to link model.
 """
 from django.test import TestCase

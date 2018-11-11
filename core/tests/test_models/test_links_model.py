@@ -1,3 +1,9 @@
+"""
+This is unsupported legacy code.
+Would be supported lately.
+
+Test link model.
+"""
 from django.test import TestCase
 
 from core.tests.utils import link_fields
@@ -5,7 +11,6 @@ from core.models import Links
 from core.utils.functions import create_link_from_fields
 
 
-# Magic constants take from specification.
 class TestLinksModel(TestCase):
 
     @classmethod

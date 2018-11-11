@@ -1,3 +1,7 @@
+"""
+This is unsupported legacy code.
+Would be supported lately.
+"""
 from json import loads, dumps
 
 from django.test import TestCase

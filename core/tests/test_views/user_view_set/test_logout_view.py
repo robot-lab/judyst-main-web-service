@@ -1,3 +1,6 @@
+"""
+Test logout view.
+"""
 import pytest
 
 from django.urls import reverse

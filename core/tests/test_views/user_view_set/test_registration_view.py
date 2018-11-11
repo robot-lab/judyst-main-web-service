@@ -1,3 +1,6 @@
+"""
+Test registration view.
+"""
 import pytest
 
 from json import loads, dumps
@@ -45,8 +48,7 @@ def check_registration(resp, context, mailoutbox):
 
     assert TestConstants.ok_status_code == resp.status_code
 
-    assert '{"token":"' + str(expected_token) + '"}' == \
-           resp.content.decode()
+    assert {"token": expected_token} == loads(resp.content.decode())
 
     # Check that was added exactly one message.
     assert 1 == len(mailoutbox)

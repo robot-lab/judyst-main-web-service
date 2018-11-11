@@ -1,3 +1,6 @@
+"""
+Test user model.
+"""
 import pytest
 
 from core.tests.utils import default_user_fields, default_user_in_bd, \
