@@ -1,3 +1,6 @@
+"""
+Test list view.
+"""
 import pytest
 
 from json import loads

@@ -1,3 +1,6 @@
+"""
+Test function, which needs for testing, but not used in prod.
+"""
 import pytest
 
 from core.tests.utils import default_user_fields, another_user_fields, \
@@ -59,6 +62,8 @@ def test_equal_lists_raise(params_equal_lists_raise):
 
 
 # Need to test this function on any type of data.
+# Function `equal_lists` should work correctly for every type of data with
+# correct `==` operator.
 @pytest.fixture(scope="function",
                 params=[(["1989"], ['1989'], True),
                         (['1989'], ['1990'], False),
@@ -70,13 +75,15 @@ def test_equal_lists_raise(params_equal_lists_raise):
                         (['1989', '1989'], ['1989', '1989'], True),
                         (['1989', '1990'], ['1989', '1990', '1989'], False),
                         ([12, 1], [1, 12], True),
-                        ([{}, {}], [{}, {}, {}], False)],
+                        ([{}, {}], [{}, {}, {}], False),
+                        ([[]], [{}], False)],
                 ids=["same list one element", 'different element',
                      'different order', 'first smaller than second',
                      'empty lists', 'first bigger than second',
                      'same list many elements', 'same list with repetitions',
                      'equal after deleting repetitions', 'not string',
-                     'different number of empty dictionaries'])
+                     'different number of empty dictionaries',
+                     'different types in list'])
 def params_equal_lists(request):
     return request.param
 
