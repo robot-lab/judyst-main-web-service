@@ -9,7 +9,7 @@ django.setup()
 
 from judyst_web_service import settings
 from django.db import models
-from core.models import *
+from core.models import Documents, Links, CustomUser
 
 
 class ModelData(object):
