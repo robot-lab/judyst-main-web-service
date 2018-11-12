@@ -132,13 +132,3 @@ class ModelData(object):
             print(e)
 
             print(f"something went wrong, may be not correct {kwargs}")
-
-
-if __name__ == '__main__':
-    a = ModelData(CustomUser)
-    print(a.get_data("email", "CustomUser", username="korwin@mail.ru"))
-    a.create_data("CustomUser", username="levozavr@mail.ru",
-                   email="levozavr@mail.ru", password="aaaassss")
-    a.edit_data({"email": "lev@mail.ru"}, "CustomUser",
-                  username="korwin@mail.ru")
-    print(a.get_all_data("email", "CustomUser"))
