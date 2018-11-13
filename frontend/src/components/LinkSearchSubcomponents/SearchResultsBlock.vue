@@ -20,9 +20,8 @@ import PageList from "../PageList.vue"
  export default {
     name: 'SearchResultBlock',
     props: {
-        LinksCount: Number,
-        IdFrom: String,
-        IdTo: String
+        SearchResults: Array,
+        
     },
     data: function() {
         return {
@@ -33,6 +32,16 @@ import PageList from "../PageList.vue"
             Links: [],
             isLoaded : false
         }
+    },
+
+    computed: {
+        LinksCount: function () {
+            return this.SearchResults.reduce(function (acum, x){
+                return acum + x.Size;
+            })},
+
+
+
     },
    
     components: {
@@ -69,46 +78,147 @@ import PageList from "../PageList.vue"
 
         getLinks: function (range)
       {
+           
         this.CurrentRange = range;
         this.isLoaded = false;
-        var idFrom = this.IdFrom;
-        var idTo = this.IdTo;
-        if (idFrom == 'any')
-            idFrom = -1
-        if (idTo == 'any')
-            idTo = -1
-        if (idTo == idFrom)
-        {
-            return []    
-        }
         
-        var req = {doc_id_from:idFrom,doc_id_to:idTo, range:this.CurrentRange}
-        var jsonReq = JSON.stringify(req)
-        var xhr = new XMLHttpRequest()
-        xhr.open('POST', this.url, true)
-        xhr.setRequestHeader("content-type", "application/json")
-        
-        xhr.withCredentials = true;
+        var peakedLinksCount = 0; 
+        var i = 0;
+        var startedCoutnter = 0; 
+        var finishedCounter = 0; 
         var vue = this ;       
-        xhr.send(jsonReq)
+        var url = this.url;
+        var links = []
+        
+        var get = function (range, searchResult) {
+            
+            var req = {doc_id_from: searchResult.doc_id_from,
+                       doc_id_to: searchResult.doc_id_to,
+                       range: range}
+            var jsonReq = JSON.stringify(req)
+            var xhr = new XMLHttpRequest()
+            xhr.open('POST', url, true)
+            xhr.setRequestHeader("content-type", "application/json")
+            
+            xhr.withCredentials = true;
+            xhr.send(jsonReq)
 
-        xhr.onreadystatechange = function(){
-            if (this.readyState != 4) return;
-            if (this.status != 200) {
-                alert( 'ошибка: ' + (this.status ? this.statusText : 'запрос не удался') );
-                return;
+            xhr.onreadystatechange = function(){
+                if (this.readyState != 4) return;
+                if (this.status != 200) {
+                    alert( 'ошибка: ' + (this.status ? this.statusText : 'запрос не удался') );
+                    return;
+                }
+                var json = xhr.responseText
+                vue.tmp = json
+                var linkList = JSON.parse(json)
+                var ret = []
+                linkList = vue.fillContexts(linkList)
+                for (var i = 0; i < linkList.length; i ++)
+                    ret.push({id: i, Link: linkList[i]})
+                links = links.concat(ret)
+                finishedCounter++;
             }
-            var json = xhr.responseText
-            vue.tmp = json
-            var linkList = JSON.parse(json)
-            var ret = []
-            linkList = vue.fillContexts(linkList)
-            for (var i = 0; i < linkList.length; i ++)
-                ret.push({id: i, Link: linkList[i]})
-            vue.Links = ret
-
-            vue.isLoaded = true
         }
+
+        while (i < this.SearchResult.length && peakedLinksCount < range[0])
+        {
+            if (peakedLinksCount + this.SearchResults[i].Size <= range[0])
+            {
+                peakedLinksCount += this.SearchResults[i].Size;
+                i++;
+            }
+            else
+            {
+                var min_point = range[0] - peakedLinksCount;
+                if (peakedLinksCount + this.SearchResults[i].Size <= range[1])
+                {
+                    var currRange = [min_point, this.SearchResult[i].Size]
+                    peakedLinksCount += this.SearchResults[i].Size; 
+                }
+                else
+                {
+                    var max_point =  range[1] - peakedLinksCount ;
+                    currRange = [min_point, max_point ]; 
+                    peakedLinksCount += range[1] - range[0]; 
+                }
+                startedCoutnter++;
+                get(currRange, this.SearchResults[i]);
+                i++;
+                break;
+            }
+
+        }
+        
+        while (i < this.SearchResult.length && peakedLinksCount < range[1])
+        {
+            if (peakedLinksCount + this.SearchResults[i].Size <= range[1])
+            {
+                
+                currRange = [0, this.SearchResult[i].Size];
+                peakedLinksCount += this.SearchResults[i].Size;
+                
+            }
+            else
+            {
+                currRange = [0, range[1] - peakedLinksCount]
+                peakedLinksCount = range[1]
+            }
+            get(currRange, this.SearchResult[i])
+            startedCoutnter++;
+            i++;
+        }
+        setTimeout(function(){
+            if (startedCoutnter == finishedCounter)
+            {
+                vue.Links = links;
+                vue.isLoaded = true;
+            }
+        }, 0);
+        
+
+
+
+        // this.CurrentRange = range;
+        // this.isLoaded = false;
+        // var idFrom = this.IdFrom;
+        // var idTo = this.IdTo;
+        // if (idFrom == 'any')
+        //     idFrom = -1
+        // if (idTo == 'any')
+        //     idTo = -1
+        // if (idTo == idFrom)
+        // {
+        //     return []    
+        // }
+        
+        // var req = {doc_id_from:idFrom,doc_id_to:idTo, range:this.CurrentRange}
+        // var jsonReq = JSON.stringify(req)
+        // var xhr = new XMLHttpRequest()
+        // xhr.open('POST', this.url, true)
+        // xhr.setRequestHeader("content-type", "application/json")
+        
+        // xhr.withCredentials = true;
+        // var vue = this ;       
+        // xhr.send(jsonReq)
+
+        // xhr.onreadystatechange = function(){
+        //     if (this.readyState != 4) return;
+        //     if (this.status != 200) {
+        //         alert( 'ошибка: ' + (this.status ? this.statusText : 'запрос не удался') );
+        //         return;
+        //     }
+        //     var json = xhr.responseText
+        //     vue.tmp = json
+        //     var linkList = JSON.parse(json)
+        //     var ret = []
+        //     linkList = vue.fillContexts(linkList)
+        //     for (var i = 0; i < linkList.length; i ++)
+        //         ret.push({id: i, Link: linkList[i]})
+        //     vue.Links = ret
+
+        //     vue.isLoaded = true
+        // }
       }
     },
 

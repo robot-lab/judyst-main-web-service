@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import LinkSearch from './components/LinkSearch.vue'
+import Search from './components/LinkSearchSubcomponents/Search.vue'
 import Footer from './components/Footer.vue'
 import Navbar from './components/Navbar.vue'
 import Workspace from './components/Workspace.vue'
@@ -20,7 +20,7 @@ export default {
   components: {
     Footer,
     Navbar,
-    LinkSearch,
+    Search,
     Workspace
   }
 }

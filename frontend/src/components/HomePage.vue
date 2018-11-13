@@ -6,12 +6,12 @@
 
 
 <script>
-import LinkSearch from './LinkSearch'
+import Search from './LinkSearchSubcomponents/Search'
 
 export default {
   name: 'HomePage',
   components:{
-      LinkSearch,
+      Search,
   }
 }
 </script>

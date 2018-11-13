@@ -1,12 +1,16 @@
 <template>
     <form class = "form-edit">
-        <input name="Document-from" type="text" placeholder="any" value="" id="input-uid-from" class = "form-control" required autofocus>
-        <input name="Document-to" type="text" placeholder="any" value="" id="input-uid-to" class = "form-control" required >
+        <span>
+        <input name="search" type="text" placeholder="Введите поисковый запрос" value="" id="input-search" class = "form-control" required autofocus>
         <button class="btn btn-lg btn-primary btn-block" type="button" id="search-start-button" v-on:click="SearchButtonClick()">Поиск</button>
+        </span>
     <!-- <p>{{tmp}}</p> -->
     </form>
 </template>
 <script>
+import Search from '../../SearchAlgorithms/search.js'
+
+
 export default {
   name: 'SearchBlock',
   data: function ()
@@ -22,44 +26,88 @@ export default {
   },
   methods:{
       SearchButtonClick: function () {
-        var idFrom = document.getElementById("input-uid-from").value
-        var idTo = document.getElementById("input-uid-to").value
-        if (idFrom == 'any' || idFrom == '')
-            idFrom = -1
-        if (idTo == 'any' || idTo == '')
-            idTo = -1
-        if (idTo == idFrom)
+        
+        
+        var searchRequst = document.getElementById('input-search').value;
+        var requests = Search(searchRequst);
+        if (requests == null)
         {
             this.$emit('SearchResultsReceived', null)
             return    
         }
-        
-        var req = {doc_id_from:idFrom,doc_id_to:idTo}
-        var jsonReq = JSON.stringify(req)
-        var xhr = new XMLHttpRequest()
-        xhr.open('POST', this.url, true)
-        xhr.setRequestHeader("content-type", "application/json")
-        
-        xhr.withCredentials = true;
+        var rets = [];
+        var counter = 0;
         var vue = this;        
-        xhr.send(jsonReq)
+        for (var req in requests)
+        {
+            var jsonReq = JSON.stringify(req);
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', this.url, true);
+            xhr.setRequestHeader("content-type", "application/json")
+            
+            xhr.withCredentials = true;
+            xhr.send(jsonReq)
 
-        xhr.onreadystatechange = function () {
-            if (this.readyState != 4) return;
-            if (this.status != 200) {
-                alert( 'ошибка: ' + (this.status ? this.statusText : 'запрос не удался') );
-                return;
+            xhr.onreadystatechange = function () {
+                if (this.readyState != 4) return;
+                if (this.status != 200) {
+                    //console.log( 'ошибка: ' + (this.status ? this.statusText : 'запрос не удался') );
+                    counter += 1;
+                    return;
+                }
+                var json = xhr.responseText
+                var linkCount = JSON.parse(json)
+                rets.push({Size: linkCount.size, IdFrom: req.idFrom, IdTo: req.idTo})
+                counter += 1; 
             }
-            var json = xhr.responseText
-            //var json = this.searchResultsRaw
-            var linkCount = JSON.parse(json)
-            vue.tmp = linkCount
-            var ret = {Size: linkCount.size, IdFrom: idFrom, IdTo: idTo}
-            vue.$emit('SearchResultsReceived', ret)            
+
         }
 
-        return
-    
+        var waiter = function(){
+            if (counter === requests.length)
+                vue.$emit('SearchResultsReceived', rets);
+            else
+                setTimeout(waiter, 500);
+        }
+        setTimeout(waiter, 500);                
+
+
+
+        // var idFrom = document.getElementById("input-uid-from").value
+        // var idTo = document.getElementById("input-uid-to").value
+        //     if (idFrom == 'any' || idFrom == '')
+        //     idFrom = -1
+        // if (idTo == 'any' || idTo == '')
+        //     idTo = -1
+        // if (idTo == idFrom)
+        // {
+        //     this.$emit('SearchResultsReceived', null)
+        //     return    
+        // }
+        
+        // var req = {doc_id_from:idFrom,doc_id_to:idTo}
+        // var jsonReq = JSON.stringify(req)
+        // var xhr = new XMLHttpRequest()
+        // xhr.open('POST', this.url, true)
+        // xhr.setRequestHeader("content-type", "application/json")
+        
+        // xhr.withCredentials = true;
+        // var vue = this;        
+        // xhr.send(jsonReq)
+
+        // xhr.onreadystatechange = function () {
+        //     if (this.readyState != 4) return;
+        //     if (this.status != 200) {
+        //         alert( 'ошибка: ' + (this.status ? this.statusText : 'запрос не удался') );
+        //         return;
+        //     }
+        //     var json = xhr.responseText
+        //     //var json = this.searchResultsRaw
+        //     var linkCount = JSON.parse(json)
+        //     vue.tmp = linkCount
+        //     var ret = {Size: linkCount.size, IdFrom: idFrom, IdTo: idTo}
+        //     vue.$emit('SearchResultsReceived', ret)            
+        // }
       }
   }
 }

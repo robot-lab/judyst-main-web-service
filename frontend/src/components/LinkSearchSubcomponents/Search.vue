@@ -2,17 +2,16 @@
   <div class="link-search-main">
       <SearchBlock class="search-block"  v-on:SearchResultsReceived="SearchResult=$event"/>
       <SearchResultsBlock v-if="SearchResult != null"
-                          v-bind:LinksCount="SearchResult.Size"
-                          v-bind:IdFrom="SearchResult.IdFrom" 
-                          v-bind:IdTo="SearchResult.IdTo" />
+                          v-bind:SearchResults="SearchResult"/>
+
   </div>
 </template>
 
 <script>
-import SearchBlock from "./LinkSearchSubcomponents/SearchBlock.vue"
-import SearchResultsBlock from "./LinkSearchSubcomponents/SearchResultsBlock.vue"
+import SearchBlock from "./SearchBlock.vue"
+import SearchResultsBlock from "./SearchResultsBlock.vue"
 export default {
-  name: 'LinkSearch',
+  name: 'Search',
   data: function() {
       return {
     

@@ -6,11 +6,9 @@
 
 
 <script>
-import LinkSearch from './LinkSearch.vue';
 export default {
   name: 'Workspace',
   components: {
-      LinkSearch
   }
     
  
