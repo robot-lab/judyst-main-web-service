@@ -3,12 +3,12 @@ from rest_framework.authentication import get_authorization_header
 from rest_framework.response import Response
 
 from core.models import CustomUser as User, Links
-from core.serializers import UserSerializer, LinksSerializer
+from core.serializers import UserSerializer, special_links_serializer
 from core.utils.decorators import redirect_if_authorize
 from core.utils.exceptions import ErrorResponse
 from core.utils.functions import get_token, is_not_valid_text_fields, \
     send_email, get_user_or_none, create_user_from_fields, check_email, \
-    is_not_fields_include, check_password
+    is_not_fields_include, check_password, get_links
 
 
 class UserViewSet(viewsets.ViewSet):
@@ -111,38 +111,17 @@ class SearchViewSet(viewsets.ViewSet):
 
     def search(self, request):
         validate_data = request.data
-        if is_not_fields_include(validate_data, ['doc_id_from', 'doc_id_to']):
+        if is_not_fields_include(validate_data, ['doc_id_from', 'doc_id_to', 'range']):
             return ErrorResponse().not_valid()
-        if validate_data['doc_id_from'] != -1 and\
-                validate_data['doc_id_to'] != -1:
-            queryset = Links.objects.all().filter(
-                doc_id_from=validate_data['doc_id_from'])\
-                .filter(doc_id_to=validate_data['doc_id_to'])
-        elif validate_data['doc_id_from'] != -1:
-            queryset = Links.objects.all().filter(
-                doc_id_from=validate_data['doc_id_from'])
-        elif validate_data['doc_id_to'] != -1:
-            queryset = Links.objects.all().filter(
-                doc_id_to=validate_data['doc_id_to'])
-        else:
-            queryset = []
+        queryset = get_links(validate_data)
         if not queryset:
             return ErrorResponse().not_valid()
-        serializer = LinksSerializer(queryset, many=True)
-        return Response(serializer.data)
+        serializer = special_links_serializer(queryset[validate_data['range'][0]: validate_data['range'][1]])
+        return Response(serializer)
 
-    def put(self, request):
-        # костыль TO DO: DELETE
-        f = open('/home/korwin/jsonAllCleanLinks.json', 'r')
-        import json
-        js = json.loads(f.read())
-        print(len(js))
-        for _, item in enumerate(js):
-            Links.objects.create(doc_id_from=item['doc_id_from'],
-                                 doc_id_to=item['doc_id_to'],
-                                 to_doc_title=item['to_doc_title'], citations_number=item['citations_number'],
-                                 contexts_list=item['contexts_list'], positions_list=item['positions_list'])
-            print(_)
-        queryset = Links.objects.all()
-        serializer = LinksSerializer(queryset)
-        return Response(serializer.data)
+    def number_of_links(self, request):
+        validate_data = request.data
+        if is_not_fields_include(validate_data, ['doc_id_from', 'doc_id_to']):
+            return ErrorResponse().not_valid()
+        queryset = get_links(validate_data)
+        return Response({"size": len(queryset)})

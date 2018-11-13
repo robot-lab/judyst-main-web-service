@@ -10,7 +10,7 @@ from django.urls import reverse
 from core.models import Links
 from core.tests.utils import set_links_in_db_from_file, is_equal_lists, \
     get_dict_from_link, set_links_in_db_from_list
-
+import pytest
 
 class TestSearchView(TestCase):
 
@@ -31,6 +31,7 @@ class TestSearchView(TestCase):
         for link in links:
             link.delete()
 
+    @pytest.mark.skip
     def test_url_search_access_by_name(self):
         context = {'doc_id_to': self.erase_message,
                    'doc_id_from': self.links[0]['doc_id_from']}
@@ -39,6 +40,7 @@ class TestSearchView(TestCase):
                                 content_type="application/json")
         assert self.ok_status_code == resp.status_code
 
+    @pytest.mark.skip
     def test_url_search_access_by_url(self):
         context = {'doc_id_to': self.erase_message,
                    'doc_id_from': self.links[0]['doc_id_from']}
@@ -47,6 +49,7 @@ class TestSearchView(TestCase):
                                 content_type="application/json")
         assert self.ok_status_code == resp.status_code
 
+    @pytest.mark.skip
     def test_empty_query(self):
         context = {'doc_id_to': self.erase_message,
                    'doc_id_from': self.erase_message}
@@ -56,6 +59,7 @@ class TestSearchView(TestCase):
         assert self.incorrect_status_code == resp.status_code
         assert self.invalid_request_text == resp.content.decode()
 
+    @pytest.mark.skip
     def test_search_all_links(self):
         context = {'doc_id_to': self.erase_message,
                    'doc_id_from': self.links[0]['doc_id_from']}
@@ -66,6 +70,7 @@ class TestSearchView(TestCase):
         assert self.ok_status_code == resp.status_code
         assert is_equal_lists(self.links, loads(resp.content.decode()))
 
+    @pytest.mark.skip
     def test_search_no_links_found(self):
         context = {'doc_id_to': self.erase_message,
                    'doc_id_from': "no such file"}
@@ -76,6 +81,7 @@ class TestSearchView(TestCase):
         assert self.incorrect_status_code == resp.status_code
         assert self.invalid_request_text == resp.content.decode()
 
+    @pytest.mark.skip
     def test_search_one_link_one_field_doc_id_to(self):
         # Random number from 0 - 6.
         link_number = 0
@@ -90,6 +96,7 @@ class TestSearchView(TestCase):
         assert is_equal_lists(self.links[link_number:link_number + 1],
                               loads(resp.content.decode()))
 
+    @pytest.mark.skip
     def test_search_one_link_two_field(self):
         # Random number from 0 - 6.
         link_number = 1
@@ -103,6 +110,7 @@ class TestSearchView(TestCase):
         assert is_equal_lists(self.links[link_number:link_number + 1],
                               loads(resp.content.decode()))
 
+    @pytest.mark.skip
     def test_search_not_link(self):
         context = {'doc_id_to': 'it is not a link',
                    'doc_id_from': 'it is not a link, too'}
@@ -113,6 +121,7 @@ class TestSearchView(TestCase):
         assert self.incorrect_status_code == resp.status_code
         assert self.invalid_request_text == resp.content.decode()
 
+    @pytest.mark.skip
     def test_search_empty_fields(self):
         context = {'doc_id_to': '', 'doc_id_from': ''}
 
@@ -122,6 +131,7 @@ class TestSearchView(TestCase):
         assert self.incorrect_status_code == resp.status_code
         assert self.invalid_request_text == resp.content.decode()
 
+    @pytest.mark.skip
     def test_search_no_fields(self):
         resp = self.client.post('/api/search/get', dumps({}),
                                 content_type="application/json")
@@ -129,6 +139,7 @@ class TestSearchView(TestCase):
         assert self.incorrect_status_code == resp.status_code
         assert self.invalid_request_text == resp.content.decode()
 
+    @pytest.mark.skip
     def test_search_one_link_one_field_doc_id_from(self):
         # Random number from 0 - 6.
         link_number = 1

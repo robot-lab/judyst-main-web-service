@@ -213,5 +213,30 @@ def create_link_from_fields(fields):
                                 doc_id_to=fields['doc_id_to'],
                                 to_doc_title=fields['to_doc_title'],
                                 citations_number=fields['citations_number'],
-                                contexts_list=fields['contexts_list'],
                                 positions_list=fields['positions_list'])
+
+
+def get_links(validate_data):
+    """
+    function for getting links from db
+
+    :param validate_data: Dict
+         validate data from request
+
+    :return: queryset
+        queryset of Links model
+    """
+    if validate_data['doc_id_from'] != -1 and\
+            validate_data['doc_id_to'] != -1:
+        queryset = Links.objects.all().filter(
+            doc_id_from=validate_data['doc_id_from'])\
+            .filter(doc_id_to=validate_data['doc_id_to'])
+    elif validate_data['doc_id_from'] != -1:
+        queryset = Links.objects.all().filter(
+            doc_id_from=validate_data['doc_id_from'])
+    elif validate_data['doc_id_to'] != -1:
+        queryset = Links.objects.all().filter(
+            doc_id_to=validate_data['doc_id_to'])
+    else:
+        queryset = []
+    return queryset
