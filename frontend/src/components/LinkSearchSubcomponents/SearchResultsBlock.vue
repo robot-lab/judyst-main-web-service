@@ -1,14 +1,13 @@
 <template>
 <div class="container">    
-    <p>{{tmp}}</p>
-    <div class = "search-result-block">
-        <PageList v-bind:Count="LinksCount" 
-        v-bind:Step="this.Step"
-        v-bind:Current="CurrentRange"
-        v-on:PageChanged="CurrentRange = $event"/>  
+    <div class="search-result-block">
+    <span class="page-list"><PageList v-bind:Count="LinksCount" v-bind:Step="Step" v-bind:Current="CurrentRange" v-on:PageChanged="getLinks($event)" /></span>
+    <div class="links-block" v-if="isLoaded">
         <div v-for="Link in Links" :key="Link.id">
             <SearchResult v-bind:CleanLink="Link.Link" />
         </div>
+    </div>
+    <p v-else>Загружается...</p>
     </div>
 </div>
 </template>
@@ -30,13 +29,48 @@ import PageList from "../PageList.vue"
             Step: 20,
             CurrentRange: [1, this.Step],
             url : '/api/search/get',
-            tmp: null
+            tmp: null,
+            Links: [],
+            isLoaded : false
         }
     },
-    computed:
-    {
-      Links: function ()
+   
+    components: {
+        SearchResult,
+        PageList
+    },
+
+    methods: {
+        fillContexts: function(links)
+        {
+            for (var i = 0; i < links.length; i++)
+            {
+                var link = links[i];
+                link.contexts = []
+                for(var j = 0; j < link.positions_list.length; j++)
+                {
+                    var position = link.positions_list[j]
+                    var before = link.text.substr(position.context_start,
+                                                    position.link_start - position.context_start)
+                    var citation = link.text.substr(position.link_start,
+                                                    position.link_end - position.link_start)
+                    var after = link.text.substr(position.link_end,
+                                                    position.context_end - position.link_end)
+                    
+                    var context = {before: before, citation: citation, after: after}
+                    // this.tmp = link.positions_list[j]
+                    link.contexts.push(context)
+
+                }
+                links[i] = link
+            }
+            return links
+        },
+
+        getLinks: function (range)
       {
+        this.CurrentRange = range;
+        this.isLoaded = false;
         var idFrom = this.IdFrom;
         var idTo = this.IdTo;
         if (idFrom == 'any')
@@ -51,56 +85,37 @@ import PageList from "../PageList.vue"
         var req = {doc_id_from:idFrom,doc_id_to:idTo, range:this.CurrentRange}
         var jsonReq = JSON.stringify(req)
         var xhr = new XMLHttpRequest()
-        xhr.open('POST', this.url, false)
+        xhr.open('POST', this.url, true)
         xhr.setRequestHeader("content-type", "application/json")
         
         xhr.withCredentials = true;
-        
+        var vue = this ;       
         xhr.send(jsonReq)
-        var json = xhr.responseText
-        // this.tmp = json
-        var linkList = JSON.parse(json)
-        var ret = []
-        linkList = this.fillContexts(linkList)
-        for (var i = 0; i < linkList.length; i ++)
-            ret.push({id: i, Link: linkList[i]})
 
-        return ret
-      }
-
-    },
-    components: {
-        SearchResult,
-        PageList
-    },
-    methods: {
-        fillContexts: function(links)
-        {
-            for (var i = 0; i < links.length; i++)
-            {   var link = links[i];
-                link.contexts = []
-                for(var j = 0; j < link.positions_list.length; j++)
-                {
-                    var position = link.positions_list[j]
-                    var context = {}
-                    context.before = link.text.substr[position.context_start,
-                                                    position.citation_start - position.context_start]
-                    context.citation = link.text.substr[position.citation_start,
-                                                    position.citation_end - position.citation_start]
-                    context.after = link.text.substr[position.citation_end,
-                                                    position.context_end - position.citation_end]
-                    link.contexts.push(context)
-                }
-                links[i] = link
+        xhr.onreadystatechange = function(){
+            if (this.readyState != 4) return;
+            if (this.status != 200) {
+                alert( 'ошибка: ' + (this.status ? this.statusText : 'запрос не удался') );
+                return;
             }
-            return links
+            var json = xhr.responseText
+            vue.tmp = json
+            var linkList = JSON.parse(json)
+            var ret = []
+            linkList = vue.fillContexts(linkList)
+            for (var i = 0; i < linkList.length; i ++)
+                ret.push({id: i, Link: linkList[i]})
+            vue.Links = ret
+
+            vue.isLoaded = true
         }
+      }
     },
 
     created: function () {
         if (this.LinksCount < this.Step)
             this.CurrentRange[1] = this.LinksCount
-                
+        this.getLinks(this.CurrentRange)
     }
     
  }
@@ -115,5 +130,12 @@ import PageList from "../PageList.vue"
   height: 58%;
   position: fixed;
   background-color: #EBEBEB
+}
+.page-list{
+    position: relative;
+    overflow: hidden;
+}
+.links-block{
+    overflow: scroll;
 }
 </style>
