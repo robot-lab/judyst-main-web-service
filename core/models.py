@@ -8,7 +8,7 @@ class CustomUser(AbstractUser):
     first_name = models.CharField(blank=True, max_length=255)
     last_name = models.CharField(blank=True, max_length=255)
     organization = models.CharField(blank=True, max_length=255)
-    verificate = models.BooleanField(blank=True, default=False)
+    verification = models.BooleanField(blank=True, default=False)
 
     def __str__(self):
         return self.email
