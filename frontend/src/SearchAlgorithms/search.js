@@ -1,6 +1,6 @@
-import Citations from "./citations";
-import Delimiters from './delimiters';
-import Keywords from './keywords';
+import Citations from "./citations.js";
+import Delimiters from './delimiters.js';
+import Keywords from './keywords.js';
 
 
 function ExtendedSearch()
@@ -10,7 +10,7 @@ function ExtendedSearch()
 
 function Search(searchRequest)
 {   
-    var keys = Keywords.values();
+    var keys = Keywords.values;
 
     for (var element in keys)
         if (searchRequest.indexOf(element) !== -1)

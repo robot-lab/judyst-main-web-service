@@ -1,6 +1,7 @@
 
 export default
 {
-    anyMark: 'any',
+    any_front: '*',
+    any_back: -1,
     
 }

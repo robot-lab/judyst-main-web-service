@@ -1,5 +1,5 @@
 <template>
-  <div class="link-search-main">
+  <div class="link-search-main container">
       <SearchBlock class="search-block"  v-on:SearchResultsReceived="SearchResult=$event"/>
       <SearchResultsBlock v-if="SearchResult != null"
                           v-bind:SearchResults="SearchResult"/>
@@ -37,6 +37,6 @@ export default {
 
 }
 .link-search-main{
-  overflow: auto;
+  overflow: hidden ;
 }
 </style>

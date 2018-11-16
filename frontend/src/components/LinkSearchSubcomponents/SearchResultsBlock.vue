@@ -1,13 +1,20 @@
 <template>
 <div class="container">    
-    <div class="search-result-block">
-    <span class="page-list"><PageList v-bind:Count="LinksCount" v-bind:Step="Step" v-bind:Current="CurrentRange" v-on:PageChanged="getLinks($event)" /></span>
-    <div class="links-block" v-if="isLoaded">
-        <div v-for="Link in Links" :key="Link.id">
-            <SearchResult v-bind:CleanLink="Link.Link" />
+    <!-- <p>{{tmp}}</p> -->
+    <div class="search-result-block" v-if="LinksCount > 0">
+        <span class="page-list"><PageList v-bind:Count="LinksCount" v-bind:Step="Step" v-bind:Current="CurrentRange" v-on:PageChanged="getLinks($event)" /></span>
+        <div class="links-block" v-if="isLoaded">
+            <div v-for="Link in Links" :key="Link.id">
+                <SearchResult v-bind:CleanLink="Link.Link" />
+            </div>
+        <span class="page-list"><PageList v-bind:Count="LinksCount" v-bind:Step="Step" v-bind:Current="CurrentRange" v-on:PageChanged="getLinks($event)" /></span>
+        <FooterController/>
         </div>
+        <p v-else>Загружается...</p>
+        
     </div>
-    <p v-else>Загружается...</p>
+    <div class="container" v-else>
+            Поиск не дал результатов. 
     </div>
 </div>
 </template>
@@ -16,6 +23,7 @@
 <script>
 import SearchResult from "./SearchResult.vue"
 import PageList from "../PageList.vue"
+import FooterController from "../FooterController.vue"
 
  export default {
     name: 'SearchResultBlock',
@@ -25,9 +33,9 @@ import PageList from "../PageList.vue"
     },
     data: function() {
         return {
-            Step: 20,
-            CurrentRange: [1, this.Step],
-            url : '/api/search/get',
+            Step: 10,
+            CurrentRange: [1, 20],
+            url : 'api/search/get',
             tmp: null,
             Links: [],
             isLoaded : false
@@ -36,9 +44,13 @@ import PageList from "../PageList.vue"
 
     computed: {
         LinksCount: function () {
-            return this.SearchResults.reduce(function (acum, x){
-                return acum + x.Size;
-            })},
+            var acum = 0;
+            for (var i = 0; i < this.SearchResults.length; i++)
+            {
+                acum += this.SearchResults[i].Size;
+            }
+            return acum; 
+        },
 
 
 
@@ -46,7 +58,8 @@ import PageList from "../PageList.vue"
    
     components: {
         SearchResult,
-        PageList
+        PageList,
+        FooterController
     },
 
     methods: {
@@ -95,13 +108,13 @@ import PageList from "../PageList.vue"
             var req = {doc_id_from: searchResult.doc_id_from,
                        doc_id_to: searchResult.doc_id_to,
                        range: range}
-            var jsonReq = JSON.stringify(req)
-            var xhr = new XMLHttpRequest()
-            xhr.open('POST', url, true)
-            xhr.setRequestHeader("content-type", "application/json")
+            var jsonReq = JSON.stringify(req);
+            // vue.tmp = searchResult;
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', url, true);
+            xhr.setRequestHeader("content-type", "application/json");
             
-            xhr.withCredentials = true;
-            xhr.send(jsonReq)
+            xhr.send(jsonReq);
 
             xhr.onreadystatechange = function(){
                 if (this.readyState != 4) return;
@@ -110,7 +123,6 @@ import PageList from "../PageList.vue"
                     return;
                 }
                 var json = xhr.responseText
-                vue.tmp = json
                 var linkList = JSON.parse(json)
                 var ret = []
                 linkList = vue.fillContexts(linkList)
@@ -118,13 +130,16 @@ import PageList from "../PageList.vue"
                     ret.push({id: i, Link: linkList[i]})
                 links = links.concat(ret)
                 finishedCounter++;
+                // vue.tmp = {a: startedCoutnter, b: finishedCounter};
             }
         }
-
-        while (i < this.SearchResult.length && peakedLinksCount < range[0])
+        // vue.tmp = this.SearchResults;
+        // vue.tmp = i; 
+        while (i < this.SearchResults.length && peakedLinksCount < range[0])
         {
             if (peakedLinksCount + this.SearchResults[i].Size <= range[0])
             {
+                // vue.tmp = {a:peakedLinksCount + this.SearchResults[i].Size, b:range[0]};
                 peakedLinksCount += this.SearchResults[i].Size;
                 i++;
             }
@@ -133,7 +148,7 @@ import PageList from "../PageList.vue"
                 var min_point = range[0] - peakedLinksCount;
                 if (peakedLinksCount + this.SearchResults[i].Size <= range[1])
                 {
-                    var currRange = [min_point, this.SearchResult[i].Size]
+                    var currRange = [min_point, this.SearchResults[i].Size]
                     peakedLinksCount += this.SearchResults[i].Size; 
                 }
                 else
@@ -143,19 +158,22 @@ import PageList from "../PageList.vue"
                     peakedLinksCount += range[1] - range[0]; 
                 }
                 startedCoutnter++;
-                get(currRange, this.SearchResults[i]);
+                var j = i; 
+                setTimeout(function(){
+                    // vue.tmp = i; 
+                    
+                    get(currRange, vue.SearchResults[j]);},0);
                 i++;
                 break;
             }
 
         }
-        
-        while (i < this.SearchResult.length && peakedLinksCount < range[1])
+        while (i < this.SearchResults.length && peakedLinksCount < range[1])
         {
             if (peakedLinksCount + this.SearchResults[i].Size <= range[1])
             {
                 
-                currRange = [0, this.SearchResult[i].Size];
+                currRange = [0, this.SearchResults[i].Size];
                 peakedLinksCount += this.SearchResults[i].Size;
                 
             }
@@ -164,65 +182,31 @@ import PageList from "../PageList.vue"
                 currRange = [0, range[1] - peakedLinksCount]
                 peakedLinksCount = range[1]
             }
-            get(currRange, this.SearchResult[i])
+            j = i;
+            setTimeout(function(){get(currRange, vue.SearchResults[j]);},0);
             startedCoutnter++;
             i++;
         }
-        setTimeout(function(){
-            if (startedCoutnter == finishedCounter)
+        var checker = function(){
+            // vue.tmp = {a: startedCoutnter, b: finishedCounter};
+            if (startedCoutnter <= finishedCounter)
             {
+
                 vue.Links = links;
                 vue.isLoaded = true;
             }
-        }, 0);
+            else
+            setTimeout(checker, 500);
+        };
+        setTimeout(checker, 0);
         
 
-
-
-        // this.CurrentRange = range;
-        // this.isLoaded = false;
-        // var idFrom = this.IdFrom;
-        // var idTo = this.IdTo;
-        // if (idFrom == 'any')
-        //     idFrom = -1
-        // if (idTo == 'any')
-        //     idTo = -1
-        // if (idTo == idFrom)
-        // {
-        //     return []    
-        // }
-        
-        // var req = {doc_id_from:idFrom,doc_id_to:idTo, range:this.CurrentRange}
-        // var jsonReq = JSON.stringify(req)
-        // var xhr = new XMLHttpRequest()
-        // xhr.open('POST', this.url, true)
-        // xhr.setRequestHeader("content-type", "application/json")
-        
-        // xhr.withCredentials = true;
-        // var vue = this ;       
-        // xhr.send(jsonReq)
-
-        // xhr.onreadystatechange = function(){
-        //     if (this.readyState != 4) return;
-        //     if (this.status != 200) {
-        //         alert( 'ошибка: ' + (this.status ? this.statusText : 'запрос не удался') );
-        //         return;
-        //     }
-        //     var json = xhr.responseText
-        //     vue.tmp = json
-        //     var linkList = JSON.parse(json)
-        //     var ret = []
-        //     linkList = vue.fillContexts(linkList)
-        //     for (var i = 0; i < linkList.length; i ++)
-        //         ret.push({id: i, Link: linkList[i]})
-        //     vue.Links = ret
-
-        //     vue.isLoaded = true
-        // }
       }
     },
 
     created: function () {
+        // this.tmp = this.LinksCount;
+        this.CurrentRange = [1, this.Step];
         if (this.LinksCount < this.Step)
             this.CurrentRange[1] = this.LinksCount
         this.getLinks(this.CurrentRange)
@@ -238,14 +222,14 @@ import PageList from "../PageList.vue"
   left: 15%;
   width:70%;
   height: 58%;
-  position: fixed;
-  background-color: #EBEBEB
+  position: relative;
 }
 .page-list{
     position: relative;
     overflow: hidden;
 }
 .links-block{
-    overflow: scroll;
 }
+
 </style>
+

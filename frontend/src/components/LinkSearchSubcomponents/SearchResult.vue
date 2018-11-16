@@ -1,5 +1,5 @@
 <template>
-   <div class= "container link-container">
+   <div class= "container link-container card card-body">
         <span> <p>Цитирующий документ: {{CleanLink.doc_id_from}} </p></span>
         <span> <p>Цитируемый документ: {{CleanLink.doc_id_to}} </p></span>
         <span> <p>Заголовок цитируемого документа: {{CleanLink.to_doc_title}} </p></span>
@@ -53,5 +53,6 @@
   overflow: hidden;
   word-wrap: break-word; 
   margin-bottom: 10%;
+  
 }
 </style>

@@ -1,12 +1,24 @@
 <template>
-    <form class = "form-edit">
-        <span>
-        <input name="search" type="text" placeholder="Введите поисковый запрос" value="" id="input-search" class = "form-control" required autofocus>
-        <button class="btn btn-lg btn-primary btn-block" type="button" id="search-start-button" v-on:click="SearchButtonClick()">Поиск</button>
-        </span>
-    <!-- <p>{{tmp}}</p> -->
-    </form>
+<div class="container">
+	<div class="row">
+        <div class="col-12">
+            <div id="custom-search-input">
+                <div class="input-group">
+                    <input type="text" id="input-search" class="search-query form-control" placeholder="Поиск" />
+                    <span class="input-group-btn">
+                        <button type="button"  >
+                            <span class="fa fa-search"  v-on:click="SearchButtonClick()"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+        </div>
+	</div>
+</div>
 </template>
+
+
+
 <script>
 import Search from '../../SearchAlgorithms/search.js'
 
@@ -38,16 +50,18 @@ export default {
         var rets = [];
         var counter = 0;
         var vue = this;        
-        for (var req in requests)
+        for (var i = 0; i < requests.length; i++)
         {
+            var req = requests[i];
+            // this.tmp = req;
+
             var jsonReq = JSON.stringify(req);
             var xhr = new XMLHttpRequest();
             xhr.open('POST', this.url, true);
             xhr.setRequestHeader("content-type", "application/json")
             
-            xhr.withCredentials = true;
             xhr.send(jsonReq)
-
+            vue.tmp = []
             xhr.onreadystatechange = function () {
                 if (this.readyState != 4) return;
                 if (this.status != 200) {
@@ -55,9 +69,10 @@ export default {
                     counter += 1;
                     return;
                 }
-                var json = xhr.responseText
+                var json = this.responseText + '';
+                vue.tmp.push(req);
                 var linkCount = JSON.parse(json)
-                rets.push({Size: linkCount.size, IdFrom: req.idFrom, IdTo: req.idTo})
+                rets.push({Size: linkCount.size, doc_id_from: req.doc_id_from, doc_id_to: req.doc_id_to})
                 counter += 1; 
             }
 
@@ -65,49 +80,16 @@ export default {
 
         var waiter = function(){
             if (counter === requests.length)
-                vue.$emit('SearchResultsReceived', rets);
+                {
+                    vue.$emit('SearchResultsReceived', rets);
+                    // vue.tmp = rets;    
+                }
             else
                 setTimeout(waiter, 500);
         }
         setTimeout(waiter, 500);                
 
 
-
-        // var idFrom = document.getElementById("input-uid-from").value
-        // var idTo = document.getElementById("input-uid-to").value
-        //     if (idFrom == 'any' || idFrom == '')
-        //     idFrom = -1
-        // if (idTo == 'any' || idTo == '')
-        //     idTo = -1
-        // if (idTo == idFrom)
-        // {
-        //     this.$emit('SearchResultsReceived', null)
-        //     return    
-        // }
-        
-        // var req = {doc_id_from:idFrom,doc_id_to:idTo}
-        // var jsonReq = JSON.stringify(req)
-        // var xhr = new XMLHttpRequest()
-        // xhr.open('POST', this.url, true)
-        // xhr.setRequestHeader("content-type", "application/json")
-        
-        // xhr.withCredentials = true;
-        // var vue = this;        
-        // xhr.send(jsonReq)
-
-        // xhr.onreadystatechange = function () {
-        //     if (this.readyState != 4) return;
-        //     if (this.status != 200) {
-        //         alert( 'ошибка: ' + (this.status ? this.statusText : 'запрос не удался') );
-        //         return;
-        //     }
-        //     var json = xhr.responseText
-        //     //var json = this.searchResultsRaw
-        //     var linkCount = JSON.parse(json)
-        //     vue.tmp = linkCount
-        //     var ret = {Size: linkCount.size, IdFrom: idFrom, IdTo: idTo}
-        //     vue.$emit('SearchResultsReceived', ret)            
-        // }
       }
   }
 }
@@ -115,35 +97,49 @@ export default {
  
 
  <style scoped>
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css');
+
+.container{
+    padding: 10%;
+    text-align: center;
+}
+#custom-search-input {
+    margin:0;
+    margin-top: 10px;
+    padding: 0;
+}
  
-    .form-edit {
-    width: 100%;
-    max-width: 330px;
-    padding: 15px;
-    margin: 0 auto;
-    }
-    .form-edit .checkbox {
-    font-weight: 400;
-    }
-    .form-edit .form-control {
-    position: relative;
-    box-sizing: border-box;
-    height: auto;
-    padding: 10px;
-    font-size: 16px;
-    }
-    .form-edit .form-control:focus {
+#custom-search-input .search-query {
+    width:100%;
+    padding-right: 3px;
+    padding-left: 15px;
+        /* IE7-8 doesn't have border-radius, so don't indent the padding */
+    margin-bottom: 0;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 0;
+}
+ 
+#custom-search-input button {
+    border: 0;
+    background: none;
+    /** belows styles are working good */
+    padding: 2px 5px;
+    margin-top: 2px;
+    position: absolute;
+    right:0;
+    /* IE7-8 doesn't have border-radius, so don't indent the padding */
+    margin-bottom: 0;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    color:#D9230F;
+    cursor: unset;
     z-index: 2;
-    }
-    .form-edit input[type="email"] {
-    margin-bottom: -1px;
-    border-bottom-right-radius: 0;
-    border-bottom-left-radius: 0;
-    }
-    .form-edit input[type="password"] {
-    margin-bottom: 10px;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-    }
+}
+ 
+.search-query:focus{
+    z-index: 0;   
+}
 
  </style>

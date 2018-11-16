@@ -1,6 +1,6 @@
 <template>
 <div class="container ">
-    <LinkSearch/>
+    <Search/>
 </div>
 </template>
 
