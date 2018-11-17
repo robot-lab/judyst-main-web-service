@@ -27,12 +27,12 @@ function RequestLinks(range, url, searchResults, callback)
               alert( 'ошибка: ' + (this.status ? this.statusText : 'запрос не удался') );
               return;
           }
-          var json = xhr.responseText
-          var linkList = JSON.parse(json)
+          var json = xhr.responseText;
+          var linkList = JSON.parse(json);
           var ret = []
           for (var i = 0; i < linkList.length; i ++)
-              ret.push({id: i, Link: linkList[i]})
-          links = links.concat(ret)
+              ret.push({id: i, Link: linkList[i]});
+          links = links.concat(ret);
           finishedCounter++;
       }
   }
