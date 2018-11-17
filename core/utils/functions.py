@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate
 from django.core.mail import EmailMessage
 from rest_framework.authtoken.models import Token
 
-from core.models import CustomUser as User, Links
+from core.models import CustomUser as User, Links, Documents
 
 
 class CheckText:
@@ -239,5 +239,26 @@ def get_links(validate_data):
         queryset = Links.objects.all().filter(
             doc_id_to=validate_data['doc_id_to'])
     else:
-        queryset = []
+        queryset = Links.objects.all()
     return queryset
+
+
+def get_document(validate_data):
+    """
+    function for getting document from db
+
+    :param validate_data: Dict
+         validate data from request
+
+    :return: document
+         Document model
+    """
+    document = Documents.objects.all().get(doc_id=validate_data['doc_id'])
+    serializable_document = {
+        'doc_id': document.doc_id,
+        'release_date': document.release_date,
+        'title': document.title,
+        'text_source_url': document.text_source_url,
+        'text': document.text
+    }
+    return serializable_document

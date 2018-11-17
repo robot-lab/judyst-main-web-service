@@ -19,7 +19,8 @@ function CitationFastSearch(requestString)
     if (idsFrom.indexOf(marks.any_front) !== -1)
     {    if (idsTo.indexOf(marks.any_front) !== -1)
         {
-            return null; // TODO let getting out all links. 
+            requests.push({doc_id_from: marks.any_back, doc_id_to: marks.any_back});
+             
         }
         else
         {

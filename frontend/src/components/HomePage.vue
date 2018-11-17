@@ -6,7 +6,7 @@
 
 
 <script>
-import Search from './LinkSearchSubcomponents/Search'
+import Search from './SearchSubcomponents/Search'
 
 export default {
   name: 'HomePage',

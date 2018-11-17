@@ -19,3 +19,10 @@ class ErrorResponse(object):
         self.response.status_code = 400
         self.response.data = {"code": 400, "message": "user already exist"}
         return self.response
+
+    def not_found(self, data_caption="data"):
+        """data not found response 404"""
+        self.response.status_code = 400
+        self.response.data = {"code": 404,
+                              "message": f"{data_caption} not found"}
+        return self.response

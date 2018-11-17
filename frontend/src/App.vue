@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import Search from './components/LinkSearchSubcomponents/Search.vue'
+import Search from './components/SearchSubcomponents/Search.vue'
 import Footer from './components/Footer.vue'
 import Navbar from './components/Navbar.vue'
 import Workspace from './components/Workspace.vue'

@@ -11,7 +11,7 @@ from core.utils.decorators import redirect_if_authorize
 from core.utils.exceptions import ErrorResponse
 from core.utils.functions import get_token, is_not_valid_text_fields, \
     send_email, get_user_or_none, create_user_from_fields, check_email, \
-    is_not_fields_include, check_password, get_links
+    is_not_fields_include, check_password, get_links, get_document
 
 
 class UserViewSet(viewsets.ViewSet):
@@ -128,6 +128,16 @@ class SearchViewSet(viewsets.ViewSet):
             return ErrorResponse().not_valid()
         queryset = get_links(validate_data)
         return Response({"size": len(queryset)})
+
+    def document(self, request):
+        validate_data = request.data
+        if is_not_fields_include(validate_data, ['doc_id']):
+            return ErrorResponse().not_valid()
+        document = get_document(validate_data)
+        if not document:
+            return ErrorResponse().not_found('document')
+        return Response(document)
+
 
 def main(request):
     return FileResponse(open(BASE_DIR+'/frontend/dist/static/index.html', 'rb'))

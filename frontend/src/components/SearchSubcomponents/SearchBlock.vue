@@ -4,7 +4,7 @@
         <div class="col-12">
             <div id="custom-search-input">
                 <div class="input-group">
-                    <input type="text" id="input-search" class="search-query form-control" placeholder="Поиск" />
+                    <input type="text" id="input-search" class="search-query form-control" placeholder="Поиск" @keyup.enter="SearchButtonClick()"/>
                     <span class="input-group-btn">
                         <button type="button"  >
                             <span class="fa fa-search"  v-on:click="SearchButtonClick()"></span>
@@ -20,7 +20,8 @@
 
 
 <script>
-import Search from '../../SearchAlgorithms/search.js'
+import requests from '../../utils/requests.js'
+import urls from '../../utils/urls.js'
 
 
 export default {
@@ -28,7 +29,7 @@ export default {
   data: function ()
   {
      return {
-        url : "api/search/number_of_links",
+        url : urls.Search,
         searchResultsRaw: "[\
             {\"doc_id_from\": \"КСРФ/34-П/2018\",\"doc_id_to\": \"КСРФ/5-П/2007\",\"to_doc_title\": \"титл\",\"citations_number\": 1,\"contexts_list\": [\"Контектс\"],\"positions_list\": [9113]},\
             {\"doc_id_from\": \"КСРФ/34-П/2018\",\"doc_id_to\": \"КСРФ/5-П/2007\",\"to_doc_title\": \"титл\",\"citations_number\": 1,\"contexts_list\": [\"Контектс\"],\"positions_list\": [9113]}\
@@ -41,56 +42,11 @@ export default {
         
         
         var searchRequst = document.getElementById('input-search').value;
-        var requests = Search(searchRequst);
-        if (requests == null)
-        {
-            this.$emit('SearchResultsReceived', null)
-            return    
+        var vue = this;
+        requests.RequestSearch(searchRequst, this.url, function(result){
+            vue.$emit('SearchResultsReceived', result);
+        });
         }
-        var rets = [];
-        var counter = 0;
-        var vue = this;        
-        for (var i = 0; i < requests.length; i++)
-        {
-            var req = requests[i];
-            // this.tmp = req;
-
-            var jsonReq = JSON.stringify(req);
-            var xhr = new XMLHttpRequest();
-            xhr.open('POST', this.url, true);
-            xhr.setRequestHeader("content-type", "application/json")
-            
-            xhr.send(jsonReq)
-            vue.tmp = []
-            xhr.onreadystatechange = function () {
-                if (this.readyState != 4) return;
-                if (this.status != 200) {
-                    //console.log( 'ошибка: ' + (this.status ? this.statusText : 'запрос не удался') );
-                    counter += 1;
-                    return;
-                }
-                var json = this.responseText + '';
-                vue.tmp.push(req);
-                var linkCount = JSON.parse(json)
-                rets.push({Size: linkCount.size, doc_id_from: req.doc_id_from, doc_id_to: req.doc_id_to})
-                counter += 1; 
-            }
-
-        }
-
-        var waiter = function(){
-            if (counter === requests.length)
-                {
-                    vue.$emit('SearchResultsReceived', rets);
-                    // vue.tmp = rets;    
-                }
-            else
-                setTimeout(waiter, 500);
-        }
-        setTimeout(waiter, 500);                
-
-
-      }
   }
 }
 </script>
