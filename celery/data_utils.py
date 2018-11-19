@@ -69,6 +69,22 @@ def check_links_in_database():
     print(time.time())
         
 
+def gen_graph(outPath):
+    a = ModelData()
+    source = web_crawler.
+                ksrf_models.\
+                KSRFDatabaseWrapper('KSRFDatabase', a)
+    link_analysis.Init(source)
+
+    link_analysis.process_period(
+        firstDateOfDocsForProcessing='18.03.1900',
+        lastDateOfDocsForProcessing='14.08.2020',
+        graphOutputFilePath=outPath,
+        showPicture=False,
+        sendRequestToUpdatingHeadersInBaseFromSite=False,
+        )
+
+
 
 if __name__ == '__main__':
-    check_links_in_database()
+    gen_graph('graph.json')
