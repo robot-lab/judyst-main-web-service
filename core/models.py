@@ -23,7 +23,7 @@ class Documents(models.Model):
     text = models.TextField()
     text_source_url = models.TextField(blank=False)
     effective_date = models.DateField()
-    absolute_path = models.TextField(blank=False)
+    absolute_path = models.TextField()
     interredaction_id = models.TextField()
     # i suppose to leave this field as text and store here json, for beginning
     cons_selected_info = models.TextField()
