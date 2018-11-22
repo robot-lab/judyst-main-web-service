@@ -4,6 +4,8 @@ Would be supported lately.
 
 Test functions connected to link model.
 """
+import pytest
+
 from django.test import TestCase
 
 from core.tests.utils import set_links_in_db_from_file, \
@@ -12,6 +14,7 @@ from core.models import Links
 from core.utils.functions import create_link_from_fields
 
 
+@pytest.mark.skip
 class TestLinksFunctions(TestCase):
 
     def tearDown(self):

@@ -30,7 +30,7 @@ def test_user_fields_values(default_user_in_bd):
     assert default_user_fields['email'] == user.username
     assert user.check_password(default_user_fields['password'])
     assert default_user_fields['organization'] == user.organization
-    assert not user.verificate
+    assert not user.verification
 
 
 @pytest.mark.django_db
@@ -45,12 +45,12 @@ def test_fields_params(default_user_in_bd, param_custom_user_fields):
 
 
 @pytest.mark.django_db
-def test_verificate(default_user_in_bd):
+def test_verification(default_user_in_bd):
     user = CustomUser.objects.get(email=default_user_fields['email'])
-    verificate_label = user._meta.get_field('verificate').verbose_name
-    verificate_default = user._meta.get_field('verificate').default
-    assert 'verificate' == verificate_label
-    assert isinstance(verificate_default, bool) and not verificate_default
+    verification_label = user._meta.get_field('verification').verbose_name
+    verification_default = user._meta.get_field('verification').default
+    assert 'verification' == verification_label
+    assert isinstance(verification_default, bool) and not verification_default
 
 
 @pytest.mark.django_db

@@ -3,7 +3,7 @@ addons:
   postgresql: "9.6"
 before_script:
   - psql -c 'create database database;' -U postgres
-  - python3 manage.py makemigrations core
+  - python3 manage.py makemigrations
   - python3 manage.py migrate
 python:
   - "3.6"
