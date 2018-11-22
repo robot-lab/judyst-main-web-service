@@ -21,7 +21,7 @@ class Documents(models.Model):
     title = models.TextField(blank=False)
     release_date = models.DateField(blank=False)
     text = models.TextField()
-    text_source_url = models.URLField(blank=False)
+    text_source_url = models.TextField(blank=False)
     effective_date = models.DateField()
     absolute_path = models.TextField(blank=False)
     interredaction_id = models.TextField()
