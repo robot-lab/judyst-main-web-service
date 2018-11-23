@@ -19,10 +19,10 @@ class Documents(models.Model):
     supertype = models.TextField(blank=False)
     doc_type = models.TextField(blank=False)
     title = models.TextField(blank=False)
-    release_date = models.DateField(blank=False)
+    release_date = models.TextField(blank=False)
     text = models.TextField()
     text_source_url = models.TextField(blank=False)
-    effective_date = models.DateField()
+    effective_date = models.TextField()
     absolute_path = models.TextField()
     interredaction_id = models.TextField()
     # i suppose to leave this field as text and store here json, for beginning
