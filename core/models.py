@@ -15,13 +15,18 @@ class CustomUser(AbstractUser):
 
 
 class Documents(models.Model):
-    doc_id = models.TextField(primary_key=True, blank=False, )
-    super_type = models.TextField()
-    release_date = models.TextField()
-    doc_type = models.TextField()
-    title = models.TextField()
-    text_source_url = models.URLField()
+    doc_id = models.TextField(unique=True, blank=False)
+    supertype = models.TextField(blank=False)
+    doc_type = models.TextField(blank=False)
+    title = models.TextField(blank=False)
+    release_date = models.TextField(blank=False)
     text = models.TextField()
+    text_source_url = models.TextField(blank=False)
+    effective_date = models.TextField()
+    absolute_path = models.TextField()
+    interredaction_id = models.TextField()
+    # i suppose to leave this field as text and store here json, for beginning
+    cons_selected_info = models.TextField()
 
 
 class Links(models.Model):

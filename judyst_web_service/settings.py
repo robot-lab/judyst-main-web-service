@@ -89,6 +89,7 @@ WSGI_APPLICATION = 'judyst_web_service.wsgi.application'
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 # settings for database
 if 'TRAVIS_CONF' in os.environ:
+    print('TRAVIS_CONF')
     conf = json.loads(open('travis_conf.json', 'r').read())
 else:
     conf = json.loads(open(BASE_DIR+'/conf.json', 'r').read())

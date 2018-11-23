@@ -2,6 +2,8 @@
 This is unsupported legacy code.
 Would be supported lately.
 """
+import pytest
+
 from json import loads, dumps
 
 from django.test import TestCase
@@ -12,6 +14,7 @@ from core.tests.utils import set_links_in_db_from_file, is_equal_lists, \
     get_dict_from_link, set_links_in_db_from_list
 
 
+@pytest.mark.skip
 class TestSearchView(TestCase):
 
     ok_status_code = 200
