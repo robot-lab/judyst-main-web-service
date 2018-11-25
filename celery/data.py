@@ -135,11 +135,12 @@ class ModelData(object):
 
 
 if __name__ == '__main__':
-    # a = ModelData(CustomUser)
+    a = ModelData()
     # print(a.get_data("email", "CustomUser", username="korwin@mail.ru"))
     # a.create_data("CustomUser", username="levozavr@mail.ru",
     #                email="levozavr@mail.ru", password="aaaassss")
     # a.edit_data({"email": "lev@mail.ru"}, "CustomUser",
     #               username="korwin@mail.ru")
     # print(a.get_all_data("email", "CustomUser"))
+    print(a.get_all_data("doc_id_from", model_name='Links'))
     pass

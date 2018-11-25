@@ -3,10 +3,11 @@ import web_crawler
 from web_crawler import DataType
 import link_analysis
 import time
+import os
     
 
 def update_database_from_localstorage(
-    fileStoragePath='./tmp/programming/Judyst/files'):
+        fileStoragePath='./tmp/programming/Judyst/files'):
     a = ModelData()
     source = web_crawler.ksrf_models.LocalFileStorageSource()
     source.folder_path = fileStoragePath
@@ -17,7 +18,6 @@ def update_database_from_localstorage(
 
 
 def check_documents_in_database():
-    a = ModelData()
     print(time.time())
     databaseSource = web_crawler.\
                      ksrf_models.KSRFDatabaseWrapper('KSRFDatabase', a)
@@ -69,6 +69,36 @@ def check_links_in_database():
     print(time.time())
         
 
+def fill_database_from_files(tasks):
+    print(time.time())
+    a = ModelData()    
+    wrapper = web_crawler.DatabaseWrapper('db_source', a)
+    for task in tasks:
+        web_crawler.tools.fill_data_source_from_file(
+            wrapper, task['filename'], dataType=task['dataType'],
+            fileFormat=task['fileFormat'])
+    print(time.time())
+
 
 if __name__ == '__main__':
-    check_links_in_database()
+    tasks = [
+              {
+              'filename': 'files/TestHeaders.json',
+              'dataType': DataType.DOCUMENT_HEADER,
+              'fileFormat': 'json'
+            #   },
+            #   {
+            #   'filename': 'files/texts.json',
+            #   'dataType': DataType.DOCUMENT_TEXT,
+            #   'fileFormat': 'json'
+            #   },
+            #   {
+            #   'filename': 'files/Codecs_cleanLinks.json',
+            #   'dataType': DataType.LINK,
+            #   'fileFormat': 'json'
+            #   },
+              
+              
+
+              ]
+    fill_database_from_files(tasks)
