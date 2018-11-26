@@ -29,6 +29,22 @@ function DeStashDocId(docId)
 }
 
 
+function StashRequest(searchRequest)
+{
+    searchRequest = searchRequest.split('/').join('_');
+    return searchRequest;
+}
+
+
+
+function DeStashRequest(searchRequest)
+{
+    searchRequest = searchRequest.split('_').join('/');
+    return searchRequest;
+}
+
+
+
 // fillContexts: function(links)
         // {
         //     for (var i = 0; i < links.length; i++)
@@ -61,5 +77,7 @@ export default{
     StashDocId,
     DeStashDocId,
     HashLink,
+    StashRequest,
+    DeStashRequest,
     
 }

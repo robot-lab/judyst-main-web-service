@@ -82,23 +82,29 @@ def fill_database_from_files(tasks):
 
 if __name__ == '__main__':
     tasks = [
-              {
-              'filename': 'files/TestHeaders.json',
-              'dataType': DataType.DOCUMENT_HEADER,
-              'fileFormat': 'json'
-            #   },
             #   {
-            #   'filename': 'files/texts.json',
-            #   'dataType': DataType.DOCUMENT_TEXT,
+            #   'filename': 'files/TestHeaders.json',
+            #   'dataType': DataType.DOCUMENT_HEADER,
             #   'fileFormat': 'json'
-            #   },
+            #   },             
             #   {
             #   'filename': 'files/Codecs_cleanLinks.json',
             #   'dataType': DataType.LINK,
             #   'fileFormat': 'json'
             #   },
-              
+               {
+                'filename': 'files/codeHeaders.jsonlines',
+                'dataType': DataType.DOCUMENT_HEADER,
+                'fileFormat': 'jsonlines'
+              },
+              {
+              'filename': 'files/ACTESTTexts.jsonlines',
+              'dataType': DataType.DOCUMENT_TEXT,
+              'fileFormat': 'json'
+              },
+
               
 
               ]
     fill_database_from_files(tasks)
+    # update_database_from_localstorage()

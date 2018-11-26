@@ -24,8 +24,8 @@ def special_link_serializer(link):
     :return: Dict
         dict for serializing
     """
-    document = Documents.objects.all().get(doc_id=link.doc_id_from)
-    document_to = Documents.objects.all().get(doc_id=link.doc_id_to)
+    document = Documents.objects.get(doc_id=link.doc_id_from)
+    document_to = Documents.objects.get(doc_id=link.doc_id_to)
     loaded_positions_list = [json.loads(_) for _ in link.positions_list]
     serializer = {
         'doc_id_from': link.doc_id_from,

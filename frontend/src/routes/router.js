@@ -1,7 +1,7 @@
 import VueRouter from 'vue-router';
 import HomePage  from '../components/HomePage.vue';
 import DocumentView from '../components/views/DocumentView.vue';
-
+import Search from '../components/SearchSubcomponents/Search.vue';
 
 var routes = [
     {path: '/', component: HomePage},
@@ -9,7 +9,11 @@ var routes = [
         path: '/document/:doc_id/:hash',
         component: DocumentView,
        
-    }
+    },
+    {
+        path: '/search/:request',
+        component: Search,
+    },
 ];
 
 

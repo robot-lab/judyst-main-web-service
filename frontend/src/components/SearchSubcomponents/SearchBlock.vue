@@ -3,11 +3,13 @@
 	<div class="row">
         <div class="col-12">
             <div id="custom-search-input">
+                <!-- @@@{{SearchRequest}} -->
+                <p v-if="isLoading"> Ведется поиск...</p>
                 <div class="input-group">
-                    <input type="text" id="input-search" class="search-query form-control" placeholder="Поиск" @keyup.enter="SearchButtonClick()"/>
+                    <input type="text" id="input-search" class="search-query form-control" placeholder="Поиск"  :value="SearchRequest" @keyup.enter="SearchButtonClick()"/>
                     <span class="input-group-btn">
                         <button type="button"  >
-                            <span class="fa fa-search"  v-on:click="SearchButtonClick()"></span>
+                            <span class="fa fa-search" v-on:click="SearchButtonClick()"></span>
                         </button>
                     </span>
                 </div>
@@ -22,31 +24,44 @@
 <script>
 import requests from '../../utils/requests.js'
 import urls from '../../utils/urls.js'
-
-
+import router_urls from '../../utils/router_url.js'
+import utils from '../../utils/common.js'
 export default {
   name: 'SearchBlock',
+  props:{
+      Request: String,
+  },
   data: function ()
   {
      return {
         url : urls.Search,
-        searchResultsRaw: "[\
-            {\"doc_id_from\": \"КСРФ/34-П/2018\",\"doc_id_to\": \"КСРФ/5-П/2007\",\"to_doc_title\": \"титл\",\"citations_number\": 1,\"contexts_list\": [\"Контектс\"],\"positions_list\": [9113]},\
-            {\"doc_id_from\": \"КСРФ/34-П/2018\",\"doc_id_to\": \"КСРФ/5-П/2007\",\"to_doc_title\": \"титл\",\"citations_number\": 1,\"contexts_list\": [\"Контектс\"],\"positions_list\": [9113]}\
-        ]",
+        SearchRequest: '',
+        isLoading: false,
         tmp:"none"
      } 
   },
   methods:{
       SearchButtonClick: function () {
         
-        
         var searchRequst = document.getElementById('input-search').value;
-        var vue = this;
-        requests.RequestSearch(searchRequst, this.url, function(result){
-            vue.$emit('SearchResultsReceived', result);
-        });
+        this.$router.push(`${router_urls.Search}/${utils.StashRequest(searchRequst)}`);
+        
+       
         }
+  },
+ 
+  created: function () {
+      if (this.Request != null)
+      {
+        this.SearchRequest = utils.DeStashRequest( this.Request);
+        
+        var vue = this;
+        this.isLoading = true;
+        requests.RequestSearch(this.SearchRequest, this.url, function(result){
+            vue.$emit('SearchResultsReceived', result);
+            vue.isLoading = false;
+        });
+      }
   }
 }
 </script>
