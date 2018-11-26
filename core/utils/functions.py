@@ -253,7 +253,7 @@ def get_document(validate_data):
     :return: document
          Document model
     """
-    document = Documents.objects.all().get(doc_id=validate_data['doc_id'])
+    document = Documents.objects.get(doc_id=validate_data['doc_id'])
     serializable_document = {
         'doc_id': document.doc_id,
         'release_date': document.release_date,
