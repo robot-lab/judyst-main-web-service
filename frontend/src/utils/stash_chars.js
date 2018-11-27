@@ -1,3 +1,3 @@
 export default{
-    doc_id_delimiter: ['/', '%']
+    doc_id_delimiter: ['/', '-_-']
 }
