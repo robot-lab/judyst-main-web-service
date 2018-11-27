@@ -1,3 +1,5 @@
+import stash_chars from './stash_chars.js';
+
 function Hash(str)
 {
     var hash = 0, i, chr;
@@ -19,19 +21,19 @@ function HashLink(link)
 
 function StashDocId(docId)
 {
-    return docId.split('/').join('_');
+    return docId.split(stash_chars.doc_id_delimiter[0]).join(stash_chars.doc_id_delimiter[1]);
 }
 
 
 function DeStashDocId(docId)
 {
-    return docId.split('_').join('/');
+    return docId.split(stash_chars.doc_id_delimiter[1]).join(stash_chars.doc_id_delimiter[0]);
 }
 
 
 function StashRequest(searchRequest)
 {
-    searchRequest = searchRequest.split('/').join('_');
+    searchRequest = searchRequest.split(stash_chars.doc_id_delimiter[0]).join(stash_chars.doc_id_delimiter[0]);
     return searchRequest;
 }
 
@@ -39,7 +41,7 @@ function StashRequest(searchRequest)
 
 function DeStashRequest(searchRequest)
 {
-    searchRequest = searchRequest.split('_').join('/');
+    searchRequest = searchRequest.split(stash_chars.doc_id_delimiter[1]).join(stash_chars.doc_id_delimiter[0]);
     return searchRequest;
 }
 
