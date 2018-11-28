@@ -5,7 +5,7 @@ from django.http import FileResponse, HttpResponseNotFound
 from judyst_web_service.settings import BASE_DIR
 import os
 
-from core.models import CustomUser as User, Links
+from core.models import CustomUser as User, Links, Documents
 from core.serializers import UserSerializer, special_links_serializer
 from core.utils.decorators import redirect_if_authorize
 from core.utils.exceptions import ErrorResponse
@@ -130,13 +130,16 @@ class SearchViewSet(viewsets.ViewSet):
         return Response({"size": len(queryset)})
 
     def document(self, request):
-        validate_data = request.data
-        if is_not_fields_include(validate_data, ['doc_id']):
-            return ErrorResponse().not_valid()
-        document = get_document(validate_data)
-        if not document:
-            return ErrorResponse().not_found('document')
-        return Response(document)
+        try:
+            validate_data = request.data
+            if is_not_fields_include(validate_data, ['doc_id']):
+                return ErrorResponse().not_valid()
+            document = get_document(validate_data)
+            if not document:
+                return ErrorResponse().not_found('document')
+            return Response(document)
+        except Documents.DoesNotExist:
+            return ErrorResponse().not_found(data_caption='Document')
 
 
 def main(request):

@@ -159,7 +159,7 @@ function RequestDocument(doc_id, url, callback)
         if (this.readyState != 4) return;
         if (this.status != 200) {
             //console.log( 'ошибка: ' + (this.status ? this.statusText : 'запрос не удался') );
-            callback(null);
+            callback(null, this.status);
             return;
         }
         var json = this.responseText + '';

@@ -229,14 +229,14 @@ def get_links(validate_data):
     """
     if validate_data['doc_id_from'] != -1 and\
             validate_data['doc_id_to'] != -1:
-        queryset = Links.objects.all().filter(
+        queryset = Links.objects.filter(
             doc_id_from=validate_data['doc_id_from'])\
             .filter(doc_id_to=validate_data['doc_id_to'])
     elif validate_data['doc_id_from'] != -1:
-        queryset = Links.objects.all().filter(
+        queryset = Links.objects.filter(
             doc_id_from=validate_data['doc_id_from'])
     elif validate_data['doc_id_to'] != -1:
-        queryset = Links.objects.all().filter(
+        queryset = Links.objects.filter(
             doc_id_to=validate_data['doc_id_to'])
     else:
         queryset = Links.objects.all()

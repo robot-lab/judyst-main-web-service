@@ -123,8 +123,14 @@ export default {
         // requests.RequestSearch(req, urls.Search, function(SearchResult){
         //     searchResults = {}
         // });
-        requests.RequestDocument(doc_id, urls.Document, function(doc){
+        requests.RequestDocument(doc_id, urls.Document, function(doc, error){
+            if (doc === null)
+                {
+                    alert('Error while getting document. Error code: ' + error)
+
+                }
             vue.CurrentDocument = doc; 
+            
         });
 
         requests.RequestSearch(`*->${doc_id}`, urls.Search, function (result){

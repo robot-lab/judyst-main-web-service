@@ -33,10 +33,9 @@ function DeStashDocId(docId)
 
 function StashRequest(searchRequest)
 {
-    searchRequest = searchRequest.split(stash_chars.doc_id_delimiter[0]).join(stash_chars.doc_id_delimiter[0]);
+    searchRequest = searchRequest.split(stash_chars.doc_id_delimiter[0]).join(stash_chars.doc_id_delimiter[1]);
     return searchRequest;
 }
-
 
 
 function DeStashRequest(searchRequest)

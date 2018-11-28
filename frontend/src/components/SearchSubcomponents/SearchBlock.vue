@@ -3,7 +3,7 @@
 	<div class="row">
         <div class="col-12">
             <div id="custom-search-input">
-                <!-- @@@{{SearchRequest}} -->
+                <!-- @@@{{tmp}} -->
                 <p v-if="isLoading"> Ведется поиск...</p>
                 <div class="input-group">
                     <input type="text" id="input-search" class="search-query form-control" placeholder="Поиск"  :value="SearchRequest" @keyup.enter="SearchButtonClick()"/>
@@ -37,14 +37,16 @@ export default {
         url : urls.Search,
         SearchRequest: '',
         isLoading: false,
-        tmp:"none"
+        tmp: "none"
      } 
   },
   methods:{
       SearchButtonClick: function () {
         
         var searchRequst = document.getElementById('input-search').value;
-        this.$router.push(`${router_urls.Search}/${utils.StashRequest(searchRequst)}`);
+        searchRequst = utils.StashRequest(searchRequst);
+        // this.tmp = searchRequst;
+        this.$router.push(`${router_urls.Search}/${searchRequst}`);
         
        
         }
