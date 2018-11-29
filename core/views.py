@@ -114,15 +114,19 @@ class SearchViewSet(viewsets.ViewSet):
 
     def search(self, request):
         validate_data = request.data
-        if is_not_fields_include(validate_data, ['doc_id_from', 'doc_id_to', 'range']):
+        if is_not_fields_include(validate_data,
+                                 ['doc_id_from', 'doc_id_to', 'range']):
             return ErrorResponse().not_valid()
         queryset = get_links(validate_data)
-        if not queryset:
+        try:
+            serializer = special_links_serializer(
+                queryset[validate_data['range'][0]: validate_data['range'][1]])
+        except TypeError:
             return ErrorResponse().not_valid()
-        serializer = special_links_serializer(queryset[validate_data['range'][0]: validate_data['range'][1]])
         return Response(serializer)
 
     def number_of_links(self, request):
+        # request for all links(if both fields =-1) may cause "out of memory"
         validate_data = request.data
         if is_not_fields_include(validate_data, ['doc_id_from', 'doc_id_to']):
             return ErrorResponse().not_valid()
@@ -136,7 +140,7 @@ class SearchViewSet(viewsets.ViewSet):
                 return ErrorResponse().not_valid()
             document = get_document(validate_data)
             if not document:
-                return ErrorResponse().not_found('document')
+                return ErrorResponse().not_found(data_caption='Document')
             return Response(document)
         except Documents.DoesNotExist:
             return ErrorResponse().not_found(data_caption='Document')
