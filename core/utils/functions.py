@@ -1,10 +1,14 @@
 import re
 
+from datetime import datetime
+
 from django.contrib.auth import authenticate
 from django.core.mail import EmailMessage
 from rest_framework.authtoken.models import Token
 
 from core.models import CustomUser as User, Links, Documents
+
+from core.serializers import document_serializer
 
 
 class CheckText:
@@ -243,9 +247,9 @@ def get_links(validate_data):
     return queryset
 
 
-def get_document(validate_data):
+def get_document_by_id(validate_data):
     """
-    function for getting document from db
+    function for getting document from db by unique id.
 
     :param validate_data: Dict
          validate data from request
@@ -254,11 +258,39 @@ def get_document(validate_data):
          Document model
     """
     document = Documents.objects.get(doc_id=validate_data['doc_id'])
-    serializable_document = {
-        'doc_id': document.doc_id,
-        'release_date': document.release_date,
-        'title': document.title,
-        'text_source_url': document.text_source_url,
-        'text': document.text
-    }
-    return serializable_document
+    return document_serializer(document)
+
+
+def get_document_by_interredaction_id(validate_data):
+    """
+    function for getting document from db by interredaction id.
+
+    :param validate_data: Dict
+         validate data from request
+
+    :return: document
+         Document model
+    """
+    documents = Documents.objects.filter(
+        interredaction_id=validate_data['doc_id'])
+    if documents:
+        document = None
+        ids = []
+        for doc in documents:
+            ids.append(doc.doc_id)
+            if not document:
+                document = doc
+            else:
+                if doc.effective_date:
+                    new_date = datetime.strptime(doc.effective_date,
+                                                 '%d.%m.%Y')
+                    old_date = datetime.strptime(document.effective_date,
+                                                 '%d.%m.%Y')
+                    if datetime.now() > new_date > old_date:
+                        document = doc
+
+        serializable_document = document_serializer(document)
+        serializable_document['editions'] = ids
+        return serializable_document
+    else:
+        return None
