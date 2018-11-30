@@ -63,3 +63,22 @@ def special_links_serializer(links):
     """
     return [special_link_serializer(link) for link in links ]
 
+
+def document_serializer(document):
+    """
+    function for serialising documents.
+
+    :param document: Document
+        document for serialising
+
+    :return:
+        dict for serialising
+    """
+    serializable_document = {
+        'doc_id': document.doc_id,
+        'release_date': document.release_date,
+        'title': document.title,
+        'text_source_url': document.text_source_url,
+        'text': document.text
+    }
+    return serializable_document

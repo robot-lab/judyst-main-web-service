@@ -5,13 +5,14 @@ from django.http import FileResponse, HttpResponseNotFound
 from judyst_web_service.settings import BASE_DIR
 import os
 
-from core.models import CustomUser as User, Links, Documents
+from core.models import CustomUser as User, Documents
 from core.serializers import UserSerializer, special_links_serializer
 from core.utils.decorators import redirect_if_authorize
 from core.utils.exceptions import ErrorResponse
 from core.utils.functions import get_token, is_not_valid_text_fields, \
     send_email, get_user_or_none, create_user_from_fields, check_email, \
-    is_not_fields_include, check_password, get_links, get_document
+    is_not_fields_include, check_password, get_links, get_document_by_id, \
+    get_document_by_interredaction_id
 
 
 class UserViewSet(viewsets.ViewSet):
@@ -138,7 +139,10 @@ class SearchViewSet(viewsets.ViewSet):
             validate_data = request.data
             if is_not_fields_include(validate_data, ['doc_id']):
                 return ErrorResponse().not_valid()
-            document = get_document(validate_data)
+            document = get_document_by_interredaction_id(validate_data)
+            if document:
+                return Response(document)
+            document = get_document_by_id(validate_data)
             if not document:
                 return ErrorResponse().not_found(data_caption='Document')
             return Response(document)
