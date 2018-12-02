@@ -28,6 +28,7 @@ urlpatterns = [
     url(r'^api/', include(router.urls)),
     url(r'^api/user/', include('core.urls.user_urls')),
     url(r'^api/search/', include('core.urls.search_urls')),
+    # url(r'^api/analysis/', include('core.urls.analysis_urls')),
     url(r'', main),
     #url(r'<path:path>', static_delivery)
 ]
