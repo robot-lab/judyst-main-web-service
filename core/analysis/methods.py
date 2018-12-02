@@ -1,4 +1,4 @@
-from core.analysis.exceptions import *
+from core.utils.exceptions import *
 import core.analysis.consts 
 
 

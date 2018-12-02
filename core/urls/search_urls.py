@@ -1,7 +1,6 @@
 from django.urls import path
 from core.apps import CoreConfig
-from core import views
-
+from core.search import views
 
 app_name = CoreConfig.name
 

@@ -8,8 +8,6 @@ from rest_framework.authtoken.models import Token
 
 from core.models import CustomUser as User, Links, Documents
 
-from core.serializers import document_serializer
-
 
 class CheckText:
     """
@@ -220,77 +218,3 @@ def create_link_from_fields(fields):
                                 contexts_list=fields['contexts_list'],
                                 positions_list=fields['positions_list'])
 
-
-def get_links(validate_data):
-    """
-    function for getting links from db
-
-    :param validate_data: Dict
-         validate data from request
-
-    :return: queryset
-        queryset of Links model
-    """
-    if validate_data['doc_id_from'] != -1 and\
-            validate_data['doc_id_to'] != -1:
-        queryset = Links.objects.filter(
-            doc_id_from=validate_data['doc_id_from'])\
-            .filter(doc_id_to=validate_data['doc_id_to'])
-    elif validate_data['doc_id_from'] != -1:
-        queryset = Links.objects.filter(
-            doc_id_from=validate_data['doc_id_from'])
-    elif validate_data['doc_id_to'] != -1:
-        queryset = Links.objects.filter(
-            doc_id_to=validate_data['doc_id_to'])
-    else:
-        queryset = Links.objects.all()
-    return queryset
-
-
-def get_document_by_id(validate_data):
-    """
-    function for getting document from db by unique id.
-
-    :param validate_data: Dict
-         validate data from request
-
-    :return: document
-         Document model
-    """
-    document = Documents.objects.get(doc_id=validate_data['doc_id'])
-    return document_serializer(document)
-
-
-def get_document_by_interredaction_id(validate_data):
-    """
-    function for getting document from db by interredaction id.
-
-    :param validate_data: Dict
-         validate data from request
-
-    :return: document
-         Document model
-    """
-    documents = Documents.objects.filter(
-        interredaction_id=validate_data['doc_id'])
-    if documents:
-        document = None
-        ids = []
-        for doc in documents:
-            ids.append(doc.doc_id)
-            if not document:
-                document = doc
-            else:
-                if doc.effective_date:
-                    new_date = datetime.strptime(doc.effective_date,
-                                                 '%d.%m.%Y')
-                    old_date = datetime.strptime(document.effective_date,
-                                                 '%d.%m.%Y')
-                    if datetime.now() > new_date > old_date:
-                        document = doc
-
-        serializable_document = document_serializer(document)
-        serializable_document['editions'] = ids
-        return serializable_document
-    else:
-        return None
