@@ -1,25 +1,41 @@
 <template>
-    <div class= "container link-container card card-body">
-        <span> 
-            <p>Цитирующий документ: <router-link :to="`/document/${utils.StashDocId(CleanLink.doc_id_from)}/0`">{{CleanLink.doc_id_from}}</router-link></p>
-        </span>
-        <span>
-            <p>Цитируемый документ: <router-link :to="`/document/${utils.StashDocId(CleanLink.doc_id_to)}/0`">{{CleanLink.doc_id_to}}</router-link></p>
-        </span>
-        <span>
-            <p>
-                Заголовок цитируемого документа: {{CleanLink.to_doc_title}}
-            </p>
-        </span>
-        <span> <p>Количество упоминаний: {{CleanLink.citations_number}} </p></span>
-        <div v-for="i in CitationsRange" :key="i">
-           <span> <p>Контекст цитаты: {{CleanLink.contexts[i].before}} <b>{{CleanLink.contexts[i].citation}}</b> {{CleanLink.contexts[i].after}} </p></span>
-           <router-link :to="`/document/${utils.StashDocId(CleanLink.doc_id_from)}/${utils.HashLink(CleanLink)}`">
-                Перейти к цитате в тексте
-            </router-link>
-        </div>
+    <b-container class= "link-container card card-body">
+        <b-card-header>
+            <span> 
+                <p>Цитирующий документ: <router-link :to="`/document/${utils.StashDocId(CleanLink.doc_id_from)}/0`">{{CleanLink.doc_id_from}}</router-link></p>
+            </span>
+            <span>
+                <p>Цитируемый документ: <router-link :to="`/document/${utils.StashDocId(CleanLink.doc_id_to)}/0`">{{CleanLink.doc_id_to}}</router-link></p>
+            </span>
+            
+        </b-card-header>
+        <b-card-body>
+                <p>
+                    <b>Заголовок цитируемого документа:</b> {{CleanLink.to_doc_title}}
+                </p>
+                <span> <p>Количество упоминаний: {{CleanLink.citations_number}} </p></span>
+                <a v-b-toggle="TitleId" v-b-tooltip.hover title="Нажмите, чтобы просмотреть контекст цитаты" class="context-toggler">
+                    Контекст цитирования
+                </a>
+                <b-collapse :id="TitleId">
+                <b-card-group v-for="i in CitationsRange" :key="i">
+                    <b-card>
+                        <b-card-header>
+                        </b-card-header>
+                        <b-card-body>
+                            <p>{{CleanLink.contexts[i].before}} <b>{{CleanLink.contexts[i].citation}}</b> {{CleanLink.contexts[i].after}} </p>
+                        </b-card-body>
+                        <b-card-footer>
+                        <router-link :to="`/document/${utils.StashDocId(CleanLink.doc_id_from)}/${utils.HashLink(CleanLink)}`">
+                            Перейти к цитате в тексте
+                        </router-link>
+                        </b-card-footer>
+                    </b-card>
+                </b-card-group>
+                </b-collapse>
+        </b-card-body>
         <!-- <p>{{CleanLink}}</p> -->
-    </div>
+    </b-container>
 </template>
 
 
@@ -75,6 +91,15 @@ export default {
   margin-bottom: 10%;
   
 }
+.context-toggler{
+    border: 1px solid #ddd; 
+    background: #fff;
+    padding: 10px;
+    vertical-align: middle;
+    text-align: center;
+    cursor: pointer;
+}
+
 </style>
 
 

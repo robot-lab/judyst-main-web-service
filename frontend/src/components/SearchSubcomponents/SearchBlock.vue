@@ -1,6 +1,6 @@
 <template>
-<div class="container">
-	<div class="row">
+<b-container>
+	<b-row>
         <div class="col-12">
             <div id="custom-search-input">
                 <!-- @@@{{tmp}} -->
@@ -15,8 +15,8 @@
                 </div>
             </div>
         </div>
-	</div>
-</div>
+	</b-row>
+</b-container>
 </template>
 
 

@@ -1,11 +1,11 @@
 <template>
-  <div class="link-search-main container">
+  <b-container class="link-search-main">
       <!-- <p>{{$route.params.request}}</p> -->
       <SearchBlock class="search-block"  :Request="$route.params.request" v-on:SearchResultsReceived="SearchResult=$event"/>
       <SearchResultsBlock v-if="SearchResult != null"
                           v-bind:SearchResults="SearchResult"/>
 
-  </div>
+  </b-container>
 </template>
 
 <script>

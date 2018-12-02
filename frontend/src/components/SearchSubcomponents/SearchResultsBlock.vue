@@ -1,27 +1,28 @@
 <template>
-<div class="container">    
+<b-container>
     <!-- <p>{{tmp}}</p> -->
+       
     <div class="search-result-block" v-if="LinksCount > 0">
-        <p>Найдено: {{LinksCount}}</p>
         <span class="page-list">
-            <PageList v-bind:Count="LinksCount" v-bind:Step="Step" v-bind:Current="CurrentRange" v-on:PageChanged="getLinks($event)" />
+                <PageList v-bind:Count="LinksCount" v-bind:Step="Step" v-bind:Current="CurrentRange" v-on:PageChanged="getLinks($event)" />
         </span>
-       <div class="links-block" v-if="isLoaded">
+        <SearchStatistics  :SearchResults="SearchResults" :Count="LinksCount"/>
+        <div class="links-block" v-if="isLoaded">
             <LinkBoxView :Links="Links"/>
             <span class="page-list"><PageList v-bind:Count="LinksCount" v-bind:Step="Step" v-bind:Current="CurrentRange" v-on:PageChanged="getLinks($event)" /></span>
         </div> 
         <p v-else>Загружается...</p>
-        
     </div>
     <div class="container" v-else>
             Поиск не дал результатов. 
     </div>
-</div>
+</b-container>
 </template>
 
 
 <script>
 import SearchResult from "./SearchResult.vue"
+import SearchStatistics from "./SearchStatistics.vue"
 import PageList from "../PageList.vue"
 import LinkBoxView from "../views/LinksBoxView.vue"
 import requsts from '../../utils/requests.js'
@@ -43,8 +44,7 @@ import urls from '../../utils/urls.js'
             isLoaded : false
         }
     },
-
-    computed: {
+    computed:{
         LinksCount: function () {
             var acum = 0;
             for (var i = 0; i < this.SearchResults.length; i++)
@@ -53,15 +53,12 @@ import urls from '../../utils/urls.js'
             }
             return acum; 
         },
-
-
-
     },
-   
     components: {
         SearchResult,
         PageList,
-        LinkBoxView
+        LinkBoxView,
+        SearchStatistics
     },
 
     methods: {

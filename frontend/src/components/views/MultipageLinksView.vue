@@ -1,21 +1,23 @@
 <template>
-<div class="container">    
+<b-container >
     <!-- <p>{{tmp}}</p> -->
     <div class="search-result-block" v-if="LinksCount > 0">
         <span class="page-list">
             <PageList v-bind:Count="LinksCount" v-bind:Step="Step" v-bind:Current="CurrentRange" v-on:PageChanged="getLinks($event)" />
         </span>
        <div class="links-block" v-if="isLoaded">
-            <LinkBoxView :Links="Links"/>
+            <b-card-group>
+                <LinkBoxView :Links="Links"/>
+            </b-card-group>
             <span class="page-list"><PageList v-bind:Count="LinksCount" v-bind:Step="Step" v-bind:Current="CurrentRange" v-on:PageChanged="getLinks($event)" /></span>
-        </div> 
+       </div> 
         <p v-else>Загружается...</p>
         
     </div>
-    <div class="container" v-else>
+    <b-container v-else>
             Не обнаружено.
-    </div>
-</div>
+    </b-container>
+</b-container>
 </template>
 
 

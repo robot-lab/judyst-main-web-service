@@ -1,7 +1,7 @@
 <template>
-<div class="workspace container ">
+<b-container class="workspace">
     <router-view/>
-</div>
+</b-container>
 </template>
 
 
@@ -17,7 +17,6 @@ export default {
 
 
 <style>
-.workspace{
-}
+
 </style>
 

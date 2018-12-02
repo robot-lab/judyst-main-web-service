@@ -2,7 +2,7 @@
 <nav class="navbar fixed-top navbar-dark bg-dark  navbar-main">
         <div class="container-fluid">
           <div class="navbar-header">
-            <a class="navbar-brand" href="#">Judist</a>
+            <router-link :to="'/'" class="navbar-brand" href="#">Judyst</router-link>
           </div>
         
         </div><!--/.container-fluid -->

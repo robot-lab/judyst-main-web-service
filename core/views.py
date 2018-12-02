@@ -5,6 +5,7 @@ from django.http import FileResponse, HttpResponseNotFound
 from judyst_web_service.settings import BASE_DIR
 import os
 
+import core.models
 from core.models import CustomUser as User, Documents
 from core.serializers import UserSerializer, special_links_serializer
 from core.utils.decorators import redirect_if_authorize
@@ -13,6 +14,9 @@ from core.utils.functions import get_token, is_not_valid_text_fields, \
     send_email, get_user_or_none, create_user_from_fields, check_email, \
     is_not_fields_include, check_password, get_links, get_document_by_id, \
     get_document_by_interredaction_id
+
+from core.analysis import entry as analysis
+from core.analysis.exceptions import CommonAnalysisException
 
 
 class UserViewSet(viewsets.ViewSet):
@@ -151,7 +155,8 @@ class SearchViewSet(viewsets.ViewSet):
 
 
 def main(request):
-    return FileResponse(open(BASE_DIR+'/frontend/dist/static/index.html', 'rb'))
+    return FileResponse(open(BASE_DIR+'/frontend/dist/static/index.html',
+                             'rb'))
 
 
 def static_delivery(request, path=""):
@@ -165,4 +170,24 @@ def static_delivery(request, path=""):
     else:
         response = HttpResponseNotFound
     return response
-  
+
+
+class AnalysisViewSet(viewsets.ViewSet):
+    def common_request(self, request):
+        try:
+            validate_data = request.data
+            if is_not_fields_include(validate_data,
+                                     ['method', 'parameters',
+                                      'search_targets']):
+                return ErrorResponse().not_valid()
+            if is_not_fields_include(validate_data['search_targets'],
+                                     ['sources', 'sources_pattern_type',
+                                      'numbers', 'numbers_pattern_type',
+                                      'dates', 'dates_pattern_type',
+                                      ]):
+                return ErrorResponse().not_valid()
+            analysis_result = analysis.process(validate_data, core.models)
+            return analysis_result
+        except CommonAnalysisException as ex:
+            # may be something else...
+            return ErrorResponse().not_valid()
