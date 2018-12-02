@@ -1,7 +1,7 @@
 <template>
-<div class="wrap container-fluid">
+<b-container fluid class="wrap">
     <div v-if="CurrentDocument != null">
-        <p>{{tmp}}</p>
+        <!-- <p>{{tmp}}</p> -->
         <h5 class="title-block"><b>Заголовок документа:</b> <p>{{CurrentDocument.title}}</p></h5>
         <h4 class="id-block"> <p><b>Номер документа:</b> {{CurrentDocument.doc_id}}</p></h4>
         <h4 class="date-block"><p><b>Дата публикации:</b> {{CurrentDocument.release_date}} </p></h4>
@@ -19,7 +19,7 @@
     <div v-else>
         <p>Документ загружается...</p>
     </div>
-</div>
+</b-container>
 </template>
 
 <script>
@@ -81,14 +81,6 @@ export default {
             return links;
             
         },
-        methods:{
-            OpenLink: function (path)
-            {
-                this.$router.push(path);
-            }
-        },
-
-
         ProcessedText: function(){
             if (this.CurrentDocument === null || this.LinksPackFrom === null || this.LinksPackTo === null)
                 return null;
@@ -107,11 +99,14 @@ export default {
            }
             text += allText.slice(last, allText.length); 
             return text;
-
         },
-        
     },
-
+    methods:{
+        OpenLink: function (path)
+        {
+            this.$router.push(path);
+        }
+    },
 
 
     created:function () {
@@ -136,12 +131,14 @@ export default {
         requests.RequestSearch(`*->${doc_id}`, urls.Search, function (result){
             requests.RequestLinks([1, result.Size], urls.Links, result, function (links) {
                 vue.LinksPackTo = links; 
+                // vue.tmp += 'to ready(' + links + ');'; 
                 
             }); });
         
         requests.RequestSearch(`${doc_id}->*`, urls.Search, function (result){
             requests.RequestLinks([1, result.Size], urls.Links, result, function (links) {
                 vue.LinksPackFrom = links; 
+                // vue.tmp += 'from ready(' + links + ');' ; 
                 
             });
             
