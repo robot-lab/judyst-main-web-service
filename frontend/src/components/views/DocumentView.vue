@@ -64,7 +64,7 @@ export default {
             }
             for (i = 0; i < this.LinksPackTo.length; i++)
             {
-                linkObj = this.LinksPackFrom[i];
+                linkObj = this.LinksPackTo[i];
                     for(j = 0; j < linkObj.Link.positions_list.length; j++)
                         linkAlone = {
                             doc_id_from : linkObj.Link.doc_id_from,
