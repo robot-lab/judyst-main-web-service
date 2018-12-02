@@ -27,44 +27,55 @@ import urls from '../../utils/urls.js'
 import router_urls from '../../utils/router_url.js'
 import utils from '../../utils/common.js'
 export default {
-  name: 'SearchBlock',
-  props:{
-      Request: String,
-  },
-  data: function ()
-  {
-     return {
+    name: 'SearchBlock',
+    props:{
+        Request: String,
+    },
+    data: function ()
+    {
+        return {
         url : urls.Search,
         SearchRequest: '',
         isLoading: false,
         tmp: "none"
-     } 
-  },
-  methods:{
-      SearchButtonClick: function () {
+        } 
+    },
+    methods:{
+        SearchButtonClick: function () {
         
         var searchRequst = document.getElementById('input-search').value;
         searchRequst = utils.StashRequest(searchRequst);
         // this.tmp = searchRequst;
         this.$router.push(`${router_urls.Search}/${searchRequst}`);
         
-       
-        }
-  },
- 
-  created: function () {
-      if (this.Request != null)
-      {
-        this.SearchRequest = utils.DeStashRequest( this.Request);
         
-        var vue = this;
-        this.isLoading = true;
-        requests.RequestSearch(this.SearchRequest, this.url, function(result){
-            vue.$emit('SearchResultsReceived', result);
-            vue.isLoading = false;
-        });
-      }
-  }
+        },
+        Update: function() {
+            if (this.Request != null)
+            {
+                this.SearchRequest = utils.DeStashRequest( this.Request);
+                
+                var vue = this;
+                this.isLoading = true;
+                requests.RequestSearch(this.SearchRequest, this.url, function(result){
+                    vue.$emit('SearchResultsReceived', result);
+                    vue.isLoading = false;
+                });
+            }
+        },
+        
+    },
+    watch: 
+    {
+        Request: function () {
+            this.Update();
+        },
+    },
+    created: function () {
+        this.Update();
+    },
+
+
 }
 </script>
  

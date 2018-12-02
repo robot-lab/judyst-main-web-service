@@ -33,18 +33,18 @@ def get_sql_by_id(doc_id, side):
         valid sql request as str
     """
     id_type = id_types[get_id_type(doc_id)]
-    sql = 'select * from core_links where '
+    sql = f'select * from {Links.objects.model._meta.db_table} where '
     if id_type == 'doc_id':
         id_type += '_' + side
         sql += f"{id_type} = '{doc_id}'"
         return sql
     if id_type == 'supertype':
         sql += f"doc_id_{side} in (select doc_id from \
-                 core_documents where (supertype = '{doc_id}'))"
+                 {Documents.objects.model._meta.db_table} where (supertype = '{doc_id}'))"
         return sql
     if id_type == 'interredaction_id':
         sql += f"doc_id_{side} in (select doc_id from \
-                 core_documents where (interredaction_id = '{doc_id}'))"
+                 {Documents.objects.model._meta.db_table} where (interredaction_id = '{doc_id}'))"
         return sql
     raise Exception('Impossible!')
 

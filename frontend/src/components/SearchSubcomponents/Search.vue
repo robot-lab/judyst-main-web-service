@@ -1,7 +1,7 @@
 <template>
   <b-container class="link-search-main">
-      <!-- <p>{{$route.params.request}}</p> -->
-      <SearchBlock class="search-block"  :Request="$route.params.request" v-on:SearchResultsReceived="SearchResult=$event"/>
+      <!-- <p>{{SearchRequest}} !! {{tmp}} @@ {{$route.params.request}}</p> -->
+      <SearchBlock class="search-block"  :Request="SearchRequest" v-on:SearchResultsReceived="SearchResult=$event"/>
       <SearchResultsBlock v-if="SearchResult != null"
                           v-bind:SearchResults="SearchResult"/>
 
@@ -17,16 +17,19 @@ export default {
       return {
     
         SearchResult: null,
-        tmp : 'none'
+        tmp : 'none',
+        SearchRequest: null,
 
       }
   },
-  computed:{
-   
+  created: function () {
+    // this.tmp = '1';
+    this.SearchRequest = this.$route.params.request;       
   },
-  
-  methods:
-  {
+  beforeRouteUpdate: function (to, from, next) {
+    // this.tmp = '2';
+    this.SearchRequest = to.params.request; 
+    next();
   },
   components:{
     SearchBlock,
