@@ -4,7 +4,9 @@ from core.serializers import document_serializer
 from core.utils.exceptions import BadSearchRequestException
 
 
-id_types = {1: 'supertype', 2: 'interredaction_id', 3:  'doc_id'}
+id_types = {1: 'supertype', 2: 'interredaction_id',
+            3: 'doc_id', 4: 'doc_id'}
+# 4 - supertype/redaction/article/part
 
 
 def get_id_type(doc_id):
@@ -17,7 +19,7 @@ def get_id_type(doc_id):
     parts = doc_id.split('/')
     id_type = len(parts)
     if id_type not in id_types:
-        raise BadSearchRequestException()
+        raise BadSearchRequestException(id_type)
     return id_type
 
 

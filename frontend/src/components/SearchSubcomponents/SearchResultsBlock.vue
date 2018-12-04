@@ -8,7 +8,7 @@
         </span>
         <SearchStatistics  :SearchResults="SearchResults" :Count="LinksCount"/>
         <div class="links-block" v-if="isLoaded">
-            <LinkBoxView :Links="Links"/>
+            <LinkBoxView :Links="Links" :DefaultCollapse="false"/>
             <span class="page-list"><PageList v-bind:Count="LinksCount" v-bind:Step="Step" v-bind:Current="CurrentRange" v-on:PageChanged="getLinks($event)" /></span>
         </div> 
         <p v-else>Загружается...</p>
@@ -32,6 +32,7 @@ import urls from '../../utils/urls.js'
     name: 'SearchResultBlock',
     props: {
         SearchResults: Array,
+        
         
     },
     data: function() {

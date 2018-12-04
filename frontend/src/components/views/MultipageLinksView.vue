@@ -7,7 +7,7 @@
         </span>
        <div class="links-block" v-if="isLoaded">
             <b-card-group>
-                <LinkBoxView :Links="Links"/>
+                <LinkBoxView :Links="Links" :CollapseDefault="CollapseDefault"/>
             </b-card-group>
             <span class="page-list"><PageList v-bind:Count="LinksCount" v-bind:Step="Step" v-bind:Current="CurrentRange" v-on:PageChanged="getLinks($event)" /></span>
        </div> 
@@ -29,12 +29,14 @@ import requsts from '../../utils/requests.js'
     name: 'MultipageLinksView',
     props: {
         SearchResults: Array,
+        Step: Number, 
+        CollapseDefault: Boolean
+
         
     },
     data: function() {
         return {
-            Step: 10,
-            CurrentRange: [1, 20],
+            CurrentRange: [1, this.Step],
             url : 'http://localhost:8000/api/search/get',
             tmp: null,
             Links: [],
@@ -57,7 +59,6 @@ import requsts from '../../utils/requests.js'
     },
    
     components: {
-        SearchResult,
         PageList,
         LinkBoxView
     },

@@ -31,7 +31,7 @@ function RequestLinks(range, url, searchResults, callback)
           var linkList = JSON.parse(json);
           var ret = []
           for (var i = 0; i < linkList.length; i ++)
-              ret.push({id: i, Link: linkList[i]});
+              ret.push(linkList[i]);
           links = links.concat(ret);
           finishedCounter++;
       }

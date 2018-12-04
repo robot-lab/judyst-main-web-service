@@ -14,6 +14,10 @@ var routes = [
         path: '/search/:request',
         component: Search,
     },
+    {
+        path: '/search/',
+        redirect: '/search/ '
+    },
 ];
 
 

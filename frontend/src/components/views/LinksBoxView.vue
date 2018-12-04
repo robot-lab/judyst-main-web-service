@@ -1,7 +1,7 @@
 <template>
 <div class="links-block" >
-        <div v-for="Link in Links" :key="Link.id">
-            <LinkView v-bind:CleanLink="Link.Link" />
+        <div v-for="Link in Links" :key="Link.doc_id_from + Link.doc_id_to">
+            <LinkView v-bind:CleanLink="Link" :CollapseDefault="CollapseDefault"/>
         </div>
 </div>
 </template>
@@ -19,6 +19,7 @@ export default {
     props:
     {
         Links: Array,
+        CollapseDefault: Boolean,
     }
 }
 </script>

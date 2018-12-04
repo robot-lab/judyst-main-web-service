@@ -3,7 +3,7 @@
       <!-- <p>{{SearchRequest}} !! {{tmp}} @@ {{$route.params.request}}</p> -->
       <SearchBlock class="search-block"  :Request="SearchRequest" v-on:SearchResultsReceived="SearchResult=$event"/>
       <SearchResultsBlock v-if="SearchResult != null"
-                          v-bind:SearchResults="SearchResult"/>
+                          :SearchResults="SearchResult"/>
 
   </b-container>
 </template>
@@ -15,20 +15,28 @@ export default {
   name: 'Search',
   data: function() {
       return {
-    
         SearchResult: null,
         tmp : 'none',
         SearchRequest: null,
 
       }
   },
+  methods:{
+    SetSearchRequest: function(val)
+    {
+      if (val != undefined || val != null)
+        this.SearchRequest = val.trim(); 
+      else
+        this.SearchRequest = ""; 
+    }
+  },
   created: function () {
-    // this.tmp = '1';
-    this.SearchRequest = this.$route.params.request;       
+    this.tmp = '1';
+    this.SetSearchRequest(this.$route.params.request);
   },
   beforeRouteUpdate: function (to, from, next) {
-    // this.tmp = '2';
-    this.SearchRequest = to.params.request; 
+    this.tmp = '2';
+    this.SetSearchRequest(to.params.request); 
     next();
   },
   components:{
