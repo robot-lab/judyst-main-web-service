@@ -25,6 +25,7 @@
 import PageList from "../PageList.vue"
 import LinkBoxView from "./LinksBoxView.vue"
 import requsts from '../../utils/requests.js'
+import url from '../../utils/urls.js'
  export default {
     name: 'MultipageLinksView',
     props: {
@@ -37,7 +38,6 @@ import requsts from '../../utils/requests.js'
     data: function() {
         return {
             CurrentRange: [1, this.Step],
-            url : 'http://localhost:8000/api/search/get',
             tmp: null,
             Links: [],
             isLoaded : false
@@ -71,7 +71,7 @@ import requsts from '../../utils/requests.js'
         this.CurrentRange = range;
         this.isLoaded = false;
         var vue = this;
-        requsts.RequestLinks(range, this.url, this.SearchResults, function(links){
+        requsts.RequestLinks(range, url.Links, this.SearchResults, function(links){
             vue.isLoaded = true; 
             vue.Links = links;
         });
