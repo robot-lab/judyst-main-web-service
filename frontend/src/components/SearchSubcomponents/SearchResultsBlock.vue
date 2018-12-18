@@ -27,6 +27,7 @@ import PageList from "../PageList.vue"
 import LinkBoxView from "../views/LinksBoxView.vue"
 import requsts from '../../utils/requests.js'
 import urls from '../../utils/urls.js'
+import StoreConst from '../../utils/searchHistoryConsts.js'
 
  export default {
     name: 'SearchResultBlock',
@@ -68,11 +69,21 @@ import urls from '../../utils/urls.js'
       {
            
         this.CurrentRange = range;
+        const req = JSON.stringify(this.SearchResults) + JSON.stringify(range);
+        const storedRes = this.$store.getters.getStoredLinks(req) ;
+        if (storedRes != null)
+        {
+            this.isLoaded = true; 
+            this.Links = storedRes;
+            return;
+        }
+        
         this.isLoaded = false;
         var vue = this;
         requsts.RequestLinks(range, this.url, this.SearchResults, function(links){
             vue.isLoaded = true; 
             vue.Links = links;
+            vue.$store.commit(StoreConst.NEW_LINKS_PACK, {request: req, result: links});
         });
 
       },

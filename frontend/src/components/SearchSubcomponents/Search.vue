@@ -1,9 +1,9 @@
 <template>
   <b-container class="link-search-main">
       <!-- <p>{{SearchRequest}} !! {{tmp}} @@ {{$route.params.request}}</p> -->
-      <p>{{tmp}}</p>
-      <p>Result: {{StoredResult}}</p>
-      <SearchBlock class="search-block"  :Request="SearchRequest" v-on:SearchResultsReceived="SetSearchResult($event)"/>
+      <!-- <p>{{tmp}}</p> -->
+      <!-- <p>Result: {{StoredResult}}</p> -->
+      <SearchBlock class="search-block"  :Request="SearchRequest" v-on:SearchResultsReceived="SetSearchResult($event)" :isNeedSearch="isNeedSearch"/>
       <SearchResultsBlock v-if="SearchResult != null"
                           :SearchResults="SearchResult"/>
 
@@ -21,29 +21,30 @@ export default {
         SearchResult: null,
         tmp : 'none',
         SearchRequest: null,
-
+        isNeedSearch: true,
       }
   },
   computed: {
     StoredResult: function () {
-      return this.$store.getters.lastSearchResult;      
+      return this.$store.getters.storedResults;      
     }
   },
   methods:{
     SetSearchRequest: function(val)
     {
+      val = val.trim();
       if (val != undefined || val != null)
         {
-          if (this.$store.getters.lastSearchRequest == this.SearchRequest && 
-              this.$store.getters.lastSearchResult != null)
-          {
-            this.SearchResult = this.$store.getters.lastSearchResult; 
-          }
-          else
-          {
-            this.SearchRequest = val.trim();
-            this.$store.commit(StoreConsts.NEW_SEARCH_REQUEST, this.SearchRequest); 
-          }
+            if (this.$store.getters.getStoredRes(val) == null)
+            {
+              this.isNeedSearch = true;
+            }
+            else
+            { 
+              this.isNeedSearch = false; 
+              this.SearchResult = this.$store.getters.getStoredRes(val);
+            }
+            this.SearchRequest = val;
         }
       else
         this.SearchRequest = ""; 
@@ -52,7 +53,7 @@ export default {
     SetSearchResult: function(val)
     {
         this.tmp = ':)';
-        this.$store.commit(StoreConsts.NEW_SEARCH_RESULT, val, this.SearchRequest);
+        this.$store.commit(StoreConsts.NEW_SEARCH_RESULT, {request: this.SearchRequest, result: val});
         this.SearchResult = val;
     }
   },

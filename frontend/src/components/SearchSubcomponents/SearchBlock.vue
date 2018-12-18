@@ -30,6 +30,7 @@ export default {
     name: 'SearchBlock',
     props:{
         Request: String,
+        isNeedSearch: Boolean
     },
     data: function ()
     {
@@ -51,7 +52,7 @@ export default {
         
         },
         Update: function() {
-            if (this.Request != null)
+            if (this.Request != null &&  this.isNeedSearch)
             {
                 this.SearchRequest = utils.DeStashRequest( this.Request);
                 

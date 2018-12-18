@@ -17,6 +17,7 @@
     <b-container v-else>
             Не обнаружено.
     </b-container>
+
 </b-container>
 </template>
 
@@ -26,6 +27,8 @@ import PageList from "../PageList.vue"
 import LinkBoxView from "./LinksBoxView.vue"
 import requsts from '../../utils/requests.js'
 import url from '../../utils/urls.js'
+import StoreConst from '../../utils/searchHistoryConsts.js'
+
  export default {
     name: 'MultipageLinksView',
     props: {
@@ -53,6 +56,10 @@ import url from '../../utils/urls.js'
             }
             return acum; 
         },
+        StoredLinks: function () {
+            
+            return this.$store.StoredLinks; 
+        }
 
 
 
@@ -67,13 +74,23 @@ import url from '../../utils/urls.js'
         
         getLinks: function (range)
       {
-           
+    
         this.CurrentRange = range;
+        const req = JSON.stringify(this.SearchResults) + JSON.stringify(range);
+        const storedRes = this.$store.getters.getStoredLinks(req) ;
+        if (storedRes != null)
+        {
+            this.isLoaded = true; 
+            this.Links = storedRes;
+            return;
+        }
+        
         this.isLoaded = false;
         var vue = this;
         requsts.RequestLinks(range, url.Links, this.SearchResults, function(links){
             vue.isLoaded = true; 
             vue.Links = links;
+            vue.$store.commit(StoreConst.NEW_LINKS_PACK, {request: req, result: links});
         });
 
       },

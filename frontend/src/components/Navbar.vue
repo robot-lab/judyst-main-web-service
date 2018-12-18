@@ -4,12 +4,12 @@
           <div class="navbar-header">
             <router-link :to="'/'" class="navbar-brand">Judyst</router-link>
           </div>
-          <b-navbar-nav left>
+          <b-navbar-nav>
             <b-nav-item :to="'/search/'">Search</b-nav-item>
           </b-navbar-nav> 
-          <b-navbar-nav>
+          <!-- <b-navbar-nav>
             <auth-bar/>
-          </b-navbar-nav>
+          </b-navbar-nav> -->
 
         
         </div><!--/.container-fluid -->

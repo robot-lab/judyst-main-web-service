@@ -8,7 +8,7 @@ import os
 import core.models
 from core.models import CustomUser as User, Documents
 from core.serializers import UserSerializer, special_links_serializer
-from core.utils.decorators import redirect_if_authorize
+# from core.utils.decorators import redirect_if_authorize
 from core.utils.exceptions import ErrorResponse, CommonAnalysisException
 from core.utils.functions import get_token, is_not_valid_text_fields, \
     send_email, get_user_or_none, create_user_from_fields, check_email, \
@@ -39,7 +39,7 @@ class UserViewSet(viewsets.ViewSet):
         serializer = UserSerializer(queryset, many=True)
         return Response(serializer.data)
 
-    @redirect_if_authorize
+    # @redirect_if_authorize
     def registration(self, request):
         """
         Method for user registration. If user is authorize then we redirect
@@ -74,7 +74,9 @@ class UserViewSet(viewsets.ViewSet):
         except Exception:
             return ErrorResponse().not_valid()
         send_email("Not Implemented:  500", validate_data['email'])
-        return Response({"token": token.key})
+        res = Response({"token": token.key})
+        print(res)
+        return res
 
     # @redirect_if_authorize
     def login(self, request):

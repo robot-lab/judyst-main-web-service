@@ -1,60 +1,50 @@
 
 import {
-        NEW_SEARCH_REQUEST,
-        NEW_SEARCH_RESULT,
+        NEW_SEARCH_RESULT, NEW_LINKS_PACK,
         }
-from '../utils/searchHistoryConsts.js'
+from '../utils/searchHistoryConsts.js';
 
 const state = {
-    lastSearch : null,
+    storedSearch :  {},
+    storedLinksPack: {}
 }
 
 const getters = {
-    lastSearchRequest: function (state) {
-        if (state.lastSearch != null)
-            return state.lastSearch.Request; 
-        else 
+    getStoredRes: state => req => {
+        if (req in state.storedSearch)
+            return state.storedSearch[req];
+        else
             return null;
-        
     },
 
-    lastSearchResult: function (state) {
-        if (state.lastSearch != null)
-            return state.lastSearch.Result; 
-        else 
+    storedResults: state => {
+        return state.storedSearch;
+    },
+
+    getStoredLinks: state => req => {
+        if (req in state.storedLinksPack)
+            return state.storedLinksPack[req];
+        else
             return null;
-        
+    },
+
+    storedLinks: state => {
+        return state.storedLinks;
     }
+
 
 }
 
 const mutations = {
-    [NEW_SEARCH_REQUEST]: (state, request)=>
-    {
-        if (state.lastSearchRequest != null)
-        {
-            state.lastSearchRequest = null;
-        }
 
-        state.lastSearchRequest = {
-            Request: request,
-            Result: null
-        };
+    [NEW_SEARCH_RESULT]: (state, val) =>
+    {
+       state.storedSearch[val.request] = val.result; 
     },
-
-    [NEW_SEARCH_RESULT]: (state, request, result) =>
+    [NEW_LINKS_PACK]: (state, val) =>
     {
-        if (state.lastSearchRequest != null)
-        {
-            state.lastSearchRequest = null;
-        }
-
-        state.lastSearchRequest = {
-            Request: request,
-            Result: result,
-        };
-    }
-
+       state.storedLinksPack[val.request] = val.result; 
+    },
 }
 
 const actions = {
