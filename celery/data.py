@@ -142,5 +142,5 @@ if __name__ == '__main__':
     # a.edit_data({"email": "lev@mail.ru"}, "CustomUser",
     #               username="korwin@mail.ru")
     # print(a.get_all_data("email", "CustomUser"))
-    print(a.get_all_data("doc_id_from", model_name='Links'))
+    print(Documents.objects.count)
     pass

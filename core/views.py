@@ -76,7 +76,7 @@ class UserViewSet(viewsets.ViewSet):
         send_email("Not Implemented:  500", validate_data['email'])
         return Response({"token": token.key})
 
-    @redirect_if_authorize
+    # @redirect_if_authorize
     def login(self, request):
         """
         Method for user authorization. If user is authorize then we redirect
@@ -97,7 +97,7 @@ class UserViewSet(viewsets.ViewSet):
         except Exception:
             return ErrorResponse().not_valid()
         return Response({"token": token.key})
-
+    
     def logout(self, request):
         """
         Method for user logout. If user is authorize his token will be delete.

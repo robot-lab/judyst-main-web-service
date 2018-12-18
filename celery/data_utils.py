@@ -106,5 +106,6 @@ if __name__ == '__main__':
               
 
               ]
-    fill_database_from_files(tasks)
+    # fill_database_from_files(tasks)
     # update_database_from_localstorage()
+    print(Documents.objects.count)

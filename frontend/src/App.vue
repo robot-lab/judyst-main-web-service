@@ -7,16 +7,34 @@
 </template>
 
 <script>
+import Vue from 'vue';
+import Router from './routes/router.js'
+import Vuex from 'vuex'
+
 import Search from './components/SearchSubcomponents/Search.vue'
 import Footer from './components/Footer.vue'
 import Navbar from './components/Navbar.vue'
 import Workspace from './components/Workspace.vue'
 
-import Router from './routes/router.js'
+import auth_store from './stores/auth_store.js'
+import search_store from './stores/searchHistory_store.js'
+
+Vue.use(Vuex);
 
 export default {
   name: 'app',
   router: Router.Router,
+  store: new Vuex.Store({
+   
+  
+    modules:{
+        auth_store,
+        search_store
+    }
+
+    }),
+  
+
   components: {
     Footer,
     Navbar,

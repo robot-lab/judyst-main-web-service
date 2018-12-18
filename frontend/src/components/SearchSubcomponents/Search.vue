@@ -1,7 +1,9 @@
 <template>
   <b-container class="link-search-main">
       <!-- <p>{{SearchRequest}} !! {{tmp}} @@ {{$route.params.request}}</p> -->
-      <SearchBlock class="search-block"  :Request="SearchRequest" v-on:SearchResultsReceived="SearchResult=$event"/>
+      <p>{{tmp}}</p>
+      <p>Result: {{StoredResult}}</p>
+      <SearchBlock class="search-block"  :Request="SearchRequest" v-on:SearchResultsReceived="SetSearchResult($event)"/>
       <SearchResultsBlock v-if="SearchResult != null"
                           :SearchResults="SearchResult"/>
 
@@ -11,6 +13,7 @@
 <script>
 import SearchBlock from "./SearchBlock.vue"
 import SearchResultsBlock from "./SearchResultsBlock.vue"
+import StoreConsts from "../../utils/searchHistoryConsts.js"
 export default {
   name: 'Search',
   data: function() {
@@ -21,21 +24,44 @@ export default {
 
       }
   },
+  computed: {
+    StoredResult: function () {
+      return this.$store.getters.lastSearchResult;      
+    }
+  },
   methods:{
     SetSearchRequest: function(val)
     {
       if (val != undefined || val != null)
-        this.SearchRequest = val.trim(); 
+        {
+          if (this.$store.getters.lastSearchRequest == this.SearchRequest && 
+              this.$store.getters.lastSearchResult != null)
+          {
+            this.SearchResult = this.$store.getters.lastSearchResult; 
+          }
+          else
+          {
+            this.SearchRequest = val.trim();
+            this.$store.commit(StoreConsts.NEW_SEARCH_REQUEST, this.SearchRequest); 
+          }
+        }
       else
         this.SearchRequest = ""; 
+    },
+    
+    SetSearchResult: function(val)
+    {
+        this.tmp = ':)';
+        this.$store.commit(StoreConsts.NEW_SEARCH_RESULT, val, this.SearchRequest);
+        this.SearchResult = val;
     }
   },
   created: function () {
-    this.tmp = '1';
+    // this.tmp = '1';
     this.SetSearchRequest(this.$route.params.request);
   },
   beforeRouteUpdate: function (to, from, next) {
-    this.tmp = '2';
+    // this.tmp = '2';
     this.SetSearchRequest(to.params.request); 
     next();
   },
