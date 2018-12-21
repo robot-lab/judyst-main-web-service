@@ -26,8 +26,8 @@ import SearchStatistics from "./SearchStatistics.vue"
 import PageList from "../PageList.vue"
 import LinkBoxView from "../views/LinksBoxView.vue"
 import requsts from '../../utils/requests.js'
-import urls from '../../utils/urls.js'
-import StoreConst from '../../utils/searchHistoryConsts.js'
+import urls from '../../consts/urls.js'
+import StoreConst from '../../consts/store_consts.js'
 
  export default {
     name: 'SearchResultBlock',

@@ -18,7 +18,7 @@ import Workspace from './components/Workspace.vue'
 
 import auth_store from './stores/auth_store.js'
 import search_store from './stores/searchHistory_store.js'
-
+import favorite_store from './stores/favorites_store.js'
 Vue.use(Vuex);
 
 export default {
@@ -29,7 +29,8 @@ export default {
   
     modules:{
         auth_store,
-        search_store
+        search_store,
+        favorite_store
     }
 
     }),

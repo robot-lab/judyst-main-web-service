@@ -1,4 +1,4 @@
-import stash_chars from './stash_chars.js';
+import stash_chars from '../consts/stash_chars';
 
 function Hash(str)
 {

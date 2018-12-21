@@ -26,8 +26,8 @@
 import PageList from "../PageList.vue"
 import LinkBoxView from "./LinksBoxView.vue"
 import requsts from '../../utils/requests.js'
-import url from '../../utils/urls.js'
-import StoreConst from '../../utils/searchHistoryConsts.js'
+import url from '../../consts/urls.js'
+import StoreConst from '../../consts/store_consts.js'
 
  export default {
     name: 'MultipageLinksView',

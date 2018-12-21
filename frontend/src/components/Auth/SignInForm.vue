@@ -30,8 +30,8 @@
 
 
 <script>
-import {AUTH_REQUEST} from './../../utils/auth_const.js'
-import router_urls from '../../utils/router_url.js'
+import {AUTH_REQUEST} from './../../consts/store_consts.js'
+import router_urls from '../../consts/router_url.js'
 
 
 

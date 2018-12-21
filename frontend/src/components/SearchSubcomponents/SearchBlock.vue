@@ -8,12 +8,17 @@
                 <div class="input-group">
                     <input type="text" id="input-search" class="search-query form-control" placeholder="Поиск"  :value="SearchRequest" @keyup.enter="SearchButtonClick()"/>
                     <span class="input-group-btn">
-                        <button type="button"  >
+                        <button type="button">
                             <span class="fa fa-search" v-on:click="SearchButtonClick()"></span>
                         </button>
                     </span>
                 </div>
             </div>
+        </div>
+        <div class="col-12">
+            <button type="button">
+                <span class="fa fa-star" v-on:click="AddReqToFavorites()"></span>
+            </button>
         </div>
 	</b-row>
 </b-container>
@@ -23,9 +28,12 @@
 
 <script>
 import requests from '../../utils/requests.js'
-import urls from '../../utils/urls.js'
-import router_urls from '../../utils/router_url.js'
+import urls from '../../consts/urls.js'
+import router_urls from '../../consts/router_url.js'
 import utils from '../../utils/common.js'
+import StoreConst from '../../consts/store_consts.js'
+
+
 export default {
     name: 'SearchBlock',
     props:{
@@ -44,13 +52,18 @@ export default {
     methods:{
         SearchButtonClick: function () {
         
-        var searchRequst = document.getElementById('input-search').value;
-        searchRequst = utils.StashRequest(searchRequst);
-        // this.tmp = searchRequst;
-        this.$router.push(`${router_urls.Search}/${searchRequst}`);
-        
-        
+            var searchRequst = document.getElementById('input-search').value;
+            searchRequst = utils.StashRequest(searchRequst);
+            // this.tmp = searchRequst;
+            this.$router.push(`${router_urls.Search}/${searchRequst}`);
         },
+        AddReqToFavorites: function() {
+            let searchRequest = document.getElementById('input-search').value;
+            searchRequest = utils.StashRequest(searchRequest);
+            if (searchRequest != '')
+                this.$store.commit(StoreConst.NEW_FAVORITE_REQ, searchRequest);
+
+        },  
         Update: function() {
             if (this.Request != null &&  this.isNeedSearch)
             {
@@ -82,7 +95,6 @@ export default {
  
 
  <style scoped>
-@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css');
 
 .container{
     padding: 10%;

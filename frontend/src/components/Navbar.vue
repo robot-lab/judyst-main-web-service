@@ -1,30 +1,70 @@
 <template>
-<nav class="navbar fixed-top navbar-dark bg-dark  navbar-main">
-        <div class="container-fluid">
-          <div class="navbar-header">
-            <router-link :to="'/'" class="navbar-brand">Judyst</router-link>
-          </div>
-          <b-navbar-nav>
-            <b-nav-item :to="'/search/'">Search</b-nav-item>
-          </b-navbar-nav> 
-          <!-- <b-navbar-nav>
-            <auth-bar/>
-          </b-navbar-nav> -->
+<b-navbar toggleble="sd"  fixed="top" type="dark" variant="dark"  class = "navbar-main">
+  <div class="navbar-header">
+    <router-link :to="'/'" class="navbar-brand">Judyst</router-link>
+  </div>
+    <b-navbar-nav class="nav-item-wrapper">
+      <b-nav-item :to="'/search/'">Search</b-nav-item>
+    </b-navbar-nav> 
 
-        
-        </div><!--/.container-fluid -->
+    <b-navbar-nav class="ml-auto">
+     <b-navbar-nav class="nav-item-wrapper">
+      <b-nav-item v-b-modal.FavoriteModal>Favorite</b-nav-item>
+     </b-navbar-nav> 
+    </b-navbar-nav>
+    
+    <b-navbar-nav v-if="isAuthenticated">
+      <b-nav-item @click="logout()">Search</b-nav-item>
+    </b-navbar-nav>
+    <b-navbar-nav class="nav-item-wrapper" v-if="!isAuthenticated">
+      <b-nav-item v-b-modal.signInModal>Sign In</b-nav-item>
+    </b-navbar-nav> 
+    <b-navbar-nav class="nav-item-wrapper" v-if="!isAuthenticated">
+      <b-nav-item :to="signUpUrl">Sign Up</b-nav-item>
+    </b-navbar-nav> 
 
-      </nav>
+    <b-modal id="FavoriteModal" hide-footer hide-title>
+      <user-favorites-view/>
+    </b-modal>
+    <b-modal id="signInModal"  hide-footer hide-title>
+      <sign-in-form/>
+    </b-modal>
+
+      
+</b-navbar>
 </template>
 
 <script>
-import AuthBar from './Auth/AuthBar.vue';
+import UserFavoritesView from './views/UserFavoriteView';
+import router_urls from '../consts/router_url.js'
+import StoreConst from '../consts/store_consts.js'
+import SignInForm from './Auth/SignInForm'
 
 
 export default {
     name: 'Navbar',
+    data: function () {
+    return {
+          signUpUrl: router_urls.SignUp,
+      };
+   },
+    computed:
+    {
+        isAuthenticated: function(){
+           return this.$store.isAuthenticated; 
+        },
+    },
+    methods: {
+        logout: function () {
+            this.$store.dispatch(StoreConst.AUTH_LOGOUT)
+            .then(() => {
+                this.$router.push('/login')
+            })
+        },
+    },
     components:{
-      AuthBar,
+      UserFavoritesView,
+      SignInForm
     }
   }
 </script>
@@ -33,6 +73,11 @@ export default {
 <style scoped>
 .navbar-main {
   overflow: hidden;
+}
+
+.nav-item-wrapper{
+  margin-right: 1%;
+  margin-left: 1%;
 }
 
 </style>

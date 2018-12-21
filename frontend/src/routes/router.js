@@ -3,8 +3,9 @@ import HomePage  from '../components/HomePage.vue';
 import DocumentView from '../components/views/DocumentView.vue';
 import Search from '../components/SearchSubcomponents/Search.vue';
 import SignUpForm from '../components/Auth/SignUpForm.vue';
+import UserFavoritesView from '../components/views/UserFavoriteView.vue';
 
-import urls from '../utils/router_url.js';
+import urls from '../consts/router_url.js';
 
 var routes = [
     {path: '/', component: HomePage},
@@ -24,6 +25,10 @@ var routes = [
     {
         path: urls.SignUp,
         component: SignUpForm,
+    },
+    {
+        path: urls.UserFavorites,
+        component: UserFavoritesView,
     },
 ];
 

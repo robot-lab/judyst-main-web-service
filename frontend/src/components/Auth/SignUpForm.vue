@@ -39,7 +39,7 @@
 
 
 <script>
-import {REGISTER_REQUEST} from './../../utils/auth_const.js'
+import {REGISTER_REQUEST} from './../../consts/store_consts.js'
 import funcs from '../../utils/auth_funcs.js'
 
 export default {

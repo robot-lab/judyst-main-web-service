@@ -4,6 +4,7 @@
       <!-- <p>{{tmp}}</p> -->
       <!-- <p>Result: {{StoredResult}}</p> -->
       <SearchBlock class="search-block"  :Request="SearchRequest" v-on:SearchResultsReceived="SetSearchResult($event)" :isNeedSearch="isNeedSearch"/>
+      
       <SearchResultsBlock v-if="SearchResult != null"
                           :SearchResults="SearchResult"/>
 
@@ -13,7 +14,7 @@
 <script>
 import SearchBlock from "./SearchBlock.vue"
 import SearchResultsBlock from "./SearchResultsBlock.vue"
-import StoreConsts from "../../utils/searchHistoryConsts.js"
+import StoreConsts from "../../consts/store_consts.js"
 export default {
   name: 'Search',
   data: function() {

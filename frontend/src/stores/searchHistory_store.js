@@ -2,7 +2,7 @@
 import {
         NEW_SEARCH_RESULT, NEW_LINKS_PACK,
         }
-from '../utils/searchHistoryConsts.js';
+from '../consts/store_consts';
 
 const state = {
     storedSearch :  {},

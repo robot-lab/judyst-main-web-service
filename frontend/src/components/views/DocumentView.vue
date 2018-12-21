@@ -37,7 +37,7 @@ import VRuntimeTemplate from "v-runtime-template";
 import multipageLinksView from './MultipageLinksView.vue'
 import requests from '../../utils/requests.js'
 import utils from '../../utils/common.js'
-import urls from '../../utils/urls.js'
+import urls from '../../consts/urls.js'
 // import marks from '../../SearchAlgorithms/marks.js'
 export default {
     name: 'DocumentView',

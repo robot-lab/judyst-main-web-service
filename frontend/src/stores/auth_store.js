@@ -10,8 +10,8 @@ import {
     REGISTER_REQUEST,
     REGISTER_ERROR
         }   
-    from '../utils/auth_const.js';
-import urls from '../utils/urls.js';
+    from '../consts/store_consts';
+import urls from '../consts/urls.js';
 
 
 
