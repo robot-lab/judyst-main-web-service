@@ -69,12 +69,8 @@ const mutations = {
     },
     [EDIT_FAVORITE_REQ]: (state, val) =>
     {
-        let model = state.favoriteRequests[val.req];
         delete state.favoriteRequests[val.req];
-        model.body = val.model.body;
-        model.caption  = val.model.caption;
-        model.description = val.model.description;
-        state.favoriteRequests[val.body] = model; 
+        state.favoriteRequests[val.model.body] = val.model;
         if (isUseStorage)
             {
                 storage.removeItem(val.req, 'req_');
@@ -96,13 +92,9 @@ const mutations = {
     },
     [EDIT_FAVORITE_DOC]: (state, val) =>
     {
-        let model = state.favoriteDocuments[val.req];
         delete state.favoriteDocuments[val.req];
-        model.body = val.model.body;
-        model.caption  = val.model.caption;
-        model.title  = val.model.title;
-        model.description = val.model.description;
-        state.favoriteDocuments[val.body] = model; 
+        state.favoriteDocuments[val.model.body] = val.model;
+
         if (isUseStorage)
         {
             storage.removeItem(val.req, 'doc_');

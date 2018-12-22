@@ -23,7 +23,7 @@
                         <b-btn type="submit" size="sm" class="submit-btn" variant="outline-success">Сохранить</b-btn>
                     </div>
                     <div v-if="mode=='edit'">
-                        <b-btn  size="sm" class="submit-btn" variant="outline-success">Отменить</b-btn>
+                        <b-btn  size="sm" class="submit-btn" variant="outline-success" @click="abort()">Отменить</b-btn>
                     </div>
 				</div>
 			</div>

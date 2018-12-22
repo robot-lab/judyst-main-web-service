@@ -6,7 +6,7 @@ import utils from './utils.js';
 
 
 Vue.use(Vuex);
-const count = 1;
+const count = 10;
 const test_string_size = 20;
 describe('simple_store_test', ()=>{
     const store = new Vuex.Store(fav_store);
@@ -57,26 +57,30 @@ describe('simple_store_test', ()=>{
 
         for (let i = 0; i < count; i++)
         {
+            let old_req = requests[i].req;
             let req = utils.GetRandomStr(test_string_size);
-            const request ={req, model:{caption:utils.GetRandomStr(test_string_size),
+            const request ={old_req, model:{caption:utils.GetRandomStr(test_string_size),
                                         description:utils.GetRandomStr(test_string_size),
                                         body: req}};
+            old_req = documents[i].req;
             req = utils.GetRandomStr(test_string_size);
-            const document ={req, model:{caption:utils.GetRandomStr(test_string_size),
+            const document ={old_req, model:{caption:utils.GetRandomStr(test_string_size),
                 description:utils.GetRandomStr(test_string_size),
                 title: utils.GetRandomStr(test_string_size),
                 body: req}};
             
-            let old_req = documents[i].req;
-            store.commit(store_consts.EDIT_FAVORITE_DOC, {req: old_req, document});
-            old_req = requests[i].req;
-            store.commit(store_consts.EDIT_FAVORITE_REQ, {req: old_req, request});
-            expect(requests[i].model).toEqual(request.model);
-            expect(documents[i].model).toEqual(document.model);
-            // store.commit(store_consts.DELETE_FAVORITE_DOC, documents[i]);
-            // store.commit(store_consts.DELETE_FAVORITE_REQ, requests[i]);
-            // expect(requests[i].model).not.toBeDefined();
-            // expect(documents[i].model).not.toBeDefined();
+            store.commit(store_consts.EDIT_FAVORITE_DOC, document);
+            store.commit(store_consts.EDIT_FAVORITE_REQ, request);
+            expect(store.getters.getFavoriteRequest(request.model.body)).toEqual(request.model);
+            expect(store.getters.getFavoriteDocument(document.model.body)).toEqual(document.model);
+            request.req = request.model.body;
+            document.req = document.model.body;
+            documents[i] = document;
+            requests[i] = request; 
+            store.commit(store_consts.DELETE_FAVORITE_DOC, documents[i]);
+            store.commit(store_consts.DELETE_FAVORITE_REQ, requests[i]);
+            expect(store.getters.getFavoriteDocument(documents[i].req)).toBeNull();
+            expect(store.getters.getFavoriteRequest(requests[i].req)).toBeNull();
         }
 
 
