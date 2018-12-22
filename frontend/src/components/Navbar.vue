@@ -7,14 +7,19 @@
       <b-nav-item :to="'/search/'">Search</b-nav-item>
     </b-navbar-nav> 
 
-    <b-navbar-nav class="ml-auto">
      <b-navbar-nav class="nav-item-wrapper">
-      <b-nav-item v-b-modal.FavoriteModal>Favorite</b-nav-item>
+      <b-nav-item :to="favoritesUrl">Favorites</b-nav-item>
      </b-navbar-nav> 
+     <b-navbar-nav class="nav-item-wrapper">
+      <b-nav-item v-b-modal.FavoriteModal>
+        <i class="far fa-eye"></i>
+      </b-nav-item>
+     </b-navbar-nav> 
+    <b-navbar-nav class="ml-auto">
     </b-navbar-nav>
     
-    <b-navbar-nav v-if="isAuthenticated">
-      <b-nav-item @click="logout()">Search</b-nav-item>
+    <b-navbar-nav v-if="isAuthenticated" class="nav-item-wrapper">
+      <b-nav-item @click="logout()">Sign out</b-nav-item>
     </b-navbar-nav>
     <b-navbar-nav class="nav-item-wrapper" v-if="!isAuthenticated">
       <b-nav-item v-b-modal.signInModal>Sign In</b-nav-item>
@@ -23,10 +28,10 @@
       <b-nav-item :to="signUpUrl">Sign Up</b-nav-item>
     </b-navbar-nav> 
 
-    <b-modal id="FavoriteModal" hide-footer hide-title>
-      <user-favorites-view/>
+    <b-modal id="FavoriteModal" ref="FavoriteModalRef" hide-footer hide-title>
+      <user-favorites-view :isModal="true"/>
     </b-modal>
-    <b-modal id="signInModal"  hide-footer hide-title>
+    <b-modal id="signInModal" ref="signInModalRef" hide-footer hide-title>
       <sign-in-form/>
     </b-modal>
 
@@ -46,21 +51,30 @@ export default {
     data: function () {
     return {
           signUpUrl: router_urls.SignUp,
+          favoritesUrl: router_urls.UserFavorites,
       };
    },
     computed:
     {
         isAuthenticated: function(){
-           return this.$store.isAuthenticated; 
+           return this.$store.getters.isAuthenticated; 
         },
     },
     methods: {
         logout: function () {
             this.$store.dispatch(StoreConst.AUTH_LOGOUT)
             .then(() => {
-                this.$router.push('/login')
+                this.$router.push('/');
             })
         },
+   
+    },
+    watch:{
+        isAuthenticated: function () {
+          if (this.isAuthenticated)
+             this.$refs.signInModalRef.hide();
+        
+      }
     },
     components:{
       UserFavoritesView,

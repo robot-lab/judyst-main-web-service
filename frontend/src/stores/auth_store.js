@@ -26,6 +26,7 @@ const state = {
 const getters = {
     isAuthenticated: state => !!state.token,
     authStatus: state => state.status,
+    token: state => state.token,
 }
 
 
@@ -34,8 +35,14 @@ const actions = {
     [AUTH_REQUEST]: ({commit, dispatch}, user) => {
       return new Promise((resolve, reject) => { // The Promise used for router redirect in login
         commit(AUTH_REQUEST);
-        axios({url: urls.Auth_signin, data: user, method: 'POST' })
-          .then(resp => {
+        axios({
+            url: urls.Auth_signin,
+            data: user,
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(resp => {
             // console.log(resp);
             const token = resp.data.token;
             if (token === undefined){
@@ -73,8 +80,14 @@ const actions = {
     [REGISTER_REQUEST]: ({commit, dispatch}, user) => {
         return new Promise((resolve, reject) => {
             commit(REGISTER_REQUEST);
-            axios({url: urls.Auth_signup, data: user, method: 'POST' })
-            .then(resp => {
+            axios({
+                url: urls.Auth_signup,
+                data: user, 
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                } 
+            }).then(resp => {
               const token = resp.data.token;
               localStorage.setItem('user-token', token) // store the token in localstorage
               axios.defaults.headers.common['Authorization'] = token;
@@ -98,6 +111,10 @@ const actions = {
 const mutations = {
     [AUTH_REQUEST]: (state) => {
         state.status = 'loading';
+    },
+    [AUTH_LOGOUT]: (state) => {
+        state.status = '';
+        state.token = undefined; 
     },
     [AUTH_SUCCESS]: (state, token) => {
         state.status = 'success';

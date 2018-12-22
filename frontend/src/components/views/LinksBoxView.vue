@@ -1,6 +1,6 @@
 <template>
 <div class="links-block" >
-        <div v-for="Link in Links" :key="Link.doc_id_from + Link.doc_id_to">
+        <div v-for="(Link, ind) in Links" :key="ind">
             <LinkView v-bind:CleanLink="Link" :CollapseDefault="CollapseDefault"/>
         </div>
 </div>

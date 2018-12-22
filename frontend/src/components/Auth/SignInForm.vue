@@ -1,5 +1,6 @@
 <template>
-<div class="text-center" style="padding:50px 0">
+<div class="text-center " style="padding:50px 0">
+  <!-- {{isAuthenticated}} -->
 	<div class="logo">Sign in</div>
 	<div class="login-form-1">
 		<form  class="text-left"  @submit.prevent="login">
@@ -42,6 +43,12 @@ export default {
         email: '',
         password: '',
         signUpUrl: router_urls.SignUp,
+        
+      }
+    },
+    computed:{
+      isAuthenticated: function(){
+        return this.$store.getters.isAuthenticated;
       }
     },
     methods: {
@@ -51,7 +58,7 @@ export default {
           this.$router.push('/');
         });
       }
-    },
+    }
 }
 
 </script>
@@ -61,11 +68,6 @@ export default {
 
 
 <style>
-body {
-  background: #efefef;
-  padding: 10px;
-  font-family: 'Varela Round';
-}
 
 .etc-login-form {
   color: #919191;

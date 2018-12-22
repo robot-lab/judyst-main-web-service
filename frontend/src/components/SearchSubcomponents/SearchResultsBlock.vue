@@ -6,7 +6,7 @@
         <span class="page-list">
                 <PageList v-bind:Count="LinksCount" v-bind:Step="Step" v-bind:Current="CurrentRange" v-on:PageChanged="getLinks($event)" />
         </span>
-        <SearchStatistics  :SearchResults="SearchResults" :Count="LinksCount"/>
+        <!-- <SearchStatistics  :SearchResults="SearchResults" :Count="LinksCount"/> -->
         <div class="links-block" v-if="isLoaded">
             <LinkBoxView :Links="Links" :DefaultCollapse="false"/>
             <span class="page-list"><PageList v-bind:Count="LinksCount" v-bind:Step="Step" v-bind:Current="CurrentRange" v-on:PageChanged="getLinks($event)" /></span>

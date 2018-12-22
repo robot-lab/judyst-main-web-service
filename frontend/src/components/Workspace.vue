@@ -6,13 +6,20 @@
 
 
 <script>
+import StoreConst from '../consts/store_consts.js';
 export default {
   name: 'Workspace',
   components: {
+  },
+  created: function (){
+
+    this.$store.dispatch(StoreConst.UPDATE_FROM_STORAGE).then();
+  }
+
   }
     
  
-}
+
 </script>
 
 

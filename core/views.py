@@ -73,7 +73,7 @@ class UserViewSet(viewsets.ViewSet):
                               validate_data['password'])
         except Exception:
             return ErrorResponse().not_valid()
-        send_email("Not Implemented:  500", validate_data['email'])
+        # send_email("Not Implemented:  500", validate_data['email'])
         res = Response({"token": token.key})
         print(res)
         return res

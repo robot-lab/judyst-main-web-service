@@ -13,13 +13,10 @@
                         </button>
                     </span>
                 </div>
+                <search-request-manager :Request="SearchRequest"/>
             </div>
         </div>
-        <div class="col-12">
-            <button type="button">
-                <span class="fa fa-star" v-on:click="AddReqToFavorites()"></span>
-            </button>
-        </div>
+       
 	</b-row>
 </b-container>
 </template>
@@ -31,14 +28,19 @@ import requests from '../../utils/requests.js'
 import urls from '../../consts/urls.js'
 import router_urls from '../../consts/router_url.js'
 import utils from '../../utils/common.js'
-import StoreConst from '../../consts/store_consts.js'
 
+import SearchRequestManager from './SearchRequestManager.vue';
 
 export default {
     name: 'SearchBlock',
+    components:{
+        SearchRequestManager
+    },
     props:{
         Request: String,
         isNeedSearch: Boolean
+    },
+    computed:{
     },
     data: function ()
     {
@@ -57,13 +59,7 @@ export default {
             // this.tmp = searchRequst;
             this.$router.push(`${router_urls.Search}/${searchRequst}`);
         },
-        AddReqToFavorites: function() {
-            let searchRequest = document.getElementById('input-search').value;
-            searchRequest = utils.StashRequest(searchRequest);
-            if (searchRequest != '')
-                this.$store.commit(StoreConst.NEW_FAVORITE_REQ, searchRequest);
-
-        },  
+      
         Update: function() {
             if (this.Request != null &&  this.isNeedSearch)
             {

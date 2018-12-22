@@ -1,5 +1,5 @@
 <template>
-<div class="text-center" style="padding:50px 0">
+<div class="text-center " style="padding:50px 0">
 	<div class="logo">Sign Up</div>
 	<div class="login-form-1">
 		<form class="text-left"  @submit.prevent="register">
@@ -19,11 +19,11 @@
 					</div>
 					<div class="form-group">
 						<label for="lg_email" class="sr-only">first name</label>
-						<input v-model="firstName" type="text" class="form-control"  placeholder="first name" required>
+						<input v-model="first_name" type="text" class="form-control"  placeholder="first name" required>
 					</div>
             <div class="form-group">
 						<label for="lg_email" class="sr-only">last name</label>
-						<input v-model="lastName" type="text" class="form-control"  placeholder="last name" required>
+						<input v-model="last_name" type="text" class="form-control"  placeholder="last name" required>
             <div>
               <b-btn type="submit" size="sm" class="register-btn" variant="outline-success">Register</b-btn>
             </div>
@@ -48,8 +48,8 @@ export default {
       return {
         email: 'Rexarrior@yandex.ru', 
         password: 'sTame_342', 
-        firstName: 'Ksandr', 
-        lastName: 'renderon', 
+        first_name: 'Ksandr', 
+        last_name: 'renderon', 
         organization: 'none',
         errMessage: '',
       }
@@ -60,8 +60,8 @@ export default {
             const model = {
               email: this.email, 
               password: this.password, 
-              firstName: this.firstName, 
-              lastName: this.lastName,
+              first_name: this.first_name, 
+              last_name: this.last_name,
               organization: this.organization
             };
             if (!funcs.CheckRegModel(model))

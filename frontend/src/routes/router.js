@@ -4,18 +4,20 @@ import DocumentView from '../components/views/DocumentView.vue';
 import Search from '../components/SearchSubcomponents/Search.vue';
 import SignUpForm from '../components/Auth/SignUpForm.vue';
 import UserFavoritesView from '../components/views/UserFavoriteView.vue';
+import AddFavoriteForm from '../components/AddFavoriteForm.vue';
+import PageNotFound from '../components/PageNotFound.vue';
 
 import urls from '../consts/router_url.js';
 
 var routes = [
-    {path: '/', component: HomePage},
+    {path: urls.HomePage, component: HomePage},
     {   name: 'document',
-        path: '/document/:doc_id/:hash',
+        path: `${urls.Document}/:doc_id/:hash`,
         component: DocumentView,
        
     },
     {
-        path: '/search/:request',
+        path: `${urls.Search}/:request`,
         component: Search,
     },
     {
@@ -30,6 +32,22 @@ var routes = [
         path: urls.UserFavorites,
         component: UserFavoritesView,
     },
+    {
+        path: `${urls.AddFavorite}/:target`,
+        component: AddFavoriteForm,
+        props: {init_target: 'route', mode: 'new'}
+        
+    },
+    {
+        path: `${urls.AddFavorite}/:target/:body`,
+        component: AddFavoriteForm,
+        props: {init_target: 'route', mode: 'edit'}
+        
+    },
+    {
+        path: urls.PageNotFound,
+        component: PageNotFound
+    }
 ];
 
 

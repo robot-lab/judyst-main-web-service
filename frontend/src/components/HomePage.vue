@@ -3,7 +3,7 @@
     <!-- <Search/> -->
     <b-container>
         <p>{{description}}</p>
-        <!-- <p>Token: {{token}}</p> -->
+        <p>Token: {{token}}</p>
     </b-container>
 </div>
 </template>
@@ -27,7 +27,7 @@ export default {
   },
   computed: {
       token : function () {
-          return this.$store.token;
+          return this.$store.getters.token;
       }
   }
 }

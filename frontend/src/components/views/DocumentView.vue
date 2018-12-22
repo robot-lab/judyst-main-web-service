@@ -5,7 +5,8 @@
         <h5 class="title-block"><b>Заголовок документа:</b> <p>{{CurrentDocument.title}}</p></h5>
         <h4 class="id-block"> <p><b>Номер документа:</b> {{CurrentDocument.doc_id}}</p></h4>
         <h4 class="date-block"><p><b>Дата публикации:</b> {{CurrentDocument.release_date}} </p></h4>
-        <b-card>
+        <span><i  class="fa fa-star" v-on:click="AddReqToFavorites()"></i> В избранное</span>
+            <b-card>
             <b-container v-if="LinksTo!= null">
             <b-card-header v-b-toggle="'link_to_block'">Цитирование этого документа</b-card-header>
             <b-collapse id="link_to_block"><b-card-body >

@@ -4,8 +4,8 @@ export default{
     Search: `${prefix}/search/number_of_links`,
     Document: `${prefix}/search/document`,
     Links: `${prefix}/search/get`,
-    Auth_signin: `${prefix}/login`,
-    Auth_signup: `${prefix}/register`,
-    Auth_signout: `${prefix}/logout`,
+    Auth_signin: `${prefix}/user/login`,
+    Auth_signup: `${prefix}/user/register`,
+    Auth_signout: `${prefix}/user/logout`,
 
 }
