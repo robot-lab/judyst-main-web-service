@@ -13,7 +13,7 @@
                         </button>
                     </span>
                 </div>
-                <search-request-manager :Request="SearchRequest"/>
+                <favorite-manager :Request="SearchRequest" Target="request"/>
             </div>
         </div>
        
@@ -29,12 +29,12 @@ import urls from '../../consts/urls.js'
 import router_urls from '../../consts/router_url.js'
 import utils from '../../utils/common.js'
 
-import SearchRequestManager from './SearchRequestManager.vue';
+import FavoriteManager from '../FavoriteManager.vue';
 
 export default {
     name: 'SearchBlock',
     components:{
-        SearchRequestManager
+        FavoriteManager
     },
     props:{
         Request: String,

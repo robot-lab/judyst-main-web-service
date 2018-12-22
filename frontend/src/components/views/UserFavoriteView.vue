@@ -7,11 +7,11 @@
             <b-collapse :id="`favorite-requests-collapse${isModal?'-modal':''}`"
                         :visible="!isModal" >
                 <b-card-body class="content">
-                    <b-container   v-if="!isRequestsEmpty">
+                    <b-container   v-if="isRequestsNotEmpty">
                         <b-card class=" text-center content-card" 
                                 v-for="(req, ind) in Requests" :key=ind>
                                 <h5>{{req.caption}}</h5>
-                                <h7><i>{{req.body}}</i></h7>
+                                <h6><i>{{req.body}}</i></h6>
                                 <span v-if="req.description != ''">
                                     <p> {{req.description}}</p>
                                 </span>
@@ -43,19 +43,18 @@
               <b-collapse :id="`favorite-documents-collapse${isModal?'-modal':''}`"
                         :visible="!isModal" >
                 <b-card-body class="content">
-                    <b-container   v-if="!isDocumentsEmpty">
+                    <b-container   v-if="isDocumentsNotEmpty">
                         <b-card class=" text-center content-card" 
-                                v-for="(req, ind) in Documents" :key=ind 
-                                :title="req.caption"
-                                :sub-title="req.body">
-                            
+                                v-for="(req, ind) in Documents" :key=ind>
+                                <h5>{{req.caption}}</h5>
+                                <h6><i>{{req.body}}</i></h6>
                                 <span v-if="req.description != ''">
                                     <p> {{req.description}}</p>
                                 </span>
-                                <span v-b-toggle="`doc-${req.body}-title-${ind}`">Заголовок</span>
-                                <b-collapse :id="`doc-${req.body}-title-${ind}`" class="text-center">
+                                <h4>Заголовок</h4>
+                                <p class="text-center">
                                     {{req.title}}
-                                </b-collapse>
+                                </p>
                             <b-card-footer>
                                 <b-row v-if="!isModal">
                                     <b-btn size="sm" class="control first-control" variant="link" :to="GetDocPath(req.body)">Документ</b-btn>
@@ -103,36 +102,27 @@ export default {
         newRequestUrl: `${router_urls.AddFavorite}/request`,
         newDocumentUrl: `${router_urls.AddFavorite}/document`,
         fullView: router_urls.UserFavorites,
-        salt : '',
+        Requests: {},
+        Documents: {},
+        isRequestsNotEmpty: true,
+        isDocumentsNotEmpty: null,
 
     }},
     computed:{
-       
-        Requests: function(){
-            if (this.salt != '')
-                return {};
-            return this.$store.getters.favoriteRequests; 
-        },
-        Documents: function(){
-            if (this.salt != '')
-                return {};
-            return this.$store.getters.favoriteDocuments; 
-        },
-        isRequestsEmpty: function(){
-            if (this.salt != '')
-                return false; 
-            return Object.keys(this.Requests).length == 0;
-        },
-          isDocumentsEmpty: function(){
-            if (this.salt != '')
-                return false; 
-            return Object.keys(this.Documents).length == 0;
-        },
     },
     methods:{
-       
+        Update: function() 
+        {
+            this.Requests = this.$store.getters.favoriteRequests; 
+            this.isRequestsEmpty = Object.keys(this.Requests).length > 0;
+            this.Documents = this.$store.getters.favoriteDocuments;
+            this.isDocumentsNotEmpty = Object.keys(this.Documents).length > 0;
+            // console.log(this.isRequestsNotEmpty);
+            // console.log(this.isDocumentsNotEmpty);
+        },
         GetReqPath: function (req) {
-            return `${router_urls.Search}/${req}`;
+            let sreq = utils.StashRequest(req);
+            return `${router_urls.Search}/${sreq}`;
         },
         GetReqLinks: function (doc_id, side) {
             let req = ''; 
@@ -144,14 +134,17 @@ export default {
             return `${router_urls.Search}/${utils.StashRequest(req)}`;
         },
         GetDocPath: function (req) {
-            return `document/${req}`;
+            const sreq = utils.StashDocId(req);
+            return `document/${sreq}/0`;
         },
         DelReq: function(req){
-            this.$store.commit(StoreConsts.DELETE_FAVORITE_REQ, req);
+            this.$store.commit(StoreConsts.DELETE_FAVORITE_REQ, {req});
+            this.Update();
         },
-        DelDoc: function(doc){
-            this.$store.commit(StoreConsts.DELETE_FAVORITE_DOC, doc);
-        },
+        DelDoc: function(req){
+            this.$store.commit(StoreConsts.DELETE_FAVORITE_DOC, {req});
+            this.Update();
+            },
         Edit: function (target, body) {
             let bd = '';
             if (target == 'request')
@@ -160,7 +153,7 @@ export default {
                 bd = utils.StashDocId(body);
             
             this.$router.push(`${router_urls.AddFavorite}/${target}/${bd}`);
-
+            
         },
         GoToNew: function (where){
             this.$emit('finish');
@@ -169,23 +162,25 @@ export default {
             else
                 this.$router.push(this.newDocumentUrl);
         },
-        created:function(){
-            let vue = this;
-            if (this.isModal)
-                this.$store.commit(StoreConsts.SET_ON_FAVORITE_UPDATE, 
-                    ()=>{
-                        vue.salt = 'reinvoking';
-                        vue.salt = ''; 
-                    });
-        },
-        destroyed: function(){
-            if (this.isModal)
-                this.$store.commit(StoreConsts.DELETE_ON_FAVORITE_UPDATE);
-        }
-
-
-
+       
     },
+    created:function(){
+        let vue = this;
+        if (this.isModal)
+            this.$store.commit(StoreConsts.SET_ON_FAVORITE_UPDATE, 
+                ()=>{
+                    vue.Update();
+                });
+        this.Update();
+    },
+    destroyed: function(){
+        if (this.isModal)
+            this.$store.commit(StoreConsts.DELETE_ON_FAVORITE_UPDATE);
+    }
+
+
+
+
    
 
 }

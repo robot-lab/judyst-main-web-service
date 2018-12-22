@@ -3,7 +3,7 @@
     <!-- <Search/> -->
     <b-container>
         <p>{{description}}</p>
-        <p>Token: {{token}}</p>
+        <!-- <p>Token: {{token}}</p> -->
     </b-container>
 </div>
 </template>

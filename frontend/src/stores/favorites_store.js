@@ -99,7 +99,7 @@ const mutations = {
         model.caption  = val.model.caption;
         model.title  = val.model.title;
         model.description = val.model.description;
-        state.favoriteRequests[val.body] = model; 
+        state.favoriteDocuments[val.body] = model; 
         if (isUseStorage)
         {
             storage.removeItem(val.req, 'doc_');
@@ -176,9 +176,11 @@ const plugins = {
             if (state.onFavoriteUpdate != null)
                 if(updating_mutations.indexOf(mutation.type) != -1)
                 {
-                    for (let func in state.onFavoriteUpdate)
-                        func();
-                }
+                        for (let i = 0; i < state.onFavoriteUpdate.length; i++)
+                    {
+                        state.onFavoriteUpdate[i]();
+                    }
+    }
         });
       }
 };

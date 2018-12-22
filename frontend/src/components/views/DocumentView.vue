@@ -5,7 +5,7 @@
         <h5 class="title-block"><b>Заголовок документа:</b> <p>{{CurrentDocument.title}}</p></h5>
         <h4 class="id-block"> <p><b>Номер документа:</b> {{CurrentDocument.doc_id}}</p></h4>
         <h4 class="date-block"><p><b>Дата публикации:</b> {{CurrentDocument.release_date}} </p></h4>
-        <span><i  class="fa fa-star" v-on:click="AddReqToFavorites()"></i> В избранное</span>
+            <favorite-manager  Target="document" :Title="CurrentDocument.title" :Request="CurrentDocument.doc_id"/>
             <b-card>
             <b-container v-if="LinksTo!= null">
             <b-card-header v-b-toggle="'link_to_block'">Цитирование этого документа</b-card-header>
@@ -36,16 +36,18 @@
 <script>
 import VRuntimeTemplate from "v-runtime-template";
 import multipageLinksView from './MultipageLinksView.vue'
+import FavoriteManager from '../FavoriteManager.vue';
 import requests from '../../utils/requests.js'
 import utils from '../../utils/common.js'
 import urls from '../../consts/urls.js'
+
 // import marks from '../../SearchAlgorithms/marks.js'
 export default {
     name: 'DocumentView',
     components:{
         multipageLinksView,
-        VRuntimeTemplate
-
+        VRuntimeTemplate,
+        FavoriteManager,
     },
     data: function(){
         return {
