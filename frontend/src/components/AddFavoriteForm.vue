@@ -175,3 +175,8 @@ export default {
 }
 </script>
 
+<style scoped>
+.submit-btn{
+    margin:1%;
+}
+</style>

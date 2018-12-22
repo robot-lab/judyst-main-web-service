@@ -49,10 +49,7 @@
                                 <span v-if="req.description != ''">
                                     <p> {{req.description}}</p>
                                 </span>
-                                <h4>Заголовок</h4>
-                                <p class="text-center">
-                                    {{req.title}}
-                                </p>
+                                
                             <b-card-footer>
                                 <b-row v-if="!isModal">
                                     <b-btn size="sm" class="control first-control" variant="link" :to="GetDocPath(req.body)">Документ</b-btn>

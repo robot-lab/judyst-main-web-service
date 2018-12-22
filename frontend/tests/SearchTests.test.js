@@ -47,8 +47,8 @@ for (let i = 0; i < 10*cicleCount; i++ )
         let arr = []; 
         for (let j = 0; i < GetRandomInt(count_rand_arr_min, count_rand_arr_max); i++ )
             arr.push(GetRandomStr(j));
-        it('no repeated elem', ()=>{
-            expect(search_utils.distinctArr(arr)).toBeDistincted();
+            it('no repeated elem', ()=>{
+                expect(search_utils.distinctArr(arr)).toBeDistincted();
         });
         it('with repeated elem', ()=>{
             const cnt = GetRandomInt(arr.length);

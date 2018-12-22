@@ -4,20 +4,20 @@
         <i :class="state" @click="starOnClick()"></i>
     </div>
     <b-modal v-model="isSaveModalVisible" id="SaveModal" hide-footer title="Запомнить запрос">
-             <form  @submit.prevent="submit">
-                <label>{{Target=='document'?'Номер документа':'Запрос'}}: {{Request}}</label>
-                <div class="form-group">
-                    <label class="sr-only">Название</label>
-                    <input v-model="caption" type="text" class="form-control"  placeholder="Название"  required>
-                </div>
-                <div class="form-group">
-                    <label  class="sr-only">Комментарий</label>
-                    <input v-model="description" type="text" class="form-control"  placeholder="Комментарий" >
-                </div>
-                <div class="form-group">
-                    <b-btn type="submit" size="sm" class="submit-btn" variant="outline-success">Сохранить</b-btn>
-                </div>
-             </form>
+        <form  @submit.prevent="submit">
+        <label>{{Target=='document'?'Номер документа':'Запрос'}}: {{Request}}</label>
+        <div class="form-group">
+            <label class="sr-only">Название</label>
+            <input v-model="caption" type="text" class="form-control"  placeholder="Название"  required>
+        </div>
+        <div class="form-group">
+            <label  class="sr-only">Комментарий</label>
+            <input v-model="description" type="text" class="form-control"  placeholder="Комментарий" >
+        </div>
+        <div class="form-group">
+            <b-btn type="submit" size="sm" class="submit-btn" variant="outline-success">Сохранить</b-btn>
+        </div>
+        </form>
     </b-modal>
 </div>
 </template>
