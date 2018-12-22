@@ -115,8 +115,10 @@ export default {
             this.caption = "";
             this.description = "";
             this.$emit('Finish');
+            this.$store.dispatch(StoreConsts.UPDATE_UPDATABLE);
             if (!this.Modal)
                 this.$router.push(router_url.UserFavorites);
+        
         }
     },
    created: function () {

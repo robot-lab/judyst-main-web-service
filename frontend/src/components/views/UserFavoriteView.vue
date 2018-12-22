@@ -34,8 +34,6 @@
                 <b-btn  variant="success" size="sm" :to="newRequestUrl">Новый запрос </b-btn>
             </b-card-footer>
         </b-card>
-
-
          <b-card md-8>
             <b-card-header v-b-toggle="`favorite-documents-collapse${isModal?'-modal':''}`">
                 Избранные документы
@@ -63,7 +61,7 @@
                                 </b-row>
                                 <hr>
                                 <b-row>
-                                    <b-btn size="sm" class="control first-control" variant="link" :to="GetReqLinks(req.body, 'from')">Ссылки из</b-btn>
+                                    <b-btn size="sm" class="control" variant="link" :to="GetReqLinks(req.body, 'from')">Ссылки из</b-btn>
                                     <b-btn size="sm" class="control" variant="link" :to="GetReqLinks(req.body, 'to')">Ссылки в</b-btn>
                                 </b-row>
                                     
@@ -79,8 +77,6 @@
                 <b-btn v-if="!isModal" variant="success" size="sm" :to="newDocumentUrl">New document</b-btn>
             </b-card-footer> -->
         </b-card>
-
-            
     </b-container>
 </template>
 
@@ -113,12 +109,12 @@ export default {
     methods:{
         Update: function() 
         {
+            this.Requests = null;
+            this.Documents = null;
             this.Requests = this.$store.getters.favoriteRequests; 
-            this.isRequestsEmpty = Object.keys(this.Requests).length > 0;
+            this.isRequestsNotEmpty = Object.keys(this.Requests).length > 0;
             this.Documents = this.$store.getters.favoriteDocuments;
             this.isDocumentsNotEmpty = Object.keys(this.Documents).length > 0;
-            // console.log(this.isRequestsNotEmpty);
-            // console.log(this.isDocumentsNotEmpty);
         },
         GetReqPath: function (req) {
             let sreq = utils.StashRequest(req);
@@ -167,10 +163,7 @@ export default {
     created:function(){
         let vue = this;
         if (this.isModal)
-            this.$store.commit(StoreConsts.SET_ON_FAVORITE_UPDATE, 
-                ()=>{
-                    vue.Update();
-                });
+            this.$store.commit(StoreConsts.SET_ON_FAVORITE_UPDATE,{Update:()=> vue.Update()});
         this.Update();
     },
     destroyed: function(){

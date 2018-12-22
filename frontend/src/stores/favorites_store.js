@@ -8,7 +8,8 @@ import {
     DELETE_FAVORITE_REQ,
     UPDATE_FROM_STORAGE,
     SET_ON_FAVORITE_UPDATE,
-    DELETE_ON_FAVORITE_UPDATE
+    DELETE_ON_FAVORITE_UPDATE,
+    UPDATE_UPDATABLE,
     }
 from '../consts/store_consts';
 
@@ -26,7 +27,7 @@ let isUseStorage = true;
 const state = {
     favoriteRequests:{},
     favoriteDocuments:{},
-    onFavoriteUpdate:null
+    UpdatableEntities: null,
 
 }
 
@@ -55,6 +56,8 @@ const getters = {
     }
 
 }
+
+
 
 const mutations = {
 
@@ -114,82 +117,72 @@ const mutations = {
     },
     [SET_ON_FAVORITE_UPDATE]: (state, val) =>
     {
-        if (state.onFavoriteUpdate == null)
-            state.onFavoriteUpdate = [];
-        state.onFavoriteUpdate.push(val); 
+        if (state.UpdatableEntities == null)
+            state.UpdatableEntities = [];
+        state.UpdatableEntities.push(val); 
     },
     [DELETE_ON_FAVORITE_UPDATE]: (state) =>
     {
-        state.onFavoriteUpdate = null; 
+        state.UpdatableEntities = null; 
     }
 }
 
 const actions = {
-        // eslint-disable-next-line 
-        [UPDATE_FROM_STORAGE]: ({commit, dispatch}) => {
-            return new Promise((resolve, reject) => {
-                    try
+    // eslint-disable-next-line 
+    [UPDATE_FROM_STORAGE]: ({commit, dispatch}) => {
+        return new Promise((resolve, reject) => {
+                try
+                {
+                    isUseStorage = false;
+                    let i = 0;
+                    let key = base_storage.key(i);
+                    while (key !== null)
                     {
-                        isUseStorage = false;
-                        let i = 0;
-                        let key = base_storage.key(i);
-                        while (key !== null)
+                        const splited_key = key.split('_');
+                        const prefix = splited_key[0];
+                        if (prefix == 'req' || prefix == 'doc')
                         {
-                            const splited_key = key.split('_');
-                            const prefix = splited_key[0];
-                            if (prefix == 'req' || prefix == 'doc')
-                            {
-                                const req = splited_key.slice(1, splited_key.length).join('');
-                                const name = (prefix == 'req') ? NEW_FAVORITE_REQ : NEW_FAVORITE_DOC;
-                                const model = JSON.parse(base_storage.getItem(key));
-                                commit(name, {req, model});
-                            }
-                            i+= 1;
-                            key = base_storage.key(i);
-                            // console.log(i);
-                            // console.log(key);
-                            // console.log(base_storage.getItem(key));
+                            const req = splited_key.slice(1, splited_key.length).join('');
+                            const name = (prefix == 'req') ? NEW_FAVORITE_REQ : NEW_FAVORITE_DOC;
+                            const model = JSON.parse(base_storage.getItem(key));
+                            commit(name, {req, model});
                         }
-                        resolve();
-                        isUseStorage = true;
-                    }           
-                    catch(e)
-                    {
-                        isUseStorage = true;
-                        reject(e);
+                        i+= 1;
+                        key = base_storage.key(i);
+                        // console.log(i);
+                        // console.log(key);
+                        // console.log(base_storage.getItem(key));
                     }
-            })
-            }, 
+                    resolve();
+                    isUseStorage = true;
+                    setTimeout(()=>dispatch(UPDATE_UPDATABLE), 1000);
+                }           
+                catch(e)
+                {
+                    isUseStorage = true;
+                    reject(e);
+                }
+        })
+    },
+    // eslint-disable-next-line
+    [UPDATE_UPDATABLE]: (context) => {
+        // console.log(context.state.UpdatableEntities);
+        if (context.state.UpdatableEntities != null)
+        {
+            for( let i = 0; i < context.state.UpdatableEntities.length; i ++)
+            {
+                context.state.UpdatableEntities[i].Update();
+            }
+        }
+    },
+    
 
 }
-
-const updating_mutations = [
-    NEW_FAVORITE_DOC,
-    NEW_FAVORITE_REQ,
-    EDIT_FAVORITE_DOC,
-    EDIT_FAVORITE_REQ
-]
-
-const plugins = {
-    OnFavoriteUpdateEmitter : store => {
-        store.subscribe((mutation, state) => {
-            if (state.onFavoriteUpdate != null)
-                if(updating_mutations.indexOf(mutation.type) != -1)
-                {
-                        for (let i = 0; i < state.onFavoriteUpdate.length; i++)
-                    {
-                        state.onFavoriteUpdate[i]();
-                    }
-    }
-        });
-      }
-};
 
 
 export default {
 state,
 getters,
 mutations,
-actions,
-plugins
+actions
 };

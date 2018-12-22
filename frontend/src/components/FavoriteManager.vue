@@ -71,14 +71,19 @@ export default {
             else return function (){
                 const name = this.Target == 'document'?StoreConsts.DELETE_FAVORITE_DOC:StoreConsts.DELETE_FAVORITE_REQ;
                 const req = this.Request.trim(); 
+                this.Update();
                 this.$store.commit(name, {req});
+                this.$store.dispatch(StoreConsts.UPDATE_UPDATABLE);
             };                 
                     
         },
 
     },
     methods:{
-          
+          Update: function(){
+                this.salt = 'reinvoking';
+                this.salt = '';
+          },
           AddReqToFavorites: function() {
             let req = this.Request.trim();
             if (req == '')
@@ -93,7 +98,8 @@ export default {
             this.isSaveModalVisible = false;
             this.salt = 'reinvoking';
             this.salt = '';
-
+            this.$store.dispatch(StoreConsts.UPDATE_UPDATABLE);
+            
         },  
         AddDocToFavorites: function() {
             let req = this.Request.trim();
@@ -108,8 +114,9 @@ export default {
             };
             this.$store.commit(StoreConsts.NEW_FAVORITE_DOC, {req, model});
             this.isSaveModalVisible = false;
-            this.salt = 'reinvoking';
-            this.salt = '';
+            this.Update();
+            this.$store.dispatch(StoreConsts.UPDATE_UPDATABLE);
+            
 
         }, 
     },
@@ -118,10 +125,7 @@ export default {
             this.submit = this.AddDocToFavorites;
         else
             this.submit = this.AddReqToFavorites;
-        
-
     }
-
 }
 </script>
 
