@@ -133,6 +133,42 @@ class ModelData(object):
 
             print(f"something went wrong, may be not correct {kwargs}")
 
+    def get_filtered_data(self, fields_list, model_name=None, **kwargs):
+        """
+        функция для того, чтобы получать список словарей
+        полей, соответствующих строкам выбранной таблицы,
+        отобранным по заданнаму в kwargs фильтру
+
+        :param field_list: {"field1", "field2"}
+            список полей, которые нужно получить
+
+        :param model_name: str
+            имя модели с которой надо работать
+
+        :param kwargs: field="str"
+            условие для выбора подходящих строк, допустим:
+            supertype="КСРФ"
+
+        :return: List
+            Список словарей, соответствующих строкам
+        """
+        data_base = self.__models_dict.get(model_name)
+        if data_base is None:
+            return None
+        try:
+            models = data_base.objects.filter(**kwargs)
+            result = []
+            for model in models:
+                line = {} 
+                for field in fields_list:
+                    line[field] = getattr(model, field)
+                result.append(line)
+            return result
+        except Exception as e:
+            print(e)
+
+            print(f"something went wrong, may be not correct {kwargs}")
+        
 
 if __name__ == '__main__':
     a = ModelData()
